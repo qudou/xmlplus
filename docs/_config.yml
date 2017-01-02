@@ -2,5 +2,5 @@
 name: xmlplus
 description: A JavaScript library for building applications
 url: https://qudou.github.io
-baseurl: http://xmlplus.net/
+baseurl: http://xmlplus.net
 theme: jekyll-theme-cayman
