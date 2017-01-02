@@ -1,7 +1,7 @@
 ---
 layout: default
-title: ÄãºÃ£¬ÊÀ½ç
+title: ä½ å¥½ï¼Œä¸–ç•Œ
 ---
 <h2>{{ page.title }}</h2>
-<p>ÎÒµÄµÚÒ»ÆªÎÄÕÂ</p>
+<p>æˆ‘çš„ç¬¬ä¸€ç¯‡æ–‡ç« </p>
 <p>{{ page.date | date_to_string }}</p>
