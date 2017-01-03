@@ -34,7 +34,7 @@
 { opt: {}, map: {}, ali: /[a-z]/i } 
 ```
 
-组件还可以是基本的HTML元素。HTML元素是基组件，前面所说的组件叫做自定义组件。基组件是不可分解的，自定义组件可以由基组件或者其它自定义组件组合而成。比如下面的组件，它由两个基组件div和span组合而成的。
+组件还可以是基本的`HTML`元素。HTML元素是基组件，前面所说的组件叫做自定义组件。基组件是不可分解的，自定义组件可以由基组件或者其它自定义组件组合而成。比如下面的组件，它由两个基组件div和span组合而成的。
 
 ```javascript
 { xml: "<div><span/></div>" } 
@@ -46,7 +46,7 @@
 { xml: "<h1>hello, world</h1>" } 
 ```
  
-一段CDATASection描述也被看作组件，下面的组件包含了一个CDATASection子组件。CDATASection描述也属于基组件。
+一段`CDATASection`描述也被看作组件，下面的组件包含了一个`CDATASection`子组件。`CDATASection`描述也属于基组件。
 
 ```javascript
 { xml: "<![CDATA[hello, world] ]>" } 
@@ -78,7 +78,7 @@ xmlplus("ui", function (xp, $_, t) {
 });
 ```
 
-下面的代码定义了一个根命名空间ui，它包含了组件Input和组件Calendar。这两个组件由函数`$_().imports`导入，其中不带参数的函数调用$_()，用于表示根命名空间"ui"。
+下面的代码定义了一个根命名空间ui，它包含了组件Input和组件Calendar。这两个组件由函数`$_().imports`导入，其中不带参数的函数调用$_()，用于表示根命名空间`ui`。
 
 ```javascript
 xmlplus("ui", function (xp, $_, t) {
@@ -89,7 +89,7 @@ xmlplus("ui", function (xp, $_, t) {
 });
 ```
 
-下面的代码定义了一个根命名空间"mx"，它包含了组件Input和组件Calendar。另外还定义了一个"mx"的子命名空间"mx/layout"，它包含了组件Tab和组件ViewStack。这两个组件由函数$_("ui/layout").imports导入，其中带参数的函数调用$_("ui/layout")，用于表示命名空间"mx/ui/layout"。
+下面的代码定义了一个根命名空间`mx`，它包含了组件Input和组件Calendar。另外还定义了一个"mx"的子命名空间`mx/layout`，它包含了组件Tab和组件ViewStack。这两个组件由函数`$_("ui/layout").imports`导入，其中带参数的函数调用`$_("ui/layout")`，用于表示命名空间`mx/ui/layout`。
 
 ```javascript
 xmlplus("mx", function (xp, $_, t) {
