@@ -122,25 +122,27 @@ xmlplus("bob", function (xp, $_, t) {
 定义好了组件之后，就可以通过xmlplus提供的startup接口启动执行一个指定的组件。下面的代码执行了一个位于命名空间ui.widget的组件Calendar。
 
 ```javascript
- 1var parent = document.getElementById("parent");
- 2xmlplus.startup("ui.widget:Calendar", parent); 
+var parent = document.getElementById("parent");
+xmlplus.startup("ui/widget/Calendar", parent); 
+```
+
 startup函数的第二个参数指定了组件实例化后被追加到的DOM元素对象，它也可以是某一DOM元素对象的id值，这种形式最为简洁，像下面这样。
 
 ```javascript
-xmlplus.startup("ui.widget:Calendar", "parent"); 
+xmlplus.startup("ui/widget/Calendar", "parent"); 
 ```
 
 下面是另一种组件的执行方式，它明确给出了组件的xml字符串描述。这与前一种方式等价。
 
 ```javascript
-var xml = "<i:Calendar xmlns:i='ui.widget:Calendar'/>";
+var xml = "<i:Calendar xmlns:i='ui/widget/Calendar'/>";
 xmlplus.startup(xml, "parent");
 ```
 
 还可以先解析出xml节点再执行，这与前两种方式等价。
 
 ```javascript
-var xml = "<i:Calendar xmlns:i='ui.widget:Calendar'/>";
+var xml = "<i:Calendar xmlns:i='ui/widget/Calendar'/>";
 var xmlNode = xmlplus.parseXML(xml).lastChild;
 xmlplus.startup(xmlNode, "parent");
 ```
@@ -165,7 +167,7 @@ startup函数还有可选的第三个参数，该参数可以为目标组件提�
 xmlplus.startup("ui.widget:Calendar", "parent", {date: "2016/01/01"});
 ```
 
-一个完整的示例
+## 一个完整的示例
 
 有别于前面零碎的代码片断，现在给出一个完整的可运行的示例。该示例由三个文件组成，下面是第一个文件，它是一个纯javascript文件，它向框架系统导入了一个名为Index的组件。现将其命名为"index.js"。
 
@@ -192,10 +194,8 @@ xmlplus("ui", function (xp, $_, t) {
     <script src="xmlplus.js"></script>
     <script src="index.js"></script>
     </head>
-    <body id="body">
-          <script>
-                xmlplus.startup("ui:Index", "body");
-          </script>
+    <body>
+		<i:Index xmlns:i="ui"></i:Index>
     </body>
 </html>
 ```
