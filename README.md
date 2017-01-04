@@ -10,8 +10,8 @@ Running in browser. Here is a simple example. For details, see [hello-world-clie
 <!DOCTYPE html>
 <html>
     <head>
-    <script src="xmlplus.js"></script>
-    <script src="index.js"></script>
+        <script src="xmlplus.js"></script>
+        <script src="index.js"></script>
     </head>
     <body>
 		<i:Index xmlns:i="ui"></i:Index>
