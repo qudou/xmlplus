@@ -4,4 +4,6 @@ A powerful, efficient, and flexible JavaScript library for building applicitions
 
 ##Install:
 
->npm install xmlplus
+```bash
+npm install xmlplus
+```
