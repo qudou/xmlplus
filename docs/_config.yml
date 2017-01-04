@@ -1,8 +1,8 @@
 ---
-name: Xmlplus
+name: React
 description: A JavaScript library for building user interfaces
-url: https://qudou.github.io
-baseurl: /
+url: https://facebook.github.io
+baseurl: /react
 permalink: /blog/:year/:month/:day/:title.html
 paginate_path: /blog/page:num/
 paginate: 5
