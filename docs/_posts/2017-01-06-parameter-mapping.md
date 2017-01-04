@@ -135,9 +135,9 @@ Form: {
 
 ```js
 Form: {
-    xml: "<div xmlns:i='@'>\
-             price: <i:Input id='foo' value='2'/><br/>\
-             count: <i:Input id='bar' value='3'/><br/>\
+    xml: "<div>\
+             price: <Input id='foo' value='2'/><br/>\
+             count: <Input id='bar' value='3'/><br/>\
           </div>",
     cfg: { foo: {format: "int"}, bar: {format: "int"} },
     map: { cfgs: { foo: "format", bar: "format" } },
@@ -191,3 +191,25 @@ Form: {
 ```
 
 现在思考一个问题，`Form`组件中无论使用到属性的映射还是到配置项的映射，都能达到所要求的目的。那么对于`Input`组件，情况还是一样吗？答案是否定的，这是由于`Input`组件包含了基本的`html`元素标签`input`，`input`元素在实例化时，并不使用配置项的指定值，它只使用节点的属性值。所以，对于`Input`组件而言，只能选择到属性的映射，这是属性映射机制存在的一个重要理由。
+
+## 同名映射与异名映射
+
+前面所讲的映射都是同名映射，也就是原来属性名或者对象名是什么，映射后目标的对象名也就是什么。现在来看如何进行异名映射，请看下面的示例。
+
+```js
+Form: {
+    xml: "<input id='foo'/>\
+	opt: { val: "hello, world!" },
+    map: { attrs: { foo: "val->value" } }
+}
+```
+
+在这个例子中，参数项中包含一个名为val的字符串，映射项中包含一异名映射描述。该描述指定参数项中的名为val的字符串被映射给foo对象的value属性值。同样，下面的示例描述了到指定对象的异名配置项映射。
+
+```js
+Form: {
+    xml: "<Input id='foo'/>\
+	opt: { val: "hello, world!" },
+    map: { cfgs: { foo: "val->value" } }
+}
+```
