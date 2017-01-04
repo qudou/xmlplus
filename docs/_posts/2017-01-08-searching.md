@@ -76,9 +76,9 @@ Button: {
 ```js
 Index: {
    xml: "<div id='top'>\
-             <div id='sub'>
+             <div id='sub'>\
                  <button id="foo">foo</button>\
-             </div>
+             </div>\
              <button id="bar">bar</button>\
          </div>",
    fun: function ( sys, items, opts ) {
