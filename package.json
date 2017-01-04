@@ -5,11 +5,9 @@
     "xpath": ">=0.0.9",
     "xmldom": "qudou/xmldom"
   },
-  "description": "A powerful, efficient, and flexible JavaScript library for building applicitions, not only user interfaces.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "description": "a javaScript framework",
+  "main": "./src/xmlplus.js",
+  "scripts": {},
   "keywords": [
     "xmlplus"
   ],
