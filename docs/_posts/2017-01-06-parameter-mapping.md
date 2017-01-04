@@ -99,7 +99,7 @@ Input: {
 }
 ```
 
-此组件映射项包含了一个attrs配置，该配置用于建立从函数项的第三个参数`opts`到相应内部对象属性的映射，这里指定的对象是唯一的`input`标签，需要映射的属性列由一字符串给出，字符串由空格分隔，每一分隔项对应一个需要映射的属性名。下面是使用新的Input组件的一个示例：
+此组件映射项包含了一个`attrs`配置，该配置用于建立从函数项的第三个参数`opts`到相应内部对象属性的映射，这里指定的对象是唯一的`input`标签，需要映射的属性列由一字符串给出，字符串由空格分隔，每一分隔项对应一个需要映射的属性名。下面是使用新的Input组件的一个示例：
 
 ```js
 Index: {
@@ -113,13 +113,13 @@ Index: {
 
 将组件的初始参数映射到当前组件的配置项与映射到相应内部组件的属性部分，所做的配置是类似的。
 
-现在假定有这么一个需求，它要求将上面实现的两个Input组件组合成一个新的组件Form，Form组件仅仅需要一个format输入，该format值最终会被映射给内部的两个Input组件，同时它还提供一个动态接口函数val，函数val将两个Input的值组合成数组输出。我们首先想到的是使用系统的属性映射来实现。
+现在假定有这么一个需求，它要求将上面实现的两个`Input`组件组合成一个新的组件`Form`，`Form`组件仅仅需要一个`format`输入，该`format`值最终会被映射给内部的两个`Input`组件，同时它还提供一个动态接口函数`val`，函数`val`将两个`Input`的值组合成数组输出。我们首先想到的是使用系统的属性映射来实现。
 
 ```js
 Form: {
-    xml: "<div xmlns:i='@'>\
-             price: <i:Input id='foo' value='2'/><br/>\
-             count: <i:Input id='bar' value='3'/>\
+    xml: "<div>\
+             price: <Input id='foo' value='2'/><br/>\
+             count: <Input id='bar' value='3'/>\
           </div>",
     map: { attrs: { foo: ["format"], bar: ["format"] } },
     fun: function ( sys, items, opts ) {
@@ -150,14 +150,14 @@ Form: {
 }
 ```
 
-为了清楚地了解映射行为是如何发生的，上面的组件明确给出配置项cfg，配置项cfg与标签的属性类似，它给出了相关对象的部分初始输入值。组件中，实例foo和bar的format初始值都被设定为"int",它覆盖了默认的初始值"string"。现在请注意映射项中的cfgs参数，它的值与前面的attrs是一样的，它指出在本组件实例化时，函数项的第三个参数opts中的format值会被拷贝到与foo对象和bar对象相关联的配置项中。
+为了清楚地了解映射行为是如何发生的，上面的组件明确给出配置项`cfg`，配置项`cfg`与标签的属性类似，它给出了相关对象的部分初始输入值。组件中，实例`foo`和`bar`的`format`初始值都被设定为`int`,它覆盖了默认的初始值`string`。现在请注意映射项中的`cfgs`参数，它的值与前面的`attrs`是一样的，它指出在本组件实例化时，函数项的第三个参数`opts`中的`format`值会被拷贝到与`foo`对象和`bar`对象相关联的配置项中。
 
 ```js
 Index: {
-    xml: "<div xmlns:i='@'>\
-            <i:Form id='foo'/>\
-            <i:Form id='bar' format='float'/>\
-            <button id='btn'>check</button>
+    xml: "<div>\
+            <Form id='foo'/>\
+            <Form id='bar' format='float'/>\
+            <button id='btn'>check</button>\
           </div>",
     fun: function ( sys, items, opts ) {
         sys.btn.on("click", function(e) {
@@ -168,15 +168,15 @@ Index: {
 }
 ```
 
-上面是组件Form的一个使用示例，foo对象不提供format输入，将采用默认值，根据前面的分析，它是`int`，`bar`对象设置`format`的值为`float`，它会被映射到组件`Form`的配置项的相应项中，最终作用于组件内部的两个子组件Input。读者可以在文本框中输入不同的内容，以验证输出情况是否符合预期。
+上面是组件Form的一个使用示例，`foo`对象不提供`format`输入，将采用默认值，根据前面的分析，它是`int`，`bar`对象设置`format`的值为`float`，它会被映射到组件`Form`的配置项的相应项中，最终作用于组件内部的两个子组件`Input`。读者可以在文本框中输入不同的内容，以验证输出情况是否符合预期。
 
 下面给出组件Form的另一种写法，它首先在组件的别名部分命名一个集体对象`form`，然后在配置项和映射项中引用此集体名以作配置，达到的效果是一样的。当要对众多对象作相同的配置时，采用这种方式会更方便些。
 
 ```js
 Form: {
-    xml: "<div xmlns:i='@'>\
-             price: <i:Input id='foo' value='2'/><br/>\
-             count: <i:Input id='bar' value='3'/>\
+    xml: "<div>\
+             price: <Input id='foo' value='2'/><br/>\
+             count: <Input id='bar' value='3'/>\
           </div>",
     ali: { form: "Input" },
     cfg: { form: { format: "int" } },
@@ -190,4 +190,4 @@ Form: {
 }
 ```
 
-现在思考一个问题，Form组件中无论使用到属性的映射还是到配置项的映射，都能达到所要求的目的。那么对于Input组件，情况还是一样吗？答案是否定的，这是由于Input组件包含了基本的html元素标签input，input元素在实例化时，并不使用配置项的指定值，它只使用节点的属性值。所以，对于Input组件而言，只能选择到属性的映射，这是属性映射机制存在的一个重要理由。
+现在思考一个问题，`Form`组件中无论使用到属性的映射还是到配置项的映射，都能达到所要求的目的。那么对于`Input`组件，情况还是一样吗？答案是否定的，这是由于`Input`组件包含了基本的`html`元素标签`input`，`input`元素在实例化时，并不使用配置项的指定值，它只使用节点的属性值。所以，对于`Input`组件而言，只能选择到属性的映射，这是属性映射机制存在的一个重要理由。
