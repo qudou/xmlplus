@@ -4,7 +4,7 @@ A powerful, efficient, and flexible JavaScript library for building applicitions
 
 ##Installation:
 
-Running in browser. Here is a simple example. For details, see [hello-world](docs/demo/hello-world/client).
+Running in browser. Here is a simple example. For details, see [hello-world-client](docs/demo/hello-world/client).
 
 ```html
 <!DOCTYPE html>
@@ -25,7 +25,7 @@ Xmlplus can not only run in browser, but also in server. If you'd like to run in
 npm install xmlplus
 ```
 
-Here is a server side example. For details, see [hello-world](docs/demo/hello-world/server).
+Here is a server side example. For details, see [hello-world-server](docs/demo/hello-world/server).
 
 ```javascript
 xmlplus("xp", function (xp, $_, t) {
@@ -37,4 +37,11 @@ xmlplus("xp", function (xp, $_, t) {
         }
     });
 }).startup("xp/Index");
+```
+
+## License
+```
+Licensed under the [MIT](http://opensource.org/licenses/MIT) License;
+
+Copyright (C) 2017 Qudou. All Rights Reserved.
 ```
