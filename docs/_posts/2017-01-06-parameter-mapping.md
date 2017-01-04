@@ -198,7 +198,7 @@ Form: {
 
 ```js
 Form: {
-    xml: "<input id='foo'/>\
+    xml: "<input id='foo'/>",
 	opt: { val: "hello, world!" },
     map: { attrs: { foo: "val->value" } }
 }
@@ -208,7 +208,7 @@ Form: {
 
 ```js
 Form: {
-    xml: "<Input id='foo'/>\
+    xml: "<Input id='foo'/>",
 	opt: { val: "hello, world!" },
     map: { cfgs: { foo: "val->value" } }
 }
