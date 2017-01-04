@@ -1,13 +1,17 @@
 {
   "name": "xmlplus",
-  "version": "1.3.0",
+  "version": "1.5.0",
   "dependencies": {
     "xpath": ">=0.0.9",
     "xmldom": "qudou/xmldom"
   },
-  "description": "a javaScript framework",
+  "description": "A powerful, efficient, and flexible JavaScript library for building applicitions, not only user interfaces.",
   "main": "./src/xmlplus.js",
   "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qudou/xmlplus.git"
+  },
   "keywords": [
     "xmlplus"
   ],
