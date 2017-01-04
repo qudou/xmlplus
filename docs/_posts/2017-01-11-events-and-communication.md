@@ -203,8 +203,8 @@ Index: {
 
 ```js
 Index: {
-    xml: "<div id='top' xmlns:i='@'>\
-              <i:Widget id='widget'/>\
+    xml: "<div id='top'>\
+              <Widget id='widget'/>\
           </div>",
     fun: function(sys, items, opts) {
         sys.top.on("event", function(e) {
