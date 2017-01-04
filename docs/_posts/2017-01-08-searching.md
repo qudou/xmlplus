@@ -40,7 +40,7 @@ Index: {
          </div>",
    fun: function ( sys, items, opts ) {
        console.log(sys("*").length); // 3
-       sys("Button").call("css", "color", "blue");
+       sys("button").call("css", "color", "blue");
    }
 }
 ```
@@ -49,9 +49,9 @@ sys("*")描述会检索出所有的组件对象，而`sys("button")`描述则只
 
 ```js
 Index: {
-   xml: "<div xmlns:i='@'>\
-             <i:Button>foo</i:Button>\
-             <i:Button>bar</i:Button>\
+   xml: "<div>\
+             <button>foo</button>\
+             <button>bar</button>\
          </div>",
    fun: function ( sys, items, opts ) {
        console.log(items("*").length); // 3
