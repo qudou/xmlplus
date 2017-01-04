@@ -125,7 +125,7 @@ Index: {
              <button id='foo'>replace</button>\
           </div>",
     fun: function ( sys, items, opts ) {
-        system.foo.on("click", function (e) {
+        sys.foo.on("click", function (e) {
             sys.foo.replace("<h1>Hello, world</h1>");
         });
     }
@@ -144,7 +144,7 @@ Index: {
              <button id='foo'>append</button>\
           </div>",
     fun: function ( sys, items, opts ) {
-        system.foo.on( "click", function (event) {
+        sys.foo.on( "click", function (event) {
             var xml = "<h1>Hello, world</h1>";
             var result = sys.top.append(xml);
             result.css("text-decoration", "underline");
@@ -161,7 +161,7 @@ Index: {
              <button id='foo'>append</button>\
           </div>",
     fun: function ( sys, items, opts ) {
-        system.foo.on("click", function (e) {
+        sys.foo.on("click", function (e) {
             var xml = "<h1 id='text'>Hello, world</h1>";
             sys.top.append(xml);
             sys.text.css("text-decoration", "underline");
