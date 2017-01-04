@@ -37,7 +37,7 @@ xmlplus("ui", function (xp, $_, t) {
 });
 ```
 
-This framework can not only run in browser, but also in server. If you'd like to run in server, just to install with npm.
+Xmlplus can not only run in browser, but also in server. If you'd like to run in server, just to install with npm.
 
 ```bash
 npm install xmlplus
