@@ -164,7 +164,7 @@ xmlplus.startup(textNode, "parent");
 startup函数还有可选的第三个参数，该参数可以为目标组件提供初始输入值。如下面的示例，Calendar组件在初始化时将采用第三参数提供的初始日期值。
 
 ```javascript
-xmlplus.startup("ui.widget:Calendar", "parent", {date: "2016/01/01"});
+xmlplus.startup("ui/widget/Calendar", "parent", {date: "2016/01/01"});
 ```
 
 当代码运行于浏览器端时，一般不显示地调用startup函数，请看下面的示例，可以直接在html中以XML的形式书写要实例化的组件。如果要禁用这种解析方式，并以startup函数启动当然也是可以的，只要给body添加属性noparse即可。
