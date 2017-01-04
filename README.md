@@ -40,8 +40,7 @@ xmlplus("xp", function (xp, $_, t) {
 ```
 
 ## License
-```
+
 Licensed under the [MIT](http://opensource.org/licenses/MIT) License;
 
 Copyright (C) 2017 Qudou. All Rights Reserved.
-```
