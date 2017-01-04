@@ -134,7 +134,7 @@ Index: {
 ```js
 Index: {
     xml: "<div id='top'>\
-             <i:Button xmlns:i='@'/>
+             <Button/>\
           </div>",
     fun: function(sys, items, opts) {
         sys.top.on("click", function(e) {
