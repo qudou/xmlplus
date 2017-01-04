@@ -19,7 +19,7 @@ Running in browser. Here is a simple example. For details, see [hello-world-clie
 </html>
 ```
 
-Xmlplus can not only run in browser, but also in server. If you'd like to run in server, just to install with npm.
+Xmlplus can not only run in browser side, but also in server side. If you'd like to run in server, just to install with npm.
 
 ```bash
 npm install xmlplus
