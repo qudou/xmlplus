@@ -171,8 +171,8 @@ xmlplus.startup("ui/widget/Calendar", "parent", {date: "2016/01/01"});
 <!DOCTYPE html>
 <html>
     <head>
-    <script src="xmlplus.js"></script>
-    <script src="index.js"></script>
+        <script src="xmlplus.js"></script>
+        <script src="index.js"></script>
     </head>
     <body>
 		<i:Index xmlns:i="ui"></i:Index>
@@ -204,8 +204,8 @@ xmlplus("ui", function (xp, $_, t) {
 <!DOCTYPE html>
 <html>
     <head>
-    <script src="xmlplus.js"></script>
-    <script src="index.js"></script>
+        <script src="xmlplus.js"></script>
+        <script src="index.js"></script>
     </head>
     <body>
 		<i:Index xmlns:i="ui"></i:Index>
