@@ -28,35 +28,35 @@ npm install xmlplus
 
 在docs目录中包含了用markdown写好的15篇文档，你最好从第一篇开始看起，因为内容的编排基本上渐近式的。下面是这些文档的索引。
 
-### 01 [组件与空间](./docs/01-components-and-space.md)
-
-### 02 [命名](./docs/02-naming.md)
-
-### 03 [抽象](./docs/03-abstract.md)
-
-### 04 [动态接口](./docs/04-dynamic-interface.md)
-
-### 05 [静态接口](./docs/static-interface.md)
-
-### 06 [参数映射](./docs/parameter-mapping.md)
-
-### 07 [路径](./docs/path.md)
-
-### 08 [继承](./docs/inheritting.md)
-
-### 09 [检索](./docs/searching.md)
-
-### 10 [嵌套](./docs/nesting.md)
-
-### 11 [生命周期](./docs/life-circle.md)
-
-### 12 [事件与通信](./docs/events-and-communication.md)
-
-### 13 [消息与通信](./docs/message-and-communication.md)
-
-### 14 [共享](./docs/sharing.md)
-
-### 15 [延迟加载](./docs/lazy-instantiation.md)
+### [01 组件与空间](./docs/01-components-and-space.md)
+     
+### [02 命名](./docs/02-naming.md)
+     
+### [03 抽象](./docs/03-abstract.md)
+     
+### [04 动态接口](./docs/04-dynamic-interface.md)
+     
+### [05 静态接口](./docs/static-interface.md)
+     
+### [06 参数映射](./docs/parameter-mapping.md)
+     
+### [07 路径](./docs/path.md)
+     
+### [08 继承](./docs/inheritting.md)
+     
+### [09 检索](./docs/searching.md)
+     
+### [10 嵌套](./docs/nesting.md)
+     
+### [11 生命周期](./docs/life-circle.md)
+     
+### [12 事件与通信](./docs/events-and-communication.md)
+     
+### [13 消息与通信](./docs/message-and-communication.md)
+     
+### [14 共享](./docs/sharing.md)
+     
+### [15 延迟加载](./docs/lazy-instantiation.md)
 
 ## License
 
