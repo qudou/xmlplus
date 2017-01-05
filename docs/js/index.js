@@ -2,17 +2,14 @@ xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
             xml: "<div id='top'>\
-					<AJAX id='ajax' type='GET'/>\
+					<Banner/>\
 					<Docs id='test'/>\
-				  </div>",
-            fun: function( sys, items, opts ) {
-				sys.ajax.on("success", function( e, data ) {
-					/\<body\>((.|\r|\n)*)\<\/body\>/g.test(data);
-					items.test.elem().innerHTML = RegExp.$1;
-				});
-                items.ajax({url: "/02-naming"});
-            }
+				  </div>"
         },
+		Banner: {
+			css: "#banner { background: #222; color: #fafafa; position: fixed; top: 0; height: 50px; box-shadow: 0 0 5px rgba(0,0,0,0.5); width: 100%; z-index: 100; }"
+			xml: "<div id='banner'/>"
+		},
 		Docs: {
 			css: "#docs { max-width: 960px; margin-left: auto; margin-right: auto; padding-left: 20px; padding-right: 20px; }\
 				  #docs { padding-top: 20px; padding-bottom: 80px; }\
@@ -21,9 +18,14 @@ xmlplus("xp", function (xp, $_, t) {
 			xml: "<section id='docs' xmlns:i='.'>\
 					<i:Content id='content'/>\
 					<i:Nav id='nav'/>\
+					<AJAX id='ajax' type='GET'/>\
 				  </section>",
 			fun: function( sys, items, opts ) {
-				return sys.content;
+				sys.ajax.on("success", function( e, data ) {
+					/\<body\>((.|\r|\n)*)\<\/body\>/g.test(data);
+					sys.content.elem().innerHTML = RegExp.$1;
+				});
+                items.ajax({url: "/02-naming"});
 			}
 		},
 		Nav: {
