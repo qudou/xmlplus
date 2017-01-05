@@ -2,7 +2,7 @@
 
 ## 组件
 
-组件是应用的基本构造块，它是一个朴素的JSON对象。比如，`{}`是组件，而`RegExp`不是组件；`{key:"value"}`是组件，而`[]`不是组件。
+组件是应用的基本构造块，它是一个朴素的`JSON`对象。比如，`{}`是组件，而`RegExp`不是组件；`{key:"value"}`是组件，而`[]`不是组件。
 
 组件内部可以包含七种可能的数据项，而忽略其他的数据项。这七种数据项分别为：
 
@@ -68,7 +68,7 @@
 
 ## 命名空间
 
-命名空间是组件的容器，任一个组件必然属于某一个特定的命名空间。命名空间可以是空的，它不包含任何的组件。下面的代码定义了一个命名空间ui，该命名空间为根命名空间，它不包含任何组件。
+命名空间是组件的容器，任一个组件必然属于某一个特定的命名空间。命名空间可以是空的，它不包含任何的组件。下面的代码定义了一个命名空间`ui`，该命名空间为根命名空间，它不包含任何组件。
 
 ```javascript
 xmlplus("ui", function (xp, $_, t) {
@@ -76,7 +76,7 @@ xmlplus("ui", function (xp, $_, t) {
 });
 ```
 
-下面的代码定义了一个根命名空间ui，它包含了组件Input和组件Calendar。这两个组件由函数`$_().imports`导入，其中不带参数的函数调用$_()，用于表示根命名空间`ui`。
+下面的代码定义了一个根命名空间`ui`，它包含了组件`Input`和组件`Calendar`。这两个组件由函数`$_().imports`导入，其中不带参数的函数调用`$_()`，用于表示根命名空间`ui`。
 
 ```javascript
 xmlplus("ui", function (xp, $_, t) {
@@ -87,7 +87,7 @@ xmlplus("ui", function (xp, $_, t) {
 });
 ```
 
-下面的代码定义了一个根命名空间`mx`，它包含了组件Input和组件Calendar。另外还定义了一个"mx"的子命名空间`mx/layout`，它包含了组件Tab和组件ViewStack。这两个组件由函数`$_("ui/layout").imports`导入，其中带参数的函数调用`$_("ui/layout")`，用于表示命名空间`mx/ui/layout`。
+下面的代码定义了一个根命名空间`mx`，它包含了组件`Input`和组件`Calendar`。另外还定义了一个`mx`的子命名空间`mx/layout`，它包含了组件`Tab`和组件`ViewStack`。这两个组件由函数`$_("ui/layout").imports`导入，其中带参数的函数调用`$_("ui/layout")`，用于表示命名空间`mx/ui/layout`。
 
 ```javascript
 xmlplus("mx", function (xp, $_, t) {
@@ -102,9 +102,9 @@ xmlplus("mx", function (xp, $_, t) {
 });
 ```
 
-除了自定义空间外，系统中还存在着一个匿名的空间，该空间包含了所有称之为基组件的对象。如上面所讲的HTML元素、文本等基组件都属于匿名空间。
+除了自定义空间外，系统中还存在着一个匿名的空间，该空间包含了所有称之为基组件的对象。如上面所讲的`HTML`元素、文本等基组件都属于匿名空间。
 
-允许存在多个不同的根命名空间，如下面所示，该示例中定义了两个根命名空间，分别为"alice"和"bob"。
+允许存在多个不同的根命名空间，如下面所示，该示例中定义了两个根命名空间，分别为`alice`和`bob`。
 
 ```javascript
 xmlplus("alice", function (xp, $_, t) {
@@ -117,14 +117,14 @@ xmlplus("bob", function (xp, $_, t) {
 
 ## 启动执行一个组件
 
-定义好了组件之后，就可以通过xmlplus提供的startup接口启动执行一个指定的组件。下面的代码执行了一个位于命名空间ui/widget的组件Calendar。
+定义好了组件之后，就可以通过`xmlplus`提供的`startup`接口启动执行一个指定的组件。下面的代码执行了一个位于命名空间`ui/widget`的组件`Calendar`。
 
 ```javascript
 var parent = document.getElementById("parent");
 xmlplus.startup("ui/widget/Calendar", parent); 
 ```
 
-startup函数的第二个参数指定了组件实例化后被追加到的DOM元素对象，它也可以是某一DOM元素对象的id值，这种形式最为简洁，像下面这样。
+startup函数的第二个参数指定了组件实例化后被追加到的`DOM`元素对象，它也可以是某一DOM元素对象的id值，这种形式最为简洁，像下面这样。
 
 ```javascript
 xmlplus.startup("ui/widget/Calendar", "parent"); 
@@ -145,27 +145,27 @@ var xmlNode = xmlplus.parseXML(xml).lastChild;
 xmlplus.startup(xmlNode, "parent");
 ```
 
-当然，直接提供基组件也是可以的。下面的第一行会创建一个span元素对象，第二行会创建一个文本对象。
+当然，直接提供基组件也是可以的。下面的第一行会创建一个`span`元素对象，第二行会创建一个文本对象。
 
 ```javascript
 xmlplus.startup("<span/>", "parent");
 xmlplus.startup("hello, world", "parent");
 ```
 
-现在有一个问题，为什么上面的第一个语句不是创建一个文本对象，而是创建一个span元素对象？这是系统自动判断的结果，如果想要得到"<span/>"这个文本对象，可以这么做。
+现在有一个问题，为什么上面的第一个语句不是创建一个文本对象，而是创建一个`span`元素对象？这是系统自动判断的结果，如果想要得到`<span/>`这个文本对象，可以这么做。
 
 ```javascript
 var textNode = document.createTextNode("<span/>");
 xmlplus.startup(textNode, "parent");
 ```
 
-startup函数还有可选的第三个参数，该参数可以为目标组件提供初始输入值。如下面的示例，Calendar组件在初始化时将采用第三参数提供的初始日期值。
+`startup`函数还有可选的第三个参数，该参数可以为目标组件提供初始输入值。如下面的示例，`Calendar`组件在初始化时将采用第三参数提供的初始日期值。
 
 ```javascript
 xmlplus.startup("ui/widget/Calendar", "parent", {date: "2016/01/01"});
 ```
 
-当代码运行于浏览器端时，一般不显示地调用startup函数，请看下面的示例，可以直接在html中以XML的形式书写要实例化的组件。如果要禁用这种解析方式，并以startup函数启动当然也是可以的，只要给body添加属性noparse即可。
+当代码运行于浏览器端时，一般不显示地调用`startup`函数，请看下面的示例，可以直接在`html`中以XML的形式书写要实例化的组件。如果要禁用这种解析方式，并以`startup`函数启动当然也是可以的，只要给body添加属性`noparse`即可。
 
 ```html
 <!DOCTYPE html>
@@ -175,17 +175,17 @@ xmlplus.startup("ui/widget/Calendar", "parent", {date: "2016/01/01"});
         <script src="index.js"></script>
     </head>
     <body>
-		<i:Index xmlns:i="ui"></i:Index>
+		<i:Index xmlns:i="xp"></i:Index>
     </body>
 </html>
 ```
 
 ## 一个完整的示例
 
-有别于前面零碎的代码片断，现在给出一个完整的可运行的示例。该示例由三个文件组成，下面是第一个文件，它是一个纯javascript文件，它向框架系统导入了一个名为Index的组件。现将其命名为"index.js"。
+有别于前面零碎的代码片断，现在给出一个完整的可运行的示例。该示例由三个文件组成，下面是第一个文件，它是一个纯`javascript`文件，它向框架系统导入了一个名为`Index`的组件。现将其命名为`index.js`。
 
 ```javascript
-xmlplus("ui", function (xp, $_, t) {
+xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
             css: "#text { color: red; }",
@@ -198,7 +198,7 @@ xmlplus("ui", function (xp, $_, t) {
 });
 ```
 
-下面是第二个文件，它是一个html文件，它引用了框架代码文件以及如上的第一个文件。现将其命名为"index.html"。
+下面是第二个文件，它是一个`html`文件，它引用了框架代码文件以及如上的第一个文件。现将其命名为`index.html`。
 
 ```html
 <!DOCTYPE html>
@@ -208,9 +208,9 @@ xmlplus("ui", function (xp, $_, t) {
         <script src="index.js"></script>
     </head>
     <body>
-		<i:Index xmlns:i="ui"></i:Index>
+		<i:Index xmlns:i="xp"></i:Index>
     </body>
 </html>
 ```
 
-确保三个文件位于同一个目录下，通过浏览器打开index.html文件，将会看到一个红色的、字体大小为28px的"hello, world"文本。这个示例中涉及到部分本章未提及的内容，可先略过，后面的章节会有详细的讲述。
+确保三个文件位于同一个目录下，通过浏览器打开`index.html`文件，将会看到一行红色的、字体大小为`28px`、值为`hello, world`的文本。这个示例中涉及到部分本章未提及的内容，可先略过，后面的章节会有详细的讲述。
