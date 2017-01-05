@@ -14,10 +14,10 @@ xmlplus("xp", function (xp, $_, t) {
             }
         },
 		Docs: {
-			css: "@media (max-width: 640px) { #docs { padding-bottom: 0; } }\
-				  @media (max-width: 960px) { #docs { padding-left: 10px; padding-right: 10px; }}\
+			css: "#docs { max-width: 960px; margin-left: auto; margin-right: auto; padding-left: 20px; padding-right: 20px; }\
 				  #docs { padding-top: 20px; padding-bottom: 80px; }\
-				  #docs { max-width: 960px; margin-left: auto; margin-right: auto; padding-left: 20px; padding-right: 20px; }",
+				  @media (max-width: 960px) { #docs { padding-left: 10px; padding-right: 10px; }}\
+				  @media (max-width: 640px) { #docs { padding-bottom: 0; } }",
 			xml: "<section id='docs' xmlns:i='.'>\
 					<i:Content id='content'/>\
 					<i:Nav id='nav'/>\
@@ -32,9 +32,9 @@ xmlplus("xp", function (xp, $_, t) {
 			xml: "<div id='nav'/>"
 		},
 		Content: {
-			css: "@media (max-width: 640px) { #content { width: 100%; } } \
+			css: "#content { float: right; width: 100%; max-width: 650px; }\
 				  @media (max-width: 960px) { #content { width: calc(100% - 240px); max-width: 100%; } }\
-				  #content { float: right; width: 100%; max-width: 650px; }",
+				  @media (max-width: 640px) { #content { width: 100%; } }",
             xml: "<div id='content'/>"
         },
 		AJAX: {
