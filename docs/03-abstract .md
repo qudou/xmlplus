@@ -8,7 +8,7 @@
 
 ![](./images/ipv4.jpg)
 
-这种输入框包含四个小文本框，文本框之间以点号相间隔。每一文本框只允许输入最多三位的十进制数字。当一个文本框中输入数字达到三位时，焦点会自动跳转到下一文本框并选中该文本框中的文本。如果焦点位于最后一个文本框，则不进行自动跳转。如前面章节所述，一个组件需属于某一特定的命名空间。为简单起见，现在将其置于命名空间ui中，该空间还包含另一个组件`Index`，它是用于测试`IPv4Box`组件的。下面是代码的框架结构，具体实现细节由后面给出。
+这种输入框包含四个小文本框，文本框之间以点号相间隔。每一文本框只允许输入最多三位的十进制数字。当一个文本框中输入数字达到三位时，焦点会自动跳转到下一文本框并选中该文本框中的文本。如果焦点位于最后一个文本框，则不进行自动跳转。如前面章节所述，一个组件需属于某一特定的命名空间。为简单起见，现在将其置于命名空间`ui`中，该空间还包含另一个组件`Index`，它是用于测试`IPv4Box`组件的。下面是代码的框架结构，具体实现细节由后面给出。
 
 ```js
 xmlplus("ui", function ( xp, $_, t ) {
@@ -43,9 +43,8 @@ xmlplus("ui", function ( xp, $_, t ) {
 function ( sys, items, opts ) {
     sys.box.on("keypress", "input", function(e) {
         var next, ch = String.fromCharCode(e.which);
-        if (!/[0-9]/.test(ch)) {
+        if (!/[0-9]/.test(ch))
             return e.preventDefault();
-        }
         if (this.prop("value").length == 2) {
             next = this.next();
             next && next.elem().select();
@@ -55,7 +54,7 @@ function ( sys, items, opts ) {
         var i, list = sys.box.children();
         if (input == undefined) {
              var res = [];
-             for (i = 0; i < list.length; i++)
+             for (var i = 0; i < list.length; i++)
                  res.push(list[i].prop('value'));
              return res.join('.');
         }
@@ -67,7 +66,7 @@ function ( sys, items, opts ) {
 }
 ```
 
-在函数项中，`sys.box`对象侦听了各文本框对象的`keypress`事件，回调函数过滤非数字输入，且当输入达到3个字符长时，光标自动跳转到下一输入框并选中该框内容。此外，函数项还返回了一个用于设置和读取`IP`值的接口。此处涉及事件通信相关的内容，后续会有专门的章节讲述，这里先略过。
+在函数项中，`sys.box`对象侦听了各文本框对象的`keypress`事件，回调函数过滤非数字输入，且当输入达到`3`个字符长时，光标自动跳转到下一输入框并选中该框内容。此外，函数项还返回了一个用于设置和读取`IP`值的接口。此处涉及事件通信相关的内容，后续会有专门的章节讲述，这里先略过。
 
 ## 使用`IPv4`输入框组件
 
