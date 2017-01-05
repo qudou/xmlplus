@@ -104,7 +104,7 @@ xmlplus("mx", function (xp, $_, t) {
 
 除了自定义空间外，系统中还存在着一个匿名的空间，该空间包含了所有称之为基组件的对象。如上面所讲的`HTML`元素、文本等基组件都属于匿名空间。
 
-允许存在多个不同的根命名空间，如下面所示，该示例中定义了两个根命名空间，分别为`alice`和`bob`。
+在应用中，允许存在多个不同的根命名空间，如下面所示，该示例中定义了两个根命名空间，分别为`alice`和`bob`。
 
 ```javascript
 xmlplus("alice", function (xp, $_, t) {
@@ -124,7 +124,7 @@ var parent = document.getElementById("parent");
 xmlplus.startup("ui/widget/Calendar", parent); 
 ```
 
-startup函数的第二个参数指定了组件实例化后被追加到的`DOM`元素对象，它也可以是某一`DOM`元素对象的`id`值，这种形式最为简洁，像下面这样。
+`startup`函数的第二个参数指定了组件实例化后被追加到的`DOM`元素对象，它也可以是某一`DOM`元素对象的`id`值，相比而言，这种形式更为简洁，像下面这样。
 
 ```javascript
 xmlplus.startup("ui/widget/Calendar", "parent"); 
@@ -159,7 +159,7 @@ var textNode = document.createTextNode("<span/>");
 xmlplus.startup(textNode, "parent");
 ```
 
-`startup`函数还有可选的第三个参数，该参数可以为目标组件提供初始输入值。如下面的示例，`Calendar`组件在初始化时将采用第三参数提供的初始日期值。
+`startup`函数还有可选的第三个参数，该参数可以为目标组件提供初始输入值。如下面的示例，`Calendar`组件在初始化时将采用第三个参数提供的初始日期值。
 
 ```javascript
 xmlplus.startup("ui/widget/Calendar", "parent", {date: "2016/01/01"});
