@@ -25,8 +25,10 @@ Index: {
 
 示例中实例化了两个`Input`组件。`Input`组件允许接收一个`format`参数作为其静态接口输入，并提供一个函数`val`作为其动态输入输出接口。`format`参数有三种可能的值：`string`(默认)、`int`以及`float`，分别对应三种数据类型：字符串型、整型和浮点型。函数`val`根据`format`的值来进行格式化输入输出。下面是示例的输出结果：
 
->hello, world
->227
+```bash
+hello, world
+227
+```
 
 对象`foo`的`format`采用默认值`string`，所以输入`hello, world`以字符串原样输出。对象`bar`的`format`值是`int`，所以输入`27.1828`会被格式化为整型数`27`输出。
 
