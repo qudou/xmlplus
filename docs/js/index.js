@@ -1,8 +1,14 @@
 xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
-            xml: "<div id='top'>\
-					<Docs id='test'/>\
+			css: "#sidebar, #content { background: #AAA; }",
+            xml: "<div id='container'>\
+					<div class='row'>\
+						<div id='sidebar' class='col-xs-3'/>\
+						<div id='content' class='col-xs-9'>\
+							<Docs id='test'/>\
+						</div>\
+					</div>\
 				  </div>"
         },
 		Banner: {
@@ -10,7 +16,7 @@ xmlplus("xp", function (xp, $_, t) {
 			xml: "<div id='banner'/>"
 		},
 		Docs: {
-			xml: "<section id='docs' xmlns:i='.'>\
+			xml: "<section id='docs' xmlns:i='.' >\
 					<i:Content id='content'/>\
 					<AJAX id='ajax' type='GET'/>\
 				  </section>",
