@@ -28,7 +28,7 @@ npm install xmlplus
 
 在docs目录中包含了用markdown写好的15篇文档，你最好从第一篇开始看起，因为内容的编排基本上渐近式的。下面是这些文档的索引。
 
-|----------|----------|----------|----------|----------|
+|    |    |    |    |    |
 |:---|:---|:---|:---|:---|
 |[01 组件与空间](./docs/01-components-and-space.md)|[04 动态接口](./docs/04-dynamic-interface.md)|[07 路径](./docs/07-path.md)       |[10 嵌套](./docs/10-nesting.md)                       |[13 消息与通信](./docs/13-message-and-communication.md)|
 |[02 命名](./docs/02-naming.md)                    |[05 静态接口](./docs/05-static-interface.md) |[08 继承](./docs/08-inheritting.md)|[11 生命周期](./docs/11-life-circle.md)               |[14 共享](./docs/14-sharing.md)                        |
