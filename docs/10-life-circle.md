@@ -13,7 +13,7 @@ Index: {
           </div>",
     fun: function ( sys, items, opts ) {
         sys.foo.on( "click", function (e) {
-            sys.top.append("./Widget");
+            sys.top.append("./Widget"); // 注意：这里需要明确给出组件所在的路径
         });
     }
 },
