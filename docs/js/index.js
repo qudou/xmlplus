@@ -3,56 +3,59 @@ xmlplus("xp", function (xp, $_, t) {
         Index: {
 			css: "#sidebar, #content { border: 1px solid #AAA; min-height: 300px; }",
             xml: "<div class='container'>\
+					<AJAX id='ajax' type='GET'/>\
 					<div class='row'>\
 						<div id='sidebar' class='col-sm-3'>\
-							<h2>Sidebar</h2>\
+							<h2>目录</h2>\
 							<Nav id='nav'/>\
 						</div>\
-						<div id='content' class='col-sm-9'>\
-							<Docs id='test'/>\
-						</div>\
+						<div id='content' class='col-sm-9'> </div>\
 					</div>\
-				  </div>"
+				  </div>",
+			fun: function( sys, items, opts ) {
+				sys.nav.on("change", function (e, target) {
+					items.ajax({url: target});
+				});
+				var regexp = /\<body\>((.|\r|\n)*)\<\/body\>/g;
+				sys.ajax.on("success", function ( e, data ) {
+					regexp.test(data);
+					sys.content.last().replace(RegExp.$1.trim()).removeAttr("class");
+				});
+			}
         },
 		Banner: {
 			css: "#banner { background: #222; color: #fafafa; position: fixed; top: 0; height: 50px; box-shadow: 0 0 5px rgba(0,0,0,0.5); width: 100%; z-index: 100; }",
 			xml: "<div id='banner'/>"
 		},
-		Docs: {
-			xml: "<section id='docs' xmlns:i='.' >\
-					<i:Content id='content'/>\
-					<AJAX id='ajax' type='GET'/>\
-				  </section>",
+		Nav: {
+			xml: "<ul id='nav' class='nav nav-tabs nav-stacked'>\
+				  <li><a href='#' dt='01-components-and-space'>组件与空间</a></li>\
+				  <li><a href='#' dt='02-naming'>命名</a></li>\
+				  <li><a href='#' dt='03-abstract'>抽象</a></li>\
+				  <li><a href='#' dt='04-dynamic-interface'>动态接口</a></li>\
+				  <li><a href='#' dt='05-static-interface'>静态接口</a></li>\
+				  <li><a href='#' dt='06-parameter-mapping'>参数映射</a></li>\
+				  <li><a href='#' dt='07-path'>路径</a></li>\
+				  <li><a href='#' dt='08-inheritting'>继承</a></li>\
+				  <li><a href='#' dt='09-searching'>检索</a></li>\
+				  <li><a href='#' dt='10-nesting'>嵌套</a></li>\
+				  <li><a href='#' dt='11-life-circle'>生命周期</a></li>\
+				  <li><a href='#' dt='12-events-and-communication'>事件与通信</a></li>\
+				  <li><a href='#' dt='13-message-and-communication'>消息与通信</a></li>\
+				  <li><a href='#' dt='14-sharing'>共享与通信</a></li>\
+				  <li><a href='#' dt='15-lazy-instantiation'>延迟实例化</a></li>\
+				</ul>",
 			fun: function( sys, items, opts ) {
-				sys.ajax.on("success", function( e, data ) {
-					/\<body\>((.|\r|\n)*)\<\/body\>/g.test(data);
-					sys.content.append(RegExp.$1.trim()).removeAttr("class");
+				setTimeout(function() {
+					sys.nav.trigger("click");
 				});
-                items.ajax({url: "/02-naming"});
+				sys.nav.on("click", "./a", function (e) {
+					e.preventDefault();
+					e.stopPropagation();
+					this.trigger("change", this.attr("dt"));
+				});
 			}
 		},
-		Nav: {
-			xml: "<ul class='nav nav-tabs nav-stacked'>\
-				  <li><a href='#'>组件与空间</a></li>\
-				  <li><a href='#'>命名</a></li>\
-				  <li><a href='#'>抽象</a></li>\
-				  <li><a href='#'>动态接口</a></li>\
-				  <li><a href='#'>静态接口</a></li>\
-				  <li><a href='#'>参数映射</a></li>\
-				  <li><a href='#'>路径</a></li>\
-				  <li><a href='#'>继承</a></li>\
-				  <li><a href='#'>检索</a></li>\
-				  <li><a href='#'>嵌套</a></li>\
-				  <li><a href='#'>生命周期</a></li>\
-				  <li><a href='#'>事件与通信</a></li>\
-				  <li><a href='#'>消息与通信</a></li>\
-				  <li><a href='#'>共享与通信</a></li>\
-				  <li><a href='#'>延迟实例化</a></li>\
-				</ul>"
-		},
-		Content: {
-            xml: "<div id='content'/>"
-        },
 		AJAX: {
 			xml: "<void id='ajax'/>",
 			opt: { url: "http://xmlplus.net/", type: "POST", data: null, timeout: 5000, async: true },
