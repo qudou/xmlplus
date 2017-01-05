@@ -4,7 +4,7 @@ xmlplus("xp", function (xp, $_, t) {
             xml: "<AJAX id='ajax' type='GET'/>",
             fun: function( sys, items, opts ) {
 				sys.ajax.on("success", function( e, data ) {
-					console.log(data);
+					console.log(markdown.toHTML(data));
 				});
                 items.ajax({url: "/02-naming.md"});
             }
