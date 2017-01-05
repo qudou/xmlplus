@@ -115,7 +115,7 @@
 
 ```js
 xmlplus("ui", function ( xp, $_, t) {
-  $().imports({
+  $_().imports({
       Index: {
           xml: "<button id='foo'>foo</button>",
           fun: function( sys, items, opts ) {
@@ -130,7 +130,7 @@ xmlplus("ui", function ( xp, $_, t) {
 });
 ``` 
 
-示例中，组件Index仅包含视图项和函数项。其中，视图项包含一个命名为`foo`的`button`元素。在函数项的第一行，全局对象`xp`调用了函数`isArray`。其后，系统对象`sys.foo`调用系统函数`on`来注册`click`事件的侦听器，当用户点击按钮时侦听函数就会被调用。最后，系统对象`sys.foo`调用了`css`和`text`两个函数，它们分别用于设定按钮的边框样式和显示文本。需要注意的是，这里的`css`函数的返回值等于`sys.foo`，这说明对`css`函数是支持链式调用。
+示例中，组件Index仅包含视图项和函数项。其中，视图项包含一个命名为`foo`的`button`元素。在函数项的第一行，全局对象`xp`调用了函数`isArray`。其后，系统对象`sys.foo`调用系统函数`on`来注册`click`事件的侦听器，当用户点击按钮时侦听函数就会被调用。最后，系统对象`sys.foo`调用了`css`和`text`两个函数，它们分别用于设定按钮的边框样式和显示文本。需要注意的是，这里的`css`函数的返回值等于`sys.foo`，这说明对`css`函数支持链式调用。
 
 ## 用户自定义的动态接口
 
