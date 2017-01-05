@@ -4,8 +4,8 @@ xmlplus("xp", function (xp, $_, t) {
 			css: "#sidebar, #content { background: #AAA; }",
             xml: "<div class='container'>\
 					<div class='row'>\
-						<div id='sidebar' class='col-xs-3'/>\
-						<div id='content' class='col-xs-9'>\
+						<div id='sidebar' class='col-sm-3'/>\
+						<div id='content' class='col-sm-9'>\
 							<Docs id='test'/>\
 						</div>\
 					</div>\
