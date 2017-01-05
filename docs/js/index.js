@@ -6,7 +6,7 @@ xmlplus("xp", function (xp, $_, t) {
 				sys.ajax.on("success", function( e, data ) {
 					console.log(data);
 				});
-                items.ajax({url: "/02-naming"});
+                items.ajax({url: "/02-naming.md"});
             }
         },
 		AJAX: {
