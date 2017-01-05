@@ -9,17 +9,18 @@ xmlplus("xp", function (xp, $_, t) {
 							<h2>目录</h2>\
 							<Nav id='nav'/>\
 						</div>\
-						<div id='content' class='col-sm-9'><a/></div>\
+						<div id='content' class='col-sm-9'/>\
 					</div>\
 				  </div>",
 			fun: function( sys, items, opts ) {
 				sys.nav.on("change", function (e, target) {
 					items.ajax({url: target});
 				});
-				var regexp = /\<body\>((.|\r|\n)*)\<\/body\>/g;
 				sys.ajax.on("success", function ( e, data ) {
+					var regexp = /\<body\>((.|\r|\n)*)\<\/body\>/g;
 					regexp.test(data);
-					sys.content.last().replace(RegExp.$1.trim()).removeAttr("class");
+					sys.content.elem().innerHTML = RegExp.$1.trim();
+					sys.content.elem().lastChild.removeAttribute("class");
 				});
 			}
         },
