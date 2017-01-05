@@ -47,14 +47,14 @@ xmlplus("xp", function (xp, $_, t) {
 				  <li><a href='#' dt='15-lazy-instantiation'>延迟实例化</a></li>\
 				</ul>",
 			fun: function( sys, items, opts ) {
-				var prev = sys.first;
+				var prev;
 				setTimeout(function() {
 					sys.first.trigger("click");
 				});
 				sys.nav.on("click", "./li/a", function (e) {
 					e.preventDefault();
 					e.stopPropagation();
-					prev.removeClass("active");
+					prev && prev.removeClass("active");
 					prev = this.trigger("change", this.attr("dt")).addClass("active");
 				});
 			}
