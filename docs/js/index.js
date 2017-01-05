@@ -1,10 +1,14 @@
 xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
-            xml: "<AJAX id='ajax' type='GET'/>",
+            xml: "<div id='top'>\
+					<AJAX id='ajax' type='GET'/>\
+					<div id='test'/>\
+				  </div>"
             fun: function( sys, items, opts ) {
 				sys.ajax.on("success", function( e, data ) {
-					console.log(markdown.toHTML(data));
+					var html = markdown.toHTML(data);
+					sys.test.elem().innerHTML = html;
 				});
                 items.ajax({url: "/02-naming.md"});
             }
