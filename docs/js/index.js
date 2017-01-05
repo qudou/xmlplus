@@ -47,7 +47,7 @@ xmlplus("xp", function (xp, $_, t) {
 				</ul>",
 			fun: function( sys, items, opts ) {
 				setTimeout(function() {
-					sys("/a")[0].trigger("click");
+					sys("/*[name()=a]")[0].trigger("click");
 				});
 				sys.nav.on("click", "./a", function (e) {
 					e.preventDefault();
