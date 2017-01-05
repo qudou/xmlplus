@@ -1,10 +1,7 @@
 xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
-			css: "* { box-sizing: border-box; border: none; margin: 0; padding: 0; }\
-				  #top { padding-top: 50px; width: 100%; }",
             xml: "<div id='top'>\
-					<Banner/>\
 					<Docs id='test'/>\
 				  </div>"
         },
@@ -13,8 +10,6 @@ xmlplus("xp", function (xp, $_, t) {
 			xml: "<div id='banner'/>"
 		},
 		Docs: {
-			css: "#docs { max-width: 960px; margin-left: auto; margin-right: auto; padding-left: 20px; padding-right: 20px; }\
-				  #docs { padding-top: 20px; padding-bottom: 80px; }",
 			xml: "<section id='docs' xmlns:i='.'>\
 					<i:Content id='content'/>\
 					<AJAX id='ajax' type='GET'/>\
