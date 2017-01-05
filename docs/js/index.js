@@ -2,7 +2,7 @@ xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
 			css: "#sidebar, #content { background: #AAA; }",
-            xml: "<div id='container'>\
+            xml: "<div class='container'>\
 					<div class='row'>\
 						<div id='sidebar' class='col-xs-3'/>\
 						<div id='content' class='col-xs-9'>\
