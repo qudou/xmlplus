@@ -32,13 +32,13 @@
 { opt: {}, map: {}, ali: /[a-z]/i } 
 ```
 
-组件还可以是基本的`HTML`元素。HTML元素是基组件，前面所说的组件叫做自定义组件。基组件是不可分解的，自定义组件可以由基组件或者其它自定义组件组合而成。比如下面的组件，它由两个基组件div和span组合而成的。
+组件还可以是基本的`HTML`元素。`HTML`元素是基组件，前面所说的组件叫做自定义组件。基组件是不可分解的，自定义组件可以由基组件或者其它自定义组件组合而成。比如下面的组件，它由两个基组件`div`和`span`组合而成的。
 
 ```javascript
 { xml: "<div><span/></div>" } 
 ```
 
-文本也作为组件而存在，且属于基组件。下面的组件由两个子组件组合而成，其中h1是一HTML元素，"hello, world"是一文本。
+文本也作为组件而存在，且属于基组件。下面的组件由两个子组件组合而成，其中`h1`是一`HTML`元素，`hello, world`是一文本。
 
 ```javascript
 { xml: "<h1>hello, world</h1>" } 
@@ -56,7 +56,7 @@
 { xml: "<!--这是一段注释-->" }
 ```
 
-在视图项中，对组件集的描述应该是一个仅包含一个根节点的XML字符串，而不能是其他的不合法的描述。下面几个对视图项的描述就是不符合要求的。
+在视图项中，对组件集的描述应该是一个仅包含一个根节点的`XML`字符串，而不能是其他的不合法的描述。下面几个对视图项的描述就是不符合要求的。
 
 ```javascript
 { xml: "<div/><span/>" }      // 缺少根节点
@@ -124,7 +124,7 @@ var parent = document.getElementById("parent");
 xmlplus.startup("ui/widget/Calendar", parent); 
 ```
 
-startup函数的第二个参数指定了组件实例化后被追加到的`DOM`元素对象，它也可以是某一DOM元素对象的id值，这种形式最为简洁，像下面这样。
+startup函数的第二个参数指定了组件实例化后被追加到的`DOM`元素对象，它也可以是某一`DOM`元素对象的`id`值，这种形式最为简洁，像下面这样。
 
 ```javascript
 xmlplus.startup("ui/widget/Calendar", "parent"); 
@@ -137,7 +137,7 @@ var xml = "<i:Calendar xmlns:i='ui/widget/Calendar'/>";
 xmlplus.startup(xml, "parent");
 ```
 
-还可以先解析出xml节点再执行，这与前两种方式等价。
+还可以先解析出`xml`节点再执行，这与前两种方式等价。
 
 ```javascript
 var xml = "<i:Calendar xmlns:i='ui/widget/Calendar'/>";
@@ -165,7 +165,7 @@ xmlplus.startup(textNode, "parent");
 xmlplus.startup("ui/widget/Calendar", "parent", {date: "2016/01/01"});
 ```
 
-当代码运行于浏览器端时，一般不显示地调用`startup`函数，请看下面的示例，可以直接在`html`中以XML的形式书写要实例化的组件。如果要禁用这种解析方式，并以`startup`函数启动当然也是可以的，只要给body添加属性`noparse`即可。
+当代码运行于浏览器端时，一般不显示地调用`startup`函数，请看下面的示例，可以直接在`html`中以`XML`的形式书写要实例化的组件。如果要禁用这种解析方式，并以`startup`函数启动当然也是可以的，只要给body添加属性`noparse`即可。
 
 ```html
 <!DOCTYPE html>
