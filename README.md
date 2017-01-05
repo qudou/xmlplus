@@ -14,7 +14,7 @@ Running in browser. Here is a simple example.
         <script src="index.js"></script>
     </head>
     <body>
-		<i:Index xmlns:i="ui"></i:Index>
+		<i:Index xmlns:i="xp"></i:Index>
     </body>
 </html>
 ```
