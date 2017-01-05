@@ -49,7 +49,7 @@ xmlplus("xp", function (xp, $_, t) {
 				setTimeout(function() {
 					sys.first.trigger("click");
 				});
-				sys.nav.on("click", "./*[@dt]", function (e) {
+				sys.nav.on("click", "./li/a", function (e) {
 					e.preventDefault();
 					e.stopPropagation();
 					this.trigger("change", this.attr("dt"));
