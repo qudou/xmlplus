@@ -14,12 +14,9 @@ xmlplus("xp", function (xp, $_, t) {
 		},
 		Docs: {
 			css: "#docs { max-width: 960px; margin-left: auto; margin-right: auto; padding-left: 20px; padding-right: 20px; }\
-				  #docs { padding-top: 20px; padding-bottom: 80px; }\
-				  @media (max-width: 960px) { #docs { padding-left: 10px; padding-right: 10px; }}\
-				  @media (max-width: 640px) { #docs { padding-bottom: 0; } }",
+				  #docs { padding-top: 20px; padding-bottom: 80px; }",
 			xml: "<section id='docs' xmlns:i='.'>\
 					<i:Content id='content'/>\
-					<i:Nav id='nav'/>\
 					<AJAX id='ajax' type='GET'/>\
 				  </section>",
 			fun: function( sys, items, opts ) {
@@ -36,9 +33,6 @@ xmlplus("xp", function (xp, $_, t) {
 			xml: "<div id='nav'/>"
 		},
 		Content: {
-			css: "#content { float: right; width: 100%; max-width: 650px; }\
-				  @media (max-width: 960px) { #content { width: calc(100% - 240px); max-width: 100%; } }\
-				  @media (max-width: 640px) { #content { width: 100%; } }",
             xml: "<div id='content'/>"
         },
 		AJAX: {
