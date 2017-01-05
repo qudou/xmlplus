@@ -4,7 +4,14 @@ xmlplus("xp", function (xp, $_, t) {
 			css: "#sidebar, #content { border: 1px solid #AAA; min-height: 300px; }",
             xml: "<div class='container'>\
 					<div class='row'>\
-						<div id='sidebar' class='col-sm-3'/>\
+						<div id='sidebar' class='col-sm-3'>\
+							<h2>Sidebar</h2>\
+							<ul class='nav nav-tabs nav-stacked'>\
+							  <li><a href='#'>Another Link 1</a></li>\
+							  <li><a href='#'>Another Link 2</a></li>\
+							  <li><a href='#'>Another Link 3</a></li>\
+							</ul>\
+						</div>\
 						<div id='content' class='col-sm-9'>\
 							<Docs id='test'/>\
 						</div>\
