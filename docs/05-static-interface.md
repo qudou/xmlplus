@@ -31,7 +31,7 @@ Index: {
 
 示例中，配置项指定`foo`对象的`fontSize`初始输入值为`16`，它将覆盖默认值`24`，于是实例化后的按钮字体大小会是`16px`。
 
-这里需要明确区分配置项`cfg`与参数项`opt`之间的异同。这里，配置项指的是缩主组件Index中的配置项，会改变目标组件中已定义好的opt中的初始值。而参数项提供的是目标组件初始参数的默认值。
+这里需要明确区分配置项`cfg`与参数项`opt`之间的异同。这里，配置项指的是缩主组件Index中的配置项，它会改变目标组件中已定义好的`opt`中的初始值。而参数项提供的是目标组件初始参数的默认值。
 
 ## 通过集体名指定初始值
 
@@ -48,7 +48,7 @@ Index: {
 }
 ```
 
-在该示例中，别名项指定名称`button`为所有的`Button`组件。所以，配置项中`fontSize`的目标对象包含了所有的`Button`组件，故对象`foo`和`bar`的`fontSize`初始值都会被设置成16。
+在该示例中，别名项指定名称`button`为所有的`Button`组件。所以，配置项中`fontSize`的目标对象包含了所有的`Button`组件，故对象`foo`和`bar`的`fontSize`初始值都会被设置成`16`。
 
 ## 属性值作为输入初始值
 
@@ -67,8 +67,9 @@ Index: {
 ```js
 Format: {
     opt: { fontSize: "24", width: "28px", disabled: "true" },
-    map: { format: {"fontSize width": Number, "disabled": Boolean} },
+    map: { format: {"int": "step", "float": "fontSize width", "bool": "disabled"} },
     fun: function( sys, items, opts ) {
+        console.log(opts.step, typeof opts.step);
         console.log(opts.fontSize, typeof opts.fontSize);
         console.log(opts.width, typeof opts.width);
         console.log(opts.disabled, typeof opts.disabled);
@@ -79,7 +80,8 @@ Index: {
 }
 ```
 
-`Format`组件的映射项中的`format`指明如何格式化输入参数，在此组件中，`fontSize`和`width`最终会以数值方式出现在`opts`中。而`disabled`则会以布尔值出现在`opts`中。对于指定为Boolean的参数，如果相应的值是字符串'true'，则为真值，否则为假值。这里要注意格式化发生的时间，格式化是在参数被映射到`opts`后才发生的。
+`Format`组件的映射项中的`format`指明如何格式化输入参数，在此组件中，`step`被格式化为整型，`fontSize`和`width`被格式化为浮点型，而`disabled`则被格式化为布尔型。
+注意，对于指定类型为`bool`的参数，如果相应的值是字符串'true'，则为真值，否则为假值。
 
 ## 四种参数设定方式的优先级
 
@@ -104,4 +106,4 @@ Index: {
 
 >`D > B > C > A`
 
-也就是说属性值具有最高有优先级，配置项中的值次之，然后到通过别名项设定的值，默认值的优先级是最低的。
+也就是说属性值具有最高有优先级，配置项中的值次之，然后是通过别名项设定的值，而默认值的优先级是最低的。
