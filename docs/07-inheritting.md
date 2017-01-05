@@ -9,7 +9,7 @@ Widget: {
 },
 Button: {
     css: "#btn { border: 1px solid red; }",
-    map: { extend: {"from": "@:Widget"} }
+    map: { extend: {"from": "Widget"} }
 }
 ```
 
