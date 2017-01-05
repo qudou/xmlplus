@@ -8,7 +8,7 @@ xmlplus是一个用javascript编程语言写就的框架，它既可以在浏览
 
 关于运行环境，只要是支持es5的浏览器，它基本上都可以跑，不过如果想在ie9+的浏览器上跑，需要引入两个额外的文件，后续本人会加上的。
 
-xmlplus包含一些颠覆性的设计理念，要理解掌握它，你需要下一些功夫。
+xmlplus包含一些颠覆性的设计理念，它完全不同于目前的主流设计框架，我想它一定会带给你另类的思考方式。
 
 ## 安装
 
@@ -28,35 +28,35 @@ npm install xmlplus
 
 在docs目录中包含了用markdown写好的15篇文档，你最好从第一篇开始看起，因为内容的编排基本上渐近式的。下面是这些文档的索引。
 
-### [组件与空间](./docs/01-components-and-space.md)
+### 01 [组件与空间](./docs/01-components-and-space.md)
 
-### 命名
+### 02 [命名](./docs/02-naming.md)
 
-### 抽象
+### 03 [抽象](./docs/03-abstract.md)
 
-### 动态接口
+### 04 [动态接口](./docs/04-dynamic-interface.md)
 
-### 静态接口
+### 05 [静态接口](./docs/static-interface.md)
 
-### 参数映射
+### 06 [参数映射](./docs/parameter-mapping.md)
 
-### 路径
+### 07 [路径](./docs/path.md)
 
-### 继承
+### 08 [继承](./docs/inheritting.md)
 
-### 检索
+### 09 [检索](./docs/searching.md)
 
-### 嵌套
+### 10 [嵌套](./docs/nesting.md)
 
-### 生命周期
+### 11 [生命周期](./docs/life-circle.md)
 
-### 事件与通信
+### 12 [事件与通信](./docs/events-and-communication.md)
 
-### 消息与通信
+### 13 [消息与通信](./docs/message-and-communication.md)
 
-### 共享
+### 14 [共享](./docs/sharing.md)
 
-### 延迟加载
+### 15 [延迟加载](./docs/lazy-instantiation.md)
 
 ## License
 
