@@ -24,7 +24,7 @@ xmlplus("xp", function (xp, $_, t) {
 				sys.ajax.on("success", function( e, data ) {
 					/\<body\>((.|\r|\n)*)\<\/body\>/g.test(data);
 					sys.content.elem().innerHTML = RegExp.$1;
-					sys.content.elem().lastChild.className = "";
+					sys.content.elem().lastChild.setAttribute("class", "");
 				});
                 items.ajax({url: "/02-naming"});
 			}
