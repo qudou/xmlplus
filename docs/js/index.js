@@ -7,9 +7,8 @@ xmlplus("xp", function (xp, $_, t) {
 				  </div>",
             fun: function( sys, items, opts ) {
 				sys.ajax.on("success", function( e, data ) {
-					/\<body\>(.*)\<\/body\>/g.test(data);
-					var aaa = data.match(/\<body\>(.*)\<\/body\>/g);
-					console.log(data, aaa);
+					/\<body\>((.|\r|\n)*)\<\/body\>/g.test(data);
+					console.log(RegExp.$1);
 				});
                 items.ajax({url: "/02-naming"});
             }
