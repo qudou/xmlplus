@@ -1,6 +1,8 @@
 xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
+			css: "* { box-sizing: border-box; border: none; margin: 0; padding: 0; }\
+				  #top { padding-top: 50px; width: 100%; }",
             xml: "<div id='top'>\
 					<Banner/>\
 					<Docs id='test'/>\
