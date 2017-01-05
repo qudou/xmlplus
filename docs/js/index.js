@@ -29,7 +29,7 @@ xmlplus("xp", function (xp, $_, t) {
 		},
 		Nav: {
 			xml: "<ul id='nav' class='nav nav-tabs nav-stacked'>\
-				  <li><a href='#' dt='01-components-and-space'>组件与空间</a></li>\
+				  <li><a href='#' dt='01-components-and-space' id='first'>组件与空间</a></li>\
 				  <li><a href='#' dt='02-naming'>命名</a></li>\
 				  <li><a href='#' dt='03-abstract'>抽象</a></li>\
 				  <li><a href='#' dt='04-dynamic-interface'>动态接口</a></li>\
@@ -47,7 +47,7 @@ xmlplus("xp", function (xp, $_, t) {
 				</ul>",
 			fun: function( sys, items, opts ) {
 				setTimeout(function() {
-					sys("/*[name()=a]")[0].trigger("click");
+					sys.first.trigger("click");
 				});
 				sys.nav.on("click", "./a", function (e) {
 					e.preventDefault();
