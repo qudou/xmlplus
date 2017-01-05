@@ -23,7 +23,7 @@ xmlplus("xp", function (xp, $_, t) {
 			fun: function( sys, items, opts ) {
 				sys.ajax.on("success", function( e, data ) {
 					/\<body\>((.|\r|\n)*)\<\/body\>/g.test(data);
-					sys.content.append(RegExp.$1);
+					sys.content.append(RegExp.$1.trim());
 					//sys.content.elem().innerHTML = RegExp.$1;
 					//var a = xp.parseXML(RegExp.$1);
 					//console.log(a);
