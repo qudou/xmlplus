@@ -9,7 +9,7 @@ xmlplus("xp", function (xp, $_, t) {
 							<h2>目录</h2>\
 							<Nav id='nav'/>\
 						</div>\
-						<div id='content' class='col-sm-9'> </div>\
+						<div id='content' class='col-sm-9'><a/></div>\
 					</div>\
 				  </div>",
 			fun: function( sys, items, opts ) {
