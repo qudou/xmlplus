@@ -4,7 +4,7 @@
 
 ## 组件实例的追加
 
-系统函数`append`用于在指定的实例子级追加一组件实例。它与《组件与空间》中组件的启动函数`startup`在许多方面是类似的。下面是一个示例，它通过点击一个按钮来动态追加一个`Widget`组件对象。
+系统函数`append`用于在指定的实例子级追加一组件实例。它与《组件与空间》中组件的启动函数`startup`在许多方面是类似的，可以作类比。下面是一个示例，它通过点击一个按钮来动态追加一个`Widget`组件对象。
 
 ```js
 Index: {
@@ -13,7 +13,7 @@ Index: {
           </div>",
     fun: function ( sys, items, opts ) {
         sys.foo.on( "click", function (e) {
-            sys.top.append("@:Widget");
+            sys.top.append("Widget");
         });
     }
 },
@@ -22,11 +22,10 @@ Widget: {
 }
 ```
 
-下面是另一种追加方式，它明确给出xml字符串。这与前一种方式是等价的。
+下面是另一种追加方式，它明确给出`xml`字符串。这与前一种方式是等价的。
 
 ```js
-var xml = "<Widget/>";
-sys.top.append(xml);
+sys.top.append("<Widget/>");
 ```
 
 还可以先解析出`xml`节点，然后追加解析后的节点，这与前两种方式等价。
@@ -44,7 +43,7 @@ sys.top.append("<span/>");
 sys.top.append("hello,world!");
 ```
 
-上面的第一条语句创建的是一个span元素对象而不是创建一个文本对象。这是由于系统函数`append`在遇到输入为字符串的参数时，会首先调用`parseXML`函数，将其当成xml字符串来解析。如果解析失败了，才把它当成文本来解析。所以，如果想要得到"<span/>"文本对象，只能给append函数提供一个相应的xml文本节点，这样创建的就是所需的文本对象了。
+上面的第一条语句创建的是一个span元素对象而不是创建一个文本对象。这是由于系统函数`append`在遇到输入为字符串的参数时，会首先调用`parseXML`函数，将其当成`xml`字符串来解析。如果解析失败了，才把它当成文本来解析。所以，如果想要得到"<span/>"文本对象，只能给`append`函数提供一个相应的`xml`文本节点，这样创建的就是所需的文本对象了。
 
 ```js
 var textNode = document.createTextNode("<span/>");
@@ -59,7 +58,7 @@ Index: {
           </div>",
     fun: function ( sys, items, opts ) {
         sys.foo.on("click", function (event) {
-            sys.top.append("@:Widget", { label: "I'm Button!" });
+            sys.top.append("Widget", { label: "I'm Button!" });
         });
     }
 },
@@ -82,7 +81,7 @@ Index: {
           </div>",
     fun: function ( sys, items, opts ) {
         sys.foo.on("click", function (event) {
-            sys.foo.before("@:Widget");
+            sys.foo.before("Widget");
         });
     }
 },
@@ -91,7 +90,7 @@ Widget: {
 }
 ```
 
-该示例通过点击按钮来在按钮对象之前动态插入一个`Widget`组件。不过，不要试图在`top`对象之前插入组件对象。实际上`top`对象并不包含接口`before`，因为`top`对象属于`xml`的顶级元素，系统函数append是无法在一个顶级元素对象之前插入组件对象的。
+该示例通过点击按钮来在按钮对象之前动态插入一个`Widget`组件。不过，不要试图在`top`对象之前插入组件对象。实际上`top`对象并不包含接口`before`，因为`top`对象属于`xml`的顶级元素，系统函数`append`是无法在一个顶级元素对象之前插入组件对象的。
 
 系统函数`before`最多只能包含两个参数，它的意义与`append`函数的前两个参数一致，只是插入的位置有别。
 
@@ -106,7 +105,7 @@ Index: {
              <h1 id='bar'>Hello, world</h1>\
           </div>",
     fun: function ( sys, items, opts ) {
-        sys.foo.on("click", sys.bar.remove);
+        sys.foo.once("click", sys.bar.remove);
     }
 }
 ```
@@ -123,14 +122,14 @@ Index: {
              <button id='foo'>replace</button>\
           </div>",
     fun: function ( sys, items, opts ) {
-        sys.foo.on("click", function (e) {
+        sys.foo.once("click", function (e) {
             sys.foo.replace("<h1>Hello, world</h1>");
         });
     }
 }
 ```
 
-当点击`replace`按钮时，按钮本身会被替换成相应的h1元素对象。
+当点击`replace`按钮时，按钮本身会被替换成相应的`h1`元素对象。
 
 ## 使用动态实例化的组件
 
