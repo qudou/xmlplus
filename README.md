@@ -4,7 +4,7 @@ A powerful, efficient, and flexible JavaScript library for building applicitions
 
 ##Installation:
 
-Running in browser. Here is a simple example. For details, see [hello-world-client](docs/demo/hello-world/client).
+Running in browser. Here is a simple example.
 
 ```html
 <!DOCTYPE html>
@@ -19,15 +19,30 @@ Running in browser. Here is a simple example. For details, see [hello-world-clie
 </html>
 ```
 
+The file `index.js` contains the description of the component `Index`.
+
+```javascript
+xmlplus("xp", function (xp, $_, t) {
+    $_().imports({
+        Index: {
+            fun: function( sys, items, opts ) {
+                console.log("hello, world!")
+            }
+        }
+    });
+});
+```
+
 Xmlplus can not only run in browser side, but also in server side. If you'd like to run in server, just to install with npm.
 
 ```bash
 npm install xmlplus
 ```
 
-Here is a server side example. For details, see [hello-world-server](docs/demo/hello-world/server).
+Here is a server side example.
 
 ```javascript
+var xmlplus = require("xmlplus");
 xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
