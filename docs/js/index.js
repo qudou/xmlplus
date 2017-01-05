@@ -1,7 +1,7 @@
 xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
-			css: "#sidebar, #content { background: #AAA; }",
+			css: "#sidebar, #content { border: 1px solid #AAA; min-height: 300px; }",
             xml: "<div class='container'>\
 					<div class='row'>\
 						<div id='sidebar' class='col-sm-3'/>\
@@ -37,7 +37,6 @@ xmlplus("xp", function (xp, $_, t) {
 			xml: "<div id='nav'/>"
 		},
 		Content: {
-			css: "#content { border: 1px solid #AAA; }",
             xml: "<div id='content'/>"
         },
 		AJAX: {
