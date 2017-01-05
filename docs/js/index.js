@@ -4,7 +4,7 @@ xmlplus("xp", function (xp, $_, t) {
             xml: "<div id='top'>\
 					<AJAX id='ajax' type='GET'/>\
 					<div id='test'/>\
-				  </div>"
+				  </div>",
             fun: function( sys, items, opts ) {
 				sys.ajax.on("success", function( e, data ) {
 					var html = markdown.toHTML(data);
