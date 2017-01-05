@@ -13,7 +13,7 @@ Index: {
           </div>",
     fun: function ( sys, items, opts ) {
         sys.foo.on( "click", function (e) {
-            sys.top.append("Widget");
+            sys.top.append("./Widget");
         });
     }
 },
@@ -58,7 +58,7 @@ Index: {
           </div>",
     fun: function ( sys, items, opts ) {
         sys.foo.on("click", function (event) {
-            sys.top.append("Widget", { label: "I'm Button!" });
+            sys.top.append("./Widget", { label: "I'm Button!" });
         });
     }
 },
@@ -81,7 +81,7 @@ Index: {
           </div>",
     fun: function ( sys, items, opts ) {
         sys.foo.on("click", function (event) {
-            sys.foo.before("Widget");
+            sys.foo.before("./Widget");
         });
     }
 },
