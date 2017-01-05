@@ -4,11 +4,11 @@
 
 ```js
 Widget: {
-    css: ".$btn { color: blue }",
+    css: "#btn { color: blue }",
     xml: "<button id='btn'>label</button>"
 },
 Button: {
-    css: ".$btn { border: 1px solid red; }",
+    css: "#btn { border: 1px solid red; }",
     map: { extend: {"from": "@:Widget"} }
 }
 ```
@@ -18,8 +18,8 @@ Button: {
 对于原组件样式项的继承，默认情况下将采用字符串拼接的方式。如上例中，最终得到组件的样式项将会是如下的样子。
 
 ```css
-.$btn { color: blue }
-.$btn { border: 1px solid red; }
+#btn { color: blue }
+#btn { border: 1px solid red; }
 ```
 
 
@@ -27,8 +27,8 @@ Button: {
 
 ```js
 Button: {
-    css: ".$btn { border: 1px solid red; }",
-    map: { extend: {"from": "@:Widget", css: "r"} } // 这里r的意思是replace
+    css: "#btn { border: 1px solid red; }",
+    map: { extend: {"from": "Widget", css: "r"} } // 这里r的意思是replace
 } 
 ```
 
@@ -123,7 +123,7 @@ Widget: {
 },
 Button: {
     opt: { border: "1px" color: "blue" },
-    map: { extend: {"from": "@:Widget", opt: "r"} }
+    map: { extend: {"from": "Widget", opt: "r"} }
 } 
 ```
 
