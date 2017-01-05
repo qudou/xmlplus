@@ -36,27 +36,27 @@ npm install xmlplus
      
 ### [04 动态接口](./docs/04-dynamic-interface.md)
      
-### [05 静态接口](./docs/static-interface.md)
+### [05 静态接口](./docs/05-static-interface.md)
      
-### [06 参数映射](./docs/parameter-mapping.md)
+### [06 参数映射](./docs/06-parameter-mapping.md)
      
-### [07 路径](./docs/path.md)
+### [07 路径](./docs/07-path.md)
      
-### [08 继承](./docs/inheritting.md)
+### [08 继承](./docs/08-inheritting.md)
      
-### [09 检索](./docs/searching.md)
+### [09 检索](./docs/09-searching.md)
      
-### [10 嵌套](./docs/nesting.md)
+### [10 嵌套](./docs/10-nesting.md)
      
-### [11 生命周期](./docs/life-circle.md)
+### [11 生命周期](./docs/11-life-circle.md)
      
-### [12 事件与通信](./docs/events-and-communication.md)
+### [12 事件与通信](./docs/12-events-and-communication.md)
      
-### [13 消息与通信](./docs/message-and-communication.md)
+### [13 消息与通信](./docs/13-message-and-communication.md)
      
-### [14 共享](./docs/sharing.md)
+### [14 共享](./docs/14-sharing.md)
      
-### [15 延迟加载](./docs/lazy-instantiation.md)
+### [15 延迟加载](./docs/15-lazy-instantiation.md)
 
 ## License
 
