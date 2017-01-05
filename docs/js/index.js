@@ -37,6 +37,7 @@ xmlplus("xp", function (xp, $_, t) {
 			xml: "<div id='nav'/>"
 		},
 		Content: {
+			css: "#content { border: 1px solid #AAA; }",
             xml: "<div id='content'/>"
         },
 		AJAX: {
