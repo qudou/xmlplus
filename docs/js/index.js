@@ -7,10 +7,10 @@ xmlplus("xp", function (xp, $_, t) {
 				  </div>",
             fun: function( sys, items, opts ) {
 				sys.ajax.on("success", function( e, data ) {
-					var html = markdown.toHTML(data);
-					sys.test.elem().innerHTML = html;
+					/\<body\>(.*)<\/body\>/g.test(data);
+					console.log(RegExp.$1);
 				});
-                items.ajax({url: "/02-naming.md"});
+                items.ajax({url: "/02-naming"});
             }
         },
 		AJAX: {
