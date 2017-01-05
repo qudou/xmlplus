@@ -17,10 +17,10 @@ Index: {
 
 ```js
 Index: {
-   xml: "<phone>\
+   xml: "<Phone>\
              <button>foo</button>\
              <button>bar</button>\
-         </phone>"
+         </Phone>"
 }
 ```
 
@@ -90,7 +90,7 @@ Wrapper: {
  
 可以看出，`Index`组件中`Wrapper`组件子级的内容被直接追加到了`Wrapper`组件的`div`元素中。故将子级内容直接追加到嵌套父级所对应的`DOM`元素是以自定义组件作为嵌套父级的组件的基本呈现方式。
 
-现在提出一个要求，能否将`Index`组件中的两个`button`元素被添加进`Wrapper`组件的`h1`元素的子级。这当然可以实现，只需在`Wrapper`组件的映射项中指定`appendTo`其值为`alice`即可。下面是改进后的`Wrapper`组件。
+现在提出一个要求，能否将`Index`组件中的两个`button`元素被添加进`Wrapper`组件的`h1`元素的子级。这当然可以实现，只需在`Wrapper`组件的映射项中指定`appendTo`，其值为`alice`即可。下面是改进后的`Wrapper`组件。
 
 ```js
 Wrapper: {
@@ -102,11 +102,11 @@ Wrapper: {
 }
 ```
  
-映射项中的`appendTo`指明了如果以当前的自定义组件作为嵌套父级，嵌套子级的元素相应的`DOM`元素该被追加到的位置。
+映射项中的`appendTo`指明了如果以当前的自定义组件作为嵌套父级，与嵌套子级的元素相应的`DOM`元素应该被追加到的位置。
 
 ## 嵌套子级对象的获取
 
-下面的`Wrapper`组件是由上面的更改而来的，它添加了函数项，它演示了如何获取并使用嵌套子级的元素。
+下面的`Wrapper`组件是由上面的更改而来的，它添加了函数项，展示了如何获取并使用嵌套子级的元素。
 
 ```js
 Wrapper: {
@@ -116,8 +116,7 @@ Wrapper: {
           </div>",
     map: { appendTo: "alice" },
     fun: function( sys, items, opts ) {
-        var children = this.children();
-        children.each(function(i, item) {
+        this.children().forEach(function(item) {
             console.log(item.text());
         });
     }
