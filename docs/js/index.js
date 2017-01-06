@@ -125,7 +125,7 @@ xmlplus("xp", function (xp, $_, t) {
 				sys.nav.on("click", "./ul/li", function (e) {
 					e.stopPropagation();
 					prev.removeClass("active");
-					prev = this.tirgger("change", this.toString()).addClass("active");
+					prev = this.trigger("change", this.toString()).addClass("active");
 				});
 			}
 		}
