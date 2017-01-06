@@ -1,7 +1,8 @@
 xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
-			css: "#header { border-bottom: 1px solid #e5e5e5; margin-bottom: 40px; }",
+			css: "#header { border-bottom: 1px solid #e5e5e5; }\
+				  #docs {  margin-bottom: 40px; }",
             xml: "<div id='index'>\
 					<Banner id='header'/>\
 					<ViewStack id='stack'>\
