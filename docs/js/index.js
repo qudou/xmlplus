@@ -6,11 +6,16 @@ xmlplus("xp", function (xp, $_, t) {
 				  #header { border-bottom: 1px solid #e5e5e5; }\
 				  #docs { position: fixed; top: 50px; left: 0; width: 100%; height: calc(100% - 50px) }",
             xml: "<div id='index'>\
-					<header id='header' class='navbar navbar-static-top bs-docs-nav'>\
-					</header>\
+					<Banner id='header'/>\
 				    <Docs id='docs'/>\
 				  </div>"
         },
+		Banner: {
+			xml: "<header id='header' class='navbar navbar-static-top bs-docs-nav' xmlns:i='banner'>\
+					<i:Title id='title'/>\
+					<i:Nav id='nav'/>\
+				  </header>"
+		},
         Docs: {
             css: "#docs { position: relative; height: 100%; }\
 				  #sidebar { position: absolute; width: 260px; height: 100%;  padding: 0 15px; margin: 0 20px 0 0; overflow-x: hidden; overflow-y: auto; }\
@@ -51,6 +56,30 @@ xmlplus("xp", function (xp, $_, t) {
             }
         }
     });
+	$_("banner").imports({
+		Title: {
+			xml: "<div class='navbar-header'>\
+			        <button class='navbar-toggle collapsed' type='button' data-toggle='collapse' data-target='.bs-navbar-collapse'>\
+			      	    <span class='sr-only'>Toggle navigation</span>\
+			      	    <span class='icon-bar'></span>\
+			      	    <span class='icon-bar'></span>\
+			      	    <span class='icon-bar'></span>\
+			        </button>\
+			        <a href='../' class='navbar-brand'>Bootstrap</a>\
+			      </div>"
+		},
+		Nav: {
+			xml: "<nav class='navbar-collapse bs-navbar-collapse collapse' role='navigation' aria-expanded='false' style='height: 1px;'>\
+                   <ul class='nav navbar-nav'>\
+                     <li class='active'><a>起步</a></li>\
+                     <li><a>全局 CSS 样式</a></li>\
+                     <li><a>组件</a></li>\
+                     <li><a>JavaScript 插件</a></li>\
+                     <li><a>定制</a></li>\
+                   </ul>\
+				  </nav>"
+		}
+	});
     $_("docs").imports({
         Nav: {
             css: "#nav { width: 100%; }\
