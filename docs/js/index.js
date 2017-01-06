@@ -11,7 +11,7 @@ xmlplus("xp", function (xp, $_, t) {
                     </i:ViewStack>\
                   </div>",
             fun: function( sys, items, opts ) {
-                sys.header.on("change", function(e, target) {
+                sys.banner.on("change", function(e, target) {
                     sys.home.trigger("switch", target);
                 });
             }
