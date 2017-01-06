@@ -65,7 +65,7 @@ xmlplus("xp", function (xp, $_, t) {
 			      	    <span class='icon-bar'></span>\
 			      	    <span class='icon-bar'></span>\
 			        </button>\
-			        <a href='../' class='navbar-brand'>Bootstrap</a>\
+			        <a href='../' class='navbar-brand'>Xmlplus</a>\
 			      </div>"
 		},
 		Nav: {
