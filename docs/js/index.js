@@ -27,7 +27,7 @@ xmlplus("xp", function (xp, $_, t) {
         },
         Nav: {
 			css: "#nav { position: fixed; display: block; width: 260px; height: 100%; overflow-x: hidden; overflow-y: auto; padding: 0 15px; }\
-				  #nav li { cursor: pointer; font-size: 14px; }",
+				  .bs-docs-sidebar .nav>li>a { cursor: pointer; font-size: 14px; }",
             xml: "<ul id='nav' class='nav bs-docs-sidenav'>\
                     <li dt='01-components-and-space' id='first'><a>组件与空间</a></li>\
                     <li dt='02-naming'><a>命名</a></li>\
