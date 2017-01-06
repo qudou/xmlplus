@@ -107,6 +107,7 @@ xmlplus("xp", function (xp, $_, t) {
 			      </div>"
 		},
 		Nav: {
+			css: "#nav li { cursor: pointer }",
 			xml: "<nav id='nav' class='navbar-collapse bs-navbar-collapse collapse' role='navigation' aria-expanded='false' style='height: 1px;'>\
                    <ul class='nav navbar-nav'>\
                      <li id='startup'><a>起步</a></li>\
