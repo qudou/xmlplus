@@ -15,8 +15,8 @@ xmlplus("mx", function (xp, $_, t) {
 xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
-			xml: "<i:Calendar xmlns:i='//mx'/>"
-		}
+            xml: "<i:Calendar xmlns:i='//mx'/>"
+        }
     });
 });
 ```
@@ -38,8 +38,8 @@ xmlplus("xp", function (xp, $_, t) {
     });
     $_().imports({
         Index: {
-			xml: "<i:Calendar xmlns:i='/form'/>" // 也可以使用<i:Calendar xmlns:i='//form'/>
-		}
+            xml: "<i:Calendar xmlns:i='/form'/>" // 也可以使用<i:Calendar xmlns:i='//form'/>
+        }
     });
 });
 ```
@@ -52,8 +52,8 @@ xmlplus("xp", function (xp, $_, t) {
 xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
-			xml: "<i:Calendar xmlns:i='.'/>" // 或者<Calendar/>也可以
-		},
+            xml: "<i:Calendar xmlns:i='.'/>" // 或者<Calendar/>也可以
+        },
         Calendar: {}
     });
 });
@@ -72,8 +72,8 @@ xmlplus("xp", function (xp, $_, t) {
     });
     $_("form").imports({
         Index: {
-			xml: "<i:Calendar xmlns:i='..'/>"
-		}
+            xml: "<i:Calendar xmlns:i='..'/>"
+        }
     });
 });
 ```
