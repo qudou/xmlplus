@@ -16,7 +16,7 @@ xmlplus("xp", function (xp, $_, t) {
                     sys.home.trigger("switch", target);
                 });
 				setTimeout(function() {
-					document.getElementsById("loading").style.opacity = 0;
+					document.getElementById("loading").style.opacity = 0;
 					sys.index.css("opacity", "1");
 				}, 1000);
             }
