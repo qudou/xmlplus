@@ -12,8 +12,10 @@ xmlplus("xp", function (xp, $_, t) {
         },
 		Banner: {
 			xml: "<header id='header' class='navbar navbar-static-top bs-docs-nav' xmlns:i='banner'>\
-					<i:Title id='title'/>\
-					<i:Nav id='nav'/>\
+					<div class='container'>\
+					   <i:Title id='title'/>\
+					   <i:Nav id='nav'/>\
+					</div>\
 				  </header>"
 		},
         Docs: {
@@ -75,7 +77,6 @@ xmlplus("xp", function (xp, $_, t) {
                      <li><a>文档</a></li>\
                      <li><a>组件</a></li>\
                      <li><a>示例</a></li>\
-                     <li><a>定制</a></li>\
                    </ul>\
 				   <ul class='nav navbar-nav navbar-right'>\
 					<li><a target='_blank'>高薪工作</a></li>\
