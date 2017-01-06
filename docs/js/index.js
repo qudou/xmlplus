@@ -4,7 +4,10 @@ xmlplus("xp", function (xp, $_, t) {
 			css: "#header { border-bottom: 1px solid #e5e5e5; margin-bottom: 40px; }",
             xml: "<div id='index'>\
 					<Banner id='header'/>\
-				    <Docs id='docs'/>\
+					<ViewStack id='stack'>\
+						<Main id='main'/>\
+						<Docs id='docs'/>\
+					</ViewStack>\
 				  </div>"
         },
 		Banner: {
@@ -14,6 +17,18 @@ xmlplus("xp", function (xp, $_, t) {
 					   <i:Nav id='nav'/>\
 					</div>\
 				  </header>"
+		},
+		Main: {
+			xml: "<main class='bs-docs-masthead' id='content' role='main'>\
+				  <div class='container'>\
+					<span class='bs-docs-booticon bs-docs-booticon-lg bs-docs-booticon-outline'>X</span>\
+					<p class='lead'>Bootstrap 是最受欢迎的 HTML、CSS 和 JS 框架，用于开发响应式布局、移动设备优先的 WEB 项目。</p>\
+					<p class='lead'>\
+					  <a href='getting-started#download' class='btn btn-outline-inverse btn-lg'>下载 XMLPlus</a>\
+					</p>\
+					<p class='version'>当前版本： v3.3.0 | 文档更新于：2014-10-31</p>\
+				  </div>\
+				 </main>"
 		},
 		Docs: {
 			xml: "<div class='container bs-docs-container' xmlns:i='docs'>\
@@ -52,7 +67,26 @@ xmlplus("xp", function (xp, $_, t) {
                     xhr.send(options.data && JSON.stringify(options.data));
                 };
             }
-        }
+        },
+		ViewStack: { 
+			xml: "<div/>",
+			fun: function ( sys, items, opts ) {
+				var args, children = this.children(),
+					table = children.call("hide").hash(),
+					ptr = table[opts.index] || children[0];
+				if ( ptr ) ptr = ptr.show().trigger("show", null, false);
+				this.on("switch", function ( e, to ) {
+					table = this.children().hash();
+					if ( !table[to] || table[to] == ptr ) return;
+					e.stopPropagation();
+					args = [].slice.call(arguments).slice(2);
+					args.unshift(ptr + '');
+					ptr.hide().trigger("hide", to + '', false);
+					ptr = table[to].show().trigger("show", args, false);
+				});
+				return Object.defineProperty({}, "selected", { get: function() {return ptr;}});
+			}
+		},
     });
 	$_("banner").imports({
 		Title: {
@@ -110,7 +144,7 @@ xmlplus("xp", function (xp, $_, t) {
                 });
                 sys.nav.on("click", "./li", function (e) {
                     e.stopPropagation();
-					window.scrollTo(window.scrollX,50);
+					window.scrollTo(window.scrollX,0);
                     prev.removeClass("active");
                     prev = this.trigger("change", this.attr("dt")).addClass("active");
                 });
