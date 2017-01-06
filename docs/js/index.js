@@ -146,9 +146,7 @@ xmlplus("xp", function (xp, $_, t) {
             }
         },
         Content: {
-            xml: "<div class='col-md-9'>\
-					<div id='content' class='bs-docs-section'/>\
-				  </div>",
+            xml: "<div id='content' class='col-md-9'/>",
             fun: function( sys, items, opts ) {
                 var content = sys.content.elem();
                 function setValue( value ) {
@@ -156,6 +154,7 @@ xmlplus("xp", function (xp, $_, t) {
                     regexp.test(value);
                     content.innerHTML = RegExp.$1.trim();
                     content.lastChild.removeAttribute("class");
+                    content.lastChild.setAttribute("class", "bs-docs-section");
 					window.scrollTo(window.scrollX,0);
                 }
                 return { val: setValue };
