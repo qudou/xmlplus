@@ -103,7 +103,7 @@ xmlplus("xp", function (xp, $_, t) {
 			      	    <span class='icon-bar'></span>\
 			      	    <span class='icon-bar'></span>\
 			        </button>\
-			        <a href='../' class='navbar-brand'>XMLPlus</a>\
+			        <a href='javascript:void(0)' class='navbar-brand'>XMLPlus</a>\
 			      </div>"
 		},
 		Nav: {
