@@ -2,9 +2,7 @@ xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
 			css: "html,body, #index { width: 100%; height: 100%; }\
-				  #navbar { position: fixed; }\
-				  #header { border-bottom: 1px solid #e5e5e5; }\
-				  #docs { position: fixed; top: 50px; left: 0; width: 100%; height: calc(100% - 50px) }",
+				  #header { border-bottom: 1px solid #e5e5e5; }",
             xml: "<div id='index'>\
 					<Banner id='header'/>\
 				    <Docs id='docs'/>\
@@ -18,24 +16,23 @@ xmlplus("xp", function (xp, $_, t) {
 					</div>\
 				  </header>"
 		},
-        Docs: {
-            css: "#docs { position: relative; height: 100%; }\
-				  #sidebar { position: absolute; width: 260px; height: 100%;  padding: 0 15px; margin: 0 20px 0 0; overflow-x: hidden; overflow-y: auto; }\
-                  #content { position: absolute; left: 280px; top: 0; width: calc(100% - 280px); height: 100%; overflow-y: auto; }",
-            xml: "<div id='docs' xmlns:i='docs'>\
-                    <AJAX id='ajax' type='GET'/>\
-                    <div id='sidebar' class='bs-docs-sidebar'>\
-                        <i:Nav id='nav'/>\
-                    </div>\
-                    <i:Content id='content'/>\
-                  </div>",
+		Docs: {
+			xml: "<div class='container bs-docs-container' xmlns:i='docs'>\
+					<div class='row'>\
+						<div class='col-md-3'>\
+							<div class='bs-docs-sidebar hidden-print hidden-xs hidden-sm affix-top'><i:Nav id='nav'/></div>\
+						</div>\
+						<i:Content id='content' class='col-md-9'/>\
+					</div>\
+					<AJAX id='ajax' type='GET'/>\
+				  </div>",
             fun: function( sys, items, opts ) {
                 sys.nav.on("change", function (e, target) {
                     items.ajax({url: target});
                 });
                 sys.ajax.on("success", items.content.val);
             }
-        },
+		},
         AJAX: {
             xml: "<void id='ajax'/>",
             opt: { url: "http://xmlplus.net/", type: "POST", data: null, timeout: 5000, async: true },
@@ -67,7 +64,7 @@ xmlplus("xp", function (xp, $_, t) {
 			      	    <span class='icon-bar'></span>\
 			      	    <span class='icon-bar'></span>\
 			        </button>\
-			        <a href='../' class='navbar-brand'>Xmlplus</a>\
+			        <a href='../' class='navbar-brand'>XMLPlus</a>\
 			      </div>"
 		},
 		Nav: {
@@ -120,8 +117,7 @@ xmlplus("xp", function (xp, $_, t) {
             }
         },
         Content: {
-            css: "#content > *:first-child { max-width: 800px; }",
-            xml: "<div id='content' class='container'/>",
+            xml: "<div id='content' class='col-md-9'/>",
             fun: function( sys, items, opts ) {
                 var content = sys.content.elem();
                 function setValue( e, value ) {
