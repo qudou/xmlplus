@@ -56,9 +56,12 @@ xmlplus("xp", function (xp, $_, t) {
                     <AJAX id='ajax' type='GET' xmlns='tools'/>\
                   </div>",
             fun: function( sys, items, opts ) {
+				var ptr = null;
                 sys.nav.on("change", function (e, target) {
-					sys.overlay.show();
-                    items.ajax({url: target});
+					if ( ptr !== target ) {
+						sys.overlay.show();
+						items.ajax({url: ptr = target});
+					}
                 });
                 sys.ajax.on("success", function(e, data) {
 					sys.overlay.hide();
