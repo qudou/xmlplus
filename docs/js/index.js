@@ -1,10 +1,10 @@
 xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
-            css: "#index { position: relative; height: 100%; opacity: 0; transition: opacity .3s ease-in-out; }\
+            css: "#index { position: relative; height: 100%; opacity: 0; transition: opacity .5s ease-in-out; }\
 				  #banner { border-bottom: 1px solid #e5e5e5; }\
 				  #docs { margin-top: 40px; }\
-				  .loading { position: fixed; top: 40%; left: calc(50% - 92px); font-size: 3em; color: #3D6AA2; font-family: Menlo, Consolas, Inconsolata, Monaco, 'Courier New', monospace, 'Source Code Pro'; transition: opacity .3s ease-in-out; }",
+				  .loading { position: fixed; top: 40%; left: calc(50% - 92px); font-size: 3em; color: #3D6AA2; font-family: Menlo, Consolas, Inconsolata, Monaco, 'Courier New', monospace, 'Source Code Pro'; transition: opacity .5s ease-in-out; }",
             xml: "<div id='index' xmlns:i='tools'>\
                     <Banner id='banner'/>\
                     <i:ViewStack>\
