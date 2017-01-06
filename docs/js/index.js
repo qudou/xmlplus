@@ -9,7 +9,12 @@ xmlplus("xp", function (xp, $_, t) {
 						<Main id='main'/>\
 						<Docs id='docs'/>\
 					</ViewStack>\
-				  </div>"
+				  </div>",
+			fun: function( sys, items, opts ) {
+				sys.header.on("change", function(e, target) {
+					sys.stack.trigger("switch", target);
+				});
+			}
         },
 		Banner: {
 			xml: "<header id='header' class='navbar navbar-static-top bs-docs-nav' xmlns:i='banner'>\
@@ -102,19 +107,27 @@ xmlplus("xp", function (xp, $_, t) {
 			      </div>"
 		},
 		Nav: {
-			xml: "<nav class='navbar-collapse bs-navbar-collapse collapse' role='navigation' aria-expanded='false' style='height: 1px;'>\
+			xml: "<nav id='nav' class='navbar-collapse bs-navbar-collapse collapse' role='navigation' aria-expanded='false' style='height: 1px;'>\
                    <ul class='nav navbar-nav'>\
-                     <li class='active'><a>起步</a></li>\
-                     <li><a>文档</a></li>\
-                     <li><a>组件</a></li>\
-                     <li><a>示例</a></li>\
+                     <li id='startup'><a>起步</a></li>\
+                     <li id='docs'><a>文档</a></li>\
+                     <li id='components'><a>组件</a></li>\
+                     <li id='examples'><a>示例</a></li>\
                    </ul>\
 				   <ul class='nav navbar-nav navbar-right'>\
 					<li><a target='_blank'>高薪工作</a></li>\
 					<li><a target='_blank'>优站精选</a></li>\
 					<li><a target='_blank'>官方博客</a></li>\
 				   </ul>\
-				 </nav>"
+				 </nav>",
+			fun: function( sys, items, opts ) {
+				var prev = sys.startup;
+				sys.nav.on("click", "./ul/li", function (e) {
+					e.stopPropagation();
+					prev.removeClass("active");
+					prev = this.tirgger("change", this.toString()).addClass("active");
+				});
+			}
 		}
 	});
     $_("docs").imports({
