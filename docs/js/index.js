@@ -1,14 +1,18 @@
 xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
-            css: "#sidebar { position: fixed; width: 260px; height: 100%;  padding: 0 15px; margin: 0 20px 0 0; overflow-x: hidden; overflow-y: auto; }\
-				  #content { position: fixed; left: 280px; top: 0; width: calc(100% - 280px); height: 100%; overflow-y: auto; }",
-            xml: "<div id='top' xmlns:i='docs'>\
+            xml: "<Docs/>"
+        },
+        Docs: {
+            css: "#docs { position: relative; height: 100%; }\
+				  #sidebar { position: absolute; width: 260px; height: 100%;  padding: 0 15px; margin: 0 20px 0 0; overflow-x: hidden; overflow-y: auto; }\
+                  #content { position: absolute; left: 280px; top: 0; width: calc(100% - 280px); height: 100%; overflow-y: auto; }",
+            xml: "<div id='docs' xmlns:i='docs'>\
                     <AJAX id='ajax' type='GET'/>\
-					<div id='sidebar' class='bs-docs-sidebar'>\
-						<i:Nav id='nav'/>\
-					</div>\
-					<i:Content id='content'/>\
+                    <div id='sidebar' class='bs-docs-sidebar'>\
+                        <i:Nav id='nav'/>\
+                    </div>\
+                    <i:Content id='content'/>\
                   </div>",
             fun: function( sys, items, opts ) {
                 sys.nav.on("change", function (e, target) {
@@ -16,10 +20,6 @@ xmlplus("xp", function (xp, $_, t) {
                 });
                 sys.ajax.on("success", items.content.val);
             }
-        },
-        Banner: {
-            css: "#banner { background: #222; color: #fafafa; position: fixed; top: 0; height: 50px; box-shadow: 0 0 5px rgba(0,0,0,0.5); width: 100%; z-index: 100; }",
-            xml: "<div id='banner'/>"
         },
         AJAX: {
             xml: "<void id='ajax'/>",
@@ -45,8 +45,8 @@ xmlplus("xp", function (xp, $_, t) {
     });
     $_("docs").imports({
         Nav: {
-			css: "#nav { width: 100%; }\
-				  .bs-docs-sidebar .nav>li>a { cursor: pointer; font-size: 14px; }",
+            css: "#nav { width: 100%; }\
+                  .bs-docs-sidebar .nav>li>a { cursor: pointer; font-size: 14px; }",
             xml: "<ul id='nav' class='nav bs-docs-sidenav'>\
                     <li dt='01-components-and-space' id='first'><a>组件与空间</a></li>\
                     <li dt='02-naming'><a>命名</a></li>\
@@ -80,15 +80,15 @@ xmlplus("xp", function (xp, $_, t) {
             css: "#content > *:first-child { max-width: 800px; }",
             xml: "<div id='content' class='container'/>",
             fun: function( sys, items, opts ) {
-				var content = sys.content.elem();
-				function setValue( e, value ) {
+                var content = sys.content.elem();
+                function setValue( e, value ) {
                     var regexp = /\<body\>((.|\r|\n)*)\<\/body\>/g;
                     regexp.test(value);
                     content.innerHTML = RegExp.$1.trim();
                     content.lastChild.removeAttribute("class");
-				}
-				return { val: setValue };
+                }
+                return { val: setValue };
             }
         }
-	});
+    });
 });
