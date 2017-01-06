@@ -12,7 +12,6 @@ xmlplus("xp", function (xp, $_, t) {
                         <Docs id='docs'/>\
                     </i:ViewStack>\
                   </div>",
-			map: { defer: "docs" },
             fun: function( sys, items, opts ) {
                 sys.banner.on("change", function(e, target) {
                     sys.home.trigger("switch", target);
