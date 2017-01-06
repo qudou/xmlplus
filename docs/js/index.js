@@ -96,6 +96,7 @@ xmlplus("xp", function (xp, $_, t) {
     });
 	$_("banner").imports({
 		Title: {
+			css: "#title { cursor: pointer; }",
 			xml: "<div class='navbar-header'>\
 			        <button class='navbar-toggle collapsed' type='button' data-toggle='collapse' data-target='.bs-navbar-collapse'>\
 			      	    <span class='sr-only'>Toggle navigation</span>\
@@ -103,8 +104,13 @@ xmlplus("xp", function (xp, $_, t) {
 			      	    <span class='icon-bar'></span>\
 			      	    <span class='icon-bar'></span>\
 			        </button>\
-			        <a href='javascript:void(0)' class='navbar-brand'>XMLPlus</a>\
-			      </div>"
+			        <a id='title' class='navbar-brand'>XMLPlus</a>\
+			      </div>",
+			fun: function( sys, items, opts ) {
+				sys.title.on("click", function(e) {
+					this.trigger("change", "main");
+				});
+			}
 		},
 		Nav: {
 			css: "#nav li { cursor: pointer }",
