@@ -2,7 +2,7 @@ xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
             css: "#top { position: relative; }\
-				  #content { position: fixed; left: 260px; top: 0; width: calc(100% - 260px); height: 100%; overflow-y: auto; }\
+				  #content { position: fixed; left: 280px; top: 0; width: calc(100% - 280px); height: 100%; overflow-y: auto; }\
 				  #content > *:first-child { max-width: 800px; }",
             xml: "<div id='top'>\
                     <AJAX id='ajax' type='GET'/>\
@@ -26,7 +26,7 @@ xmlplus("xp", function (xp, $_, t) {
             xml: "<div id='banner'/>"
         },
         Nav: {
-			css: "#nav { position: fixed; display: block; width: 260px; height: 100%; overflow-x: hidden; overflow-y: auto; padding: 0 15px; }\
+			css: "#nav { position: fixed; display: block; width: 260px; height: 100%; overflow-x: hidden; overflow-y: auto; padding: 0 15px; margin: 0 20px 0 0; }\
 				  .bs-docs-sidebar .nav>li>a { cursor: pointer; font-size: 14px; }",
             xml: "<ul id='nav' class='nav bs-docs-sidenav'>\
                     <li dt='01-components-and-space' id='first'><a>组件与空间</a></li>\
