@@ -3,8 +3,7 @@ xmlplus("xp", function (xp, $_, t) {
         Index: {
             css: "#index { position: relative; height: 100%; opacity: 0; transition: opacity .5s ease-in-out; }\
 				  #banner { border-bottom: 1px solid #e5e5e5; }\
-				  #docs { margin-top: 40px; }\
-				  .loading { position: fixed; top: 40%; left: calc(50% - 92px); font-size: 3em; color: #3D6AA2; font-family: Menlo, Consolas, Inconsolata, Monaco, 'Courier New', monospace, 'Source Code Pro'; transition: opacity .5s ease-in-out; }",
+				  #docs { margin-top: 40px; }",
             xml: "<div id='index' xmlns:i='tools'>\
                     <Banner id='banner'/>\
                     <i:ViewStack>\
@@ -17,7 +16,7 @@ xmlplus("xp", function (xp, $_, t) {
                     sys.home.trigger("switch", target);
                 });
 				setTimeout(function() {
-					document.getElementsByClassName("loading")[0].style.opacity = 0;
+					document.getElementsById("loading").style.opacity = 0;
 					sys.index.css("opacity", "1");
 				}, 1000);
             }
