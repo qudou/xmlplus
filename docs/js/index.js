@@ -63,6 +63,7 @@ xmlplus("xp", function (xp, $_, t) {
                 sys.ajax.on("success", function(e, data) {
 					sys.overlay.hide();
 					items.content.val(e, data);
+					window.scrollTo(window.scrollX,0);
 				});
             }
         }
@@ -138,7 +139,6 @@ xmlplus("xp", function (xp, $_, t) {
                 });
                 sys.nav.on("click", "./li", function (e) {
                     e.stopPropagation();
-                    window.scrollTo(window.scrollX,0);
                     prev.removeClass("active");
                     prev = this.trigger("change", this.attr("dt")).addClass("active");
                 });
@@ -158,7 +158,7 @@ xmlplus("xp", function (xp, $_, t) {
             }
         },
 		Overlay: {
-			css: "#overlay{display:none;position:absolute;left:0;top:0;width:100%;height:100%;z-index:13000;-webkit-transition-duration:.4s;transition-duration:.4s}",
+			css: "#overlay{display:none;position:fixed;left:0;top:0;width:100%;height:100%;z-index:13000;-webkit-transition-duration:.4s;transition-duration:.4s}",
 			xml: "<div id=\"overlay\"> <Loader/> </div>"
 		},
 		Loader: {
