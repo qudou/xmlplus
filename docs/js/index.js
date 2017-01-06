@@ -28,31 +28,31 @@ xmlplus("xp", function (xp, $_, t) {
         Nav: {
 			css: "#nav { position: fixed; display: block; width: 260px; height: 100%; overflow-x: hidden; overflow-y: auto; padding: 0 15px; }",
             xml: "<ul id='nav' class='nav bs-docs-sidenav'>\
-                    <li><a href='#' dt='01-components-and-space' id='first'>组件与空间</a></li>\
-                    <li><a href='#' dt='02-naming'>命名</a></li>\
-                    <li><a href='#' dt='03-abstract'>抽象</a></li>\
-                    <li><a href='#' dt='04-dynamic-interface'>动态接口</a></li>\
-                    <li><a href='#' dt='05-static-interface'>静态接口</a></li>\
-                    <li><a href='#' dt='06-parameter-mapping'>参数映射</a></li>\
-                    <li><a href='#' dt='07-path'>路径</a></li>\
-                    <li><a href='#' dt='08-inheritting'>继承</a></li>\
-                    <li><a href='#' dt='09-searching'>检索</a></li>\
-                    <li><a href='#' dt='10-nesting'>嵌套</a></li>\
-                    <li><a href='#' dt='11-life-circle'>生命周期</a></li>\
-                    <li><a href='#' dt='12-events-and-communication'>事件与通信</a></li>\
-                    <li><a href='#' dt='13-message-and-communication'>消息与通信</a></li>\
-                    <li><a href='#' dt='14-sharing'>共享与通信</a></li>\
-                    <li><a href='#' dt='15-lazy-instantiation'>延迟实例化</a></li>\
+                    <li dt='01-components-and-space' id='first'><a>组件与空间</a></li>\
+                    <li dt='02-naming'><a>命名</a></li>\
+                    <li dt='03-abstract'><a>抽象</a></li>\
+                    <li dt='04-dynamic-interface'><a>动态接口</a></li>\
+                    <li dt='05-static-interface'><a>静态接口</a></li>\
+                    <li dt='06-parameter-mapping'><a>参数映射</a></li>\
+                    <li dt='07-path'><a>路径</a></li>\
+                    <li dt='08-inheritting'><a>继承</a></li>\
+                    <li dt='09-searching'><a>检索</a></li>\
+                    <li dt='10-nesting'><a>嵌套</a></li>\
+                    <li dt='11-life-circle'><a>生命周期</a></li>\
+                    <li dt='12-events-and-communication'><a>事件与通信</a></li>\
+                    <li dt='13-message-and-communication'><a>消息与通信</a></li>\
+                    <li dt='14-sharing'><a>共享与通信</a></li>\
+                    <li dt='15-lazy-instantiation'><a>延迟实例化</a></li>\
                  </ul>",
             fun: function( sys, items, opts ) {
-                var prev;
+                var prev = sys.first;
                 setTimeout(function() {
                     sys.first.trigger("click");
                 });
-                sys.nav.on("click", "./li/a", function (e) {
+                sys.nav.on("click", "./li", function (e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    prev && prev.removeClass("active");
+                    prev.removeClass("active");
                     prev = this.trigger("change", this.attr("dt")).addClass("active");
                 });
             }
