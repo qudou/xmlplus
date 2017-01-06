@@ -146,7 +146,9 @@ xmlplus("xp", function (xp, $_, t) {
             }
         },
         Content: {
-            xml: "<div id='content' class='col-md-9'/>",
+            xml: "<div class='col-md-9'>\
+					<div id='content' class='bs-docs-section'/>\
+				  </div>",
             fun: function( sys, items, opts ) {
                 var content = sys.content.elem();
                 function setValue( value ) {
