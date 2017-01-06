@@ -123,7 +123,13 @@ xmlplus("xp", function (xp, $_, t) {
                     <li dt='04-dynamic-interface'><a>动态接口</a></li>\
                     <li dt='05-static-interface'><a>静态接口</a></li>\
                     <li dt='06-parameter-mapping'><a>参数映射</a></li>\
-                    <li dt='07-path'><a>路径</a></li>\
+                    <li dt='07-path'>\
+						<a href='#path'>路径</a>\
+						<ul class='nav'>\
+							<li><a href='#absolute-path'>绝对路径</a></li>\
+							<li><a href='#relative-path'>相对路径</a></li>\
+						</ul>\
+					</li>\
                     <li dt='08-inheritting'><a>继承</a></li>\
                     <li dt='09-searching'><a>检索</a></li>\
                     <li dt='10-nesting'><a>嵌套</a></li>\
