@@ -72,12 +72,17 @@ xmlplus("xp", function (xp, $_, t) {
 			xml: "<nav class='navbar-collapse bs-navbar-collapse collapse' role='navigation' aria-expanded='false' style='height: 1px;'>\
                    <ul class='nav navbar-nav'>\
                      <li class='active'><a>起步</a></li>\
-                     <li><a>全局 CSS 样式</a></li>\
+                     <li><a>文档</a></li>\
                      <li><a>组件</a></li>\
-                     <li><a>JavaScript 插件</a></li>\
+                     <li><a>示例</a></li>\
                      <li><a>定制</a></li>\
                    </ul>\
-				  </nav>"
+				   <ul class='nav navbar-nav navbar-right'>\
+					<li><a target='_blank'>高薪工作</a></li>\
+					<li><a target='_blank'>优站精选</a></li>\
+					<li><a target='_blank'>官方博客</a></li>\
+				   </ul>\
+				 </nav>"
 		}
 	});
     $_("docs").imports({
