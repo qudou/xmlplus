@@ -111,6 +111,7 @@ xmlplus("xp", function (xp, $_, t) {
                 });
                 sys.nav.on("click", "./li", function (e) {
                     e.stopPropagation();
+					window.scrollTo(window.scrollX,0);
                     prev.removeClass("active");
                     prev = this.trigger("change", this.attr("dt")).addClass("active");
                 });
