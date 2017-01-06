@@ -1,144 +1,104 @@
 xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
-			css: "#header { border-bottom: 1px solid #e5e5e5; }\
-				  #docs {  margin-top: 40px; }",
-            xml: "<div id='index'>\
-					<Banner id='header'/>\
-					<ViewStack id='stack'>\
-						<Main id='main'/>\
-						<Docs id='docs'/>\
-					</ViewStack>\
-				  </div>",
-			fun: function( sys, items, opts ) {
-				sys.header.on("change", function(e, target) {
-					sys.stack.trigger("switch", target);
-				});
-			}
+            css: "#banner { border-bottom: 1px solid #e5e5e5; }\
+				  #docs { margin-top: 40px; }",
+            xml: "<div xmlns:i='tools'>\
+                    <Banner id='banner'/>\
+                    <i:ViewStack>\
+                        <Home id='home'/>\
+                        <Docs id='docs'/>\
+                    </i:ViewStack>\
+                  </div>",
+            fun: function( sys, items, opts ) {
+                sys.header.on("change", function(e, target) {
+                    sys.home.trigger("switch", target);
+                });
+            }
         },
-		Banner: {
-			xml: "<header id='header' class='navbar navbar-static-top bs-docs-nav' xmlns:i='banner'>\
-					<div class='container'>\
-					   <i:Title id='title'/>\
-					   <i:Nav id='nav'/>\
-					</div>\
-				  </header>"
-		},
-		Main: {
-			xml: "<main class='bs-docs-masthead' id='content' role='main'>\
-				  <div class='container'>\
-					<span class='bs-docs-booticon bs-docs-booticon-lg bs-docs-booticon-outline'>X</span>\
-					<p class='lead'>Bootstrap 是最受欢迎的 HTML、CSS 和 JS 框架，用于开发响应式布局、移动设备优先的 WEB 项目。</p>\
-					<p class='lead'>\
-					  <a href='getting-started#download' class='btn btn-outline-inverse btn-lg'>下载 XMLPlus</a>\
-					</p>\
-					<p class='version'>当前版本： v3.3.0 | 文档更新于：2014-10-31</p>\
-				  </div>\
-				 </main>"
-		},
-		Docs: {
-			xml: "<div class='container bs-docs-container' xmlns:i='docs'>\
-					<div class='row'>\
-						<i:Content id='content' class='col-md-9'/>\
-						<div class='col-md-3'>\
-							<div class='bs-docs-sidebar hidden-print hidden-xs hidden-sm affix-top'><i:Nav id='nav'/></div>\
-						</div>\
-					</div>\
-					<AJAX id='ajax' type='GET'/>\
-				  </div>",
+        Banner: {
+            xml: "<header class='navbar navbar-static-top bs-docs-nav'>\
+                     <div class='container' xmlns:i='banner'>\
+                        <i:Title/>\
+                        <i:Navigator/>\
+                     </div>\
+                  </header>"
+        },
+        Home: {
+            xml: "<main class='bs-docs-masthead'>\
+                  <div class='container'>\
+                    <span class='bs-docs-booticon bs-docs-booticon-lg bs-docs-booticon-outline'>X</span>\
+                    <p class='lead'>XMLPlus是一个颠覆性JS框架，用于快速开发前后端项目。</p>\
+                    <p class='lead'>\
+                      <a href='getting-started#download' class='btn btn-outline-inverse btn-lg'>下载 XMLPlus</a>\
+                    </p>\
+                    <p class='version'>当前版本： v1.5.1 | 文档更新于：2017-01-06</p>\
+                  </div>\
+                 </main>"
+        },
+        Docs: {
+            xml: "<div class='container bs-docs-container' xmlns:i='docs'>\
+                    <div class='row'>\
+                        <i:Content id='content' class='col-md-9'/>\
+                        <div class='col-md-3'>\
+                            <div class='bs-docs-sidebar hidden-print hidden-xs hidden-sm affix-top'><i:Navigator id='nav'/></div>\
+                        </div>\
+                    </div>\
+                    <AJAX id='ajax' type='GET' xmlns='tools'/>\
+                  </div>",
             fun: function( sys, items, opts ) {
                 sys.nav.on("change", function (e, target) {
                     items.ajax({url: target});
                 });
                 sys.ajax.on("success", items.content.val);
             }
-		},
-        AJAX: {
-            xml: "<void id='ajax'/>",
-            opt: { url: "http://xmlplus.net/", type: "POST", data: null, timeout: 5000, async: true },
-            fun: function ( sys, items, opts ) {
-                return function ( options_ ) { 
-                    var xhr = new XMLHttpRequest,
-                        options = xp.extend({}, opts, options_);
-                    xhr.timeout = options.timeout;
-                    xhr.ontimeout = xhr.onerror = function (event) {
-                        sys.ajax.trigger(event.type, event);
-                    };
-                    xhr.onload = function (event) {
-                        if ( xhr.status != 200 )
-                            return sys.ajax.trigger("error", event);
-                        sys.ajax.trigger("success", [xhr.responseText], false);
-                    };
-                    xhr.open(options.type, opts.url + options.url, options.async);
-                    xhr.send(options.data && JSON.stringify(options.data));
-                };
+        }
+    });
+    $_("banner").imports({
+        Title: {
+            css: "#title { cursor: pointer; }",
+            xml: "<div class='navbar-header'>\
+                    <button class='navbar-toggle collapsed' type='button' data-toggle='collapse' data-target='.bs-navbar-collapse'>\
+                        <span class='sr-only'>Toggle navigation</span>\
+                        <span class='icon-bar'></span>\
+                        <span class='icon-bar'></span>\
+                        <span class='icon-bar'></span>\
+                    </button>\
+                    <a id='title' class='navbar-brand'>XMLPlus</a>\
+                  </div>",
+            fun: function( sys, items, opts ) {
+                sys.title.on("click", function(e) {
+                    this.trigger("change", "home");
+                });
             }
         },
-		ViewStack: { 
-			xml: "<div/>",
-			fun: function ( sys, items, opts ) {
-				var args, children = this.children(),
-					table = children.call("hide").hash(),
-					ptr = table[opts.index] || children[0];
-				if ( ptr ) ptr = ptr.show().trigger("show", null, false);
-				this.on("switch", function ( e, to ) {
-					table = this.children().hash();
-					if ( !table[to] || table[to] == ptr ) return;
-					e.stopPropagation();
-					args = [].slice.call(arguments).slice(2);
-					args.unshift(ptr + '');
-					ptr.hide().trigger("hide", to + '', false);
-					ptr = table[to].show().trigger("show", args, false);
-				});
-				return Object.defineProperty({}, "selected", { get: function() {return ptr;}});
-			}
-		},
-    });
-	$_("banner").imports({
-		Title: {
-			css: "#title { cursor: pointer; }",
-			xml: "<div class='navbar-header'>\
-			        <button class='navbar-toggle collapsed' type='button' data-toggle='collapse' data-target='.bs-navbar-collapse'>\
-			      	    <span class='sr-only'>Toggle navigation</span>\
-			      	    <span class='icon-bar'></span>\
-			      	    <span class='icon-bar'></span>\
-			      	    <span class='icon-bar'></span>\
-			        </button>\
-			        <a id='title' class='navbar-brand'>XMLPlus</a>\
-			      </div>",
-			fun: function( sys, items, opts ) {
-				sys.title.on("click", function(e) {
-					this.trigger("change", "main");
-				});
-			}
-		},
-		Nav: {
-			css: "#nav li { cursor: pointer }",
-			xml: "<nav id='nav' class='navbar-collapse bs-navbar-collapse collapse' role='navigation' aria-expanded='false' style='height: 1px;'>\
+        Navigator: {
+            css: "#nav li { cursor: pointer }",
+            xml: "<nav id='nav' class='navbar-collapse bs-navbar-collapse collapse' role='navigation' aria-expanded='false' style='height: 1px;'>\
                    <ul class='nav navbar-nav'>\
                      <li id='startup'><a>起步</a></li>\
                      <li id='docs'><a>文档</a></li>\
                      <li id='components'><a>组件</a></li>\
                      <li id='examples'><a>示例</a></li>\
                    </ul>\
-				   <ul class='nav navbar-nav navbar-right'>\
-					<li><a target='_blank'>高薪工作</a></li>\
-					<li><a target='_blank'>优站精选</a></li>\
-					<li><a target='_blank'>官方博客</a></li>\
-				   </ul>\
-				 </nav>",
-			fun: function( sys, items, opts ) {
-				var prev = sys.startup;
-				sys.nav.on("click", "./ul/li", function (e) {
-					e.stopPropagation();
-					prev.removeClass("active");
-					prev = this.trigger("change", this.toString()).addClass("active");
-				});
-			}
-		}
-	});
+                   <ul class='nav navbar-nav navbar-right'>\
+                    <li><a target='_blank'>高薪工作</a></li>\
+                    <li><a target='_blank'>优站精选</a></li>\
+                    <li><a target='_blank'>官方博客</a></li>\
+                   </ul>\
+                 </nav>",
+            fun: function( sys, items, opts ) {
+                var prev = sys.startup;
+                sys.nav.on("click", "./ul/li", function (e) {
+                    e.stopPropagation();
+                    prev.removeClass("active");
+                    prev = this.trigger("change", this.toString()).addClass("active");
+                });
+            }
+        }
+    });
     $_("docs").imports({
-        Nav: {
+        Navigator: {
             css: "#nav { width: 100%; }\
                   .bs-docs-sidebar .nav>li>a { cursor: pointer; font-size: 14px; }",
             xml: "<ul id='nav' class='nav bs-docs-sidenav'>\
@@ -165,7 +125,7 @@ xmlplus("xp", function (xp, $_, t) {
                 });
                 sys.nav.on("click", "./li", function (e) {
                     e.stopPropagation();
-					window.scrollTo(window.scrollX,0);
+                    window.scrollTo(window.scrollX,0);
                     prev.removeClass("active");
                     prev = this.trigger("change", this.attr("dt")).addClass("active");
                 });
@@ -185,4 +145,46 @@ xmlplus("xp", function (xp, $_, t) {
             }
         }
     });
+    $_("tools").imports({
+        AJAX: {
+            xml: "<void id='ajax'/>",
+            opt: { url: "http://xmlplus.net/", type: "POST", data: null, timeout: 5000, async: true },
+            fun: function ( sys, items, opts ) {
+                return function ( options_ ) { 
+                    var xhr = new XMLHttpRequest,
+                        options = xp.extend({}, opts, options_);
+                    xhr.timeout = options.timeout;
+                    xhr.ontimeout = xhr.onerror = function (event) {
+                        sys.ajax.trigger(event.type, event);
+                    };
+                    xhr.onload = function (event) {
+                        if ( xhr.status != 200 )
+                            return sys.ajax.trigger("error", event);
+                        sys.ajax.trigger("success", [xhr.responseText], false);
+                    };
+                    xhr.open(options.type, opts.url + options.url, options.async);
+                    xhr.send(options.data && JSON.stringify(options.data));
+                };
+            }
+        },
+        ViewStack: { 
+            xml: "<div/>",
+            fun: function ( sys, items, opts ) {
+                var args, children = this.children(),
+                    table = children.call("hide").hash(),
+                    ptr = table[opts.index] || children[0];
+                if ( ptr ) ptr = ptr.show().trigger("show", null, false);
+                this.on("switch", function ( e, to ) {
+                    table = this.children().hash();
+                    if ( !table[to] || table[to] == ptr ) return;
+                    e.stopPropagation();
+                    args = [].slice.call(arguments).slice(2);
+                    args.unshift(ptr + '');
+                    ptr.hide().trigger("hide", to + '', false);
+                    ptr = table[to].show().trigger("show", args, false);
+                });
+                return Object.defineProperty({}, "selected", { get: function() {return ptr;}});
+            }
+        }
+	});
 });
