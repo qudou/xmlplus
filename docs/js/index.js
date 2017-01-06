@@ -2,7 +2,7 @@ xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
             css: "#top { position: relative; }\
-				  #content { position: fixed; left: 260px; top: 0; width: calc(100% - 260px); height: 100%; }\
+				  #content { position: fixed; left: 260px; top: 0; width: calc(100% - 260px); height: 100%; overflow-y: auto; }\
 				  #content > *:first-child { max-width: 800px; }",
             xml: "<div id='top'>\
                     <AJAX id='ajax' type='GET'/>\
