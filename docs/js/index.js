@@ -26,7 +26,7 @@ xmlplus("xp", function (xp, $_, t) {
             xml: "<div id='banner'/>"
         },
         Nav: {
-			css: "#nav { display: block; width: 260px; height: 100%; overflow-x: hidden; overflow-y: auto; }",
+			css: "#nav { position: fixed; display: block; width: 260px; height: 100%; overflow-x: hidden; overflow-y: auto; padding: 0 15px; }",
             xml: "<ul id='nav' class='nav nav-tabs nav-stacked'>\
                     <li><a href='#' dt='01-components-and-space' id='first'>组件与空间</a></li>\
                     <li><a href='#' dt='02-naming'>命名</a></li>\
