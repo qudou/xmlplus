@@ -19,10 +19,10 @@ xmlplus("xp", function (xp, $_, t) {
 		Docs: {
 			xml: "<div class='container bs-docs-container' xmlns:i='docs'>\
 					<div class='row'>\
+						<i:Content id='content' class='col-md-9'/>\
 						<div class='col-md-3'>\
 							<div class='bs-docs-sidebar hidden-print hidden-xs hidden-sm affix-top'><i:Nav id='nav'/></div>\
 						</div>\
-						<i:Content id='content' class='col-md-9'/>\
 					</div>\
 					<AJAX id='ajax' type='GET'/>\
 				  </div>",
