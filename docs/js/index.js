@@ -4,10 +4,10 @@ xmlplus("xp", function (xp, $_, t) {
             css: "#top { position: relative; }\
 				  #content { position: fixed; left: 260px; top: 0; width: calc(100% - 260px); height: 100%; }\
 				  #content > *:first-child { max-width: 800px; }",
-            xml: "<div id='top' class='container'>\
+            xml: "<div id='top'>\
                     <AJAX id='ajax' type='GET'/>\
 					<Nav id='nav'/>\
-					<div id='content'/>\
+					<div id='content' class='container'/>\
                   </div>",
             fun: function( sys, items, opts ) {
                 sys.nav.on("change", function (e, target) {
