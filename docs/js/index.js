@@ -3,7 +3,7 @@ xmlplus("xp", function (xp, $_, t) {
         Index: {
 			css: "html,body, #index { width: 100%; height: 100%; }\
 				  #navbar { position: fixed; }\
-				  #docs { position: fixed; top: 50px; left: 0; height: calc(100% - 50px) }",
+				  #docs { position: fixed; top: 50px; left: 0; width: 100%; height: calc(100% - 50px) }",
             xml: "<div id='index'>\
 					<header class='navbar navbar-static-top bs-docs-nav'>\
 					</header>\
