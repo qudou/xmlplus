@@ -58,14 +58,13 @@ xmlplus("xp", function (xp, $_, t) {
                 sys.nav.on("change", function (e, target) {
 					if ( ptr == target ) return;
 					if ( table[target] )
-						return items.content.val(e, table[ptr = target]);
+						return items.content.val(table[ptr = target]);
 					sys.overlay.show();
 					items.ajax({url: ptr = target});
                 });
                 sys.ajax.on("success", function(e, data) {
 					sys.overlay.hide();
-					items.content.val(e, table[ptr] = data);
-					window.scrollTo(window.scrollX,0);
+					items.content.val(table[ptr] = data);
 				});
             }
         }
@@ -150,11 +149,12 @@ xmlplus("xp", function (xp, $_, t) {
             xml: "<div id='content' class='col-md-9'/>",
             fun: function( sys, items, opts ) {
                 var content = sys.content.elem();
-                function setValue( e, value ) {
+                function setValue( value ) {
                     var regexp = /\<body\>((.|\r|\n)*)\<\/body\>/g;
                     regexp.test(value);
                     content.innerHTML = RegExp.$1.trim();
                     content.lastChild.removeAttribute("class");
+					window.scrollTo(window.scrollX,0);
                 }
                 return { val: setValue };
             }
