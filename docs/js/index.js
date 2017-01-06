@@ -1,8 +1,14 @@
 xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
-			css: "html,body { width: 100%; height: 100%; }",
-            xml: "<Docs/>"
+			css: "html,body, #index { width: 100%; height: 100%; }\
+				  #navbar { position: fixed; }\
+				  #docs { position: fixed; top: 50px; left: 0; height: calc(100% - 50px) }",
+            xml: "<div id='index'>\
+					<header class='navbar navbar-static-top bs-docs-nav'>\
+					</header>\
+				    <Docs id='docs'/>\
+				  </div>"
         },
         Docs: {
             css: "#docs { position: relative; height: 100%; }\
