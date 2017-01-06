@@ -141,7 +141,7 @@ xmlplus("xp", function (xp, $_, t) {
                 sys.nav.on("click", "./li", function (e) {
                     e.stopPropagation();
                     prev.removeClass("active");
-                    prev = this.trigger("change", this.attr("dt")).addClass("active");
+                    prev = this.trigger("change", "docs/" + this.attr("dt")).addClass("active");
                 });
             }
         },
