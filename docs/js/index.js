@@ -20,7 +20,7 @@ xmlplus("xp", function (xp, $_, t) {
 				setTimeout(function() {
 					document.getElementsByClassName("loading")[0].style.opacity = 0;
 					sys.index.css("opacity", "1");
-				}, 0);
+				}, 300);
             }
         },
         Banner: {
