@@ -134,7 +134,7 @@ xmlplus("xp", function (xp, $_, t) {
                     <li id='15-lazy-instantiation'><a>延迟实例化</a></li>\
                  </ul>",
             fun: function( sys, items, opts ) {
-				var template = "<li class='nav'><a href='%href'>%text</a></li>";
+				var template = "<li><a href='%href'>%text</a></li>";
                 this.watch("article-ready", function ( e, dt ) {
 					sys[dt.url].first().attr("href", "#" + dt.h1.getAttribute("id"));
 					var ul = "<ul class='nav'>";
