@@ -42,7 +42,6 @@ xmlplus("xp", function (xp, $_, t) {
                  </main>"
         },
         Docs: {
-			css: "#docs { position: relative; }",
             xml: "<div id='docs' class='container bs-docs-container' xmlns:i='docs'>\
                     <div class='row'>\
                         <div id='content' class='col-md-9'>\
