@@ -69,7 +69,7 @@ xmlplus("xp", function (xp, $_, t) {
                   </div>",
 			fun: function () {
 				this.on("show", function() {
-						$('[data-spy="scroll"]').scrollspy('process');
+						$('[data-spy="scroll"]').scrollspy('clear');
 				});
 			}
         }
