@@ -151,6 +151,9 @@ xmlplus("xp", function (xp, $_, t) {
 					article = sys.article.elem(),
 					ajax = this.append("/tools/AJAX"),
 					regexp = /body\>((.|\r|\n)*)\<\/body/g;
+				ajax.on("error", function (e) {
+					ajax.value()({type: 'GET', url: 'docs/' + opts.url});
+				});
 				ajax.once("success", function (e, value) {
                     regexp.test(value);
                     str = RegExp.$1.trim();
@@ -158,7 +161,7 @@ xmlplus("xp", function (xp, $_, t) {
 					(msg = [].slice.call(article.querySelectorAll("h1,h2"))).forEach(function(item) {
 						item.setAttribute("id", xp.guid());
 					});
-					this.notify("article-ready", {url: opts.url, h1: msg[0], h2s: msg.slice(1)});
+					ajax.notify("article-ready", {url: opts.url, h1: msg[0], h2s: msg.slice(1)}).off("error");
 				}).value()({type: 'GET', url: 'docs/' + opts.url});
 			}
 		}
