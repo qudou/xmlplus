@@ -45,7 +45,7 @@ xmlplus("xp", function (xp, $_, t) {
 			css: "#docs { position: relative; }",
             xml: "<div id='docs' class='container bs-docs-container' xmlns:i='docs'>\
                     <div class='row'>\
-                        <div id='content' class='col-md-9' data-spy='scroll'>\
+                        <div id='content' class='col-md-9'>\
 							<i:Article url='01-components-and-space'/>\
 							<i:Article url='02-naming'/>\
 							<i:Article url='03-abstract'/>\
