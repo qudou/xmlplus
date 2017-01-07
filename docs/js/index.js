@@ -66,7 +66,7 @@ xmlplus("xp", function (xp, $_, t) {
                 sys.ajax.on("success", function(e, data) {
 					sys.overlay.hide();
 					items.content.val(table[ptr] = data);
-					$(sys.nav.elem()).scrollspy("refresh");
+					$(sys.content.elem()).scrollspy("refresh");
 				});
 				console.log($(sys.content.elem()).data());
 				$(sys.nav.elem()).scrollspy($(sys.content.elem()).data());
