@@ -66,12 +66,7 @@ xmlplus("xp", function (xp, $_, t) {
                             <div class='bs-docs-sidebar hidden-print hidden-xs hidden-sm affix-top'><i:Navigator id='nav'/></div>\
                         </div>\
                     </div>\
-                  </div>",
-			fun: function () {
-				this.on("show", function() {
-						$('[data-spy="scroll"]').scrollspy('clear');
-				});
-			}
+                  </div>"
         }
     });
     $_("banner").imports({
