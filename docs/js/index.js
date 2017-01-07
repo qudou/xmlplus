@@ -52,6 +52,15 @@ xmlplus("xp", function (xp, $_, t) {
 							<i:Article url='04-dynamic-interface'/>\
 							<i:Article url='05-static-interface'/>\
 							<i:Article url='06-parameter-mapping'/>\
+							<i:Article url='07-path'/>\
+							<i:Article url='08-inheritting'/>\
+							<i:Article url='09-searching'/>\
+							<i:Article url='10-nesting'/>\
+							<i:Article url='11-life-circle'/>\
+							<i:Article url='12-events-and-communication'/>\
+							<i:Article url='13-message-and-communication'/>\
+							<i:Article url='14-sharing'/>\
+							<i:Article url='15-lazy-instantiation'/>\
 						</div>\
                         <div class='col-md-3'>\
                             <div class='bs-docs-sidebar hidden-print hidden-xs hidden-sm affix-top'><i:Navigator id='nav'/></div>\
