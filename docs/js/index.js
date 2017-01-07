@@ -66,7 +66,7 @@ xmlplus("xp", function (xp, $_, t) {
                 sys.ajax.on("success", function(e, data) {
 					sys.overlay.hide();
 					items.content.val(table[ptr] = data);
-					$(sys.content.elem()).scrollspy({target: "#navigator", offset: 100});
+					$(document.body).scrollspy({target: "#navigator"});
 				});
             }
         }
@@ -153,7 +153,7 @@ xmlplus("xp", function (xp, $_, t) {
             }
         },
         Content: {
-            xml: "<div id='content' class='col-md-9'/>",
+            xml: "<div id='content' class='col-md-9' data-spy='scroll'/>",
             fun: function( sys, items, opts ) {
                 var content = sys.content.elem();
                 function setValue( value ) {
