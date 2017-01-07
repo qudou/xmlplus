@@ -176,6 +176,7 @@ xmlplus("xp", function (xp, $_, t) {
                         options = xp.extend({}, opts, options_);
                     xhr.timeout = options.timeout;
                     xhr.ontimeout = xhr.onerror = function (event) {
+						console.log(event.type);
                         sys.ajax.trigger(event.type, event);
                     };
                     xhr.onload = function (event) {
