@@ -149,7 +149,7 @@ xmlplus("xp", function (xp, $_, t) {
                     e.stopPropagation();
                     this.trigger("change", "docs/" + this.attr("dt"));
                 });
-				sys.nav.attr("id", "navigater");
+				sys.nav.attr("id", "navigator");
             }
         },
         Content: {
