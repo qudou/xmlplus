@@ -142,7 +142,10 @@ xmlplus("xp", function (xp, $_, t) {
 						ul += template.replace('%href', '#' + h2.getAttribute("id")).replace('%text', h2.innerHTML);
 					});
 					sys[dt.url].append(ul += "</ul>");
-					$('[data-spy="scroll"]').scrollspy("refresh");
+					    $('[data-spy="scroll"]').each(function () {
+						  var $spy = $(this);
+						  $.fn.scrollspy.call($spy, $spy.data())
+						})
 				});
             }
         },
