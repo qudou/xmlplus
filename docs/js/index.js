@@ -116,20 +116,14 @@ xmlplus("xp", function (xp, $_, t) {
         Navigator: {
             css: "#nav { width: 100%; }\
                   .bs-docs-sidebar .nav>li>a { cursor: pointer; font-size: 14px; }",
-            xml: "<ul id='nav' class='nav bs-docs-sidenav'>\
+            xml: "<ul id='nav' class='nav bs-docs-sidenav' xmlns:i='nav'>\
                     <li dt='01-components-and-space' id='first'><a>组件与空间</a></li>\
                     <li dt='02-naming'><a>命名</a></li>\
                     <li dt='03-abstract'><a>抽象</a></li>\
                     <li dt='04-dynamic-interface'><a>动态接口</a></li>\
                     <li dt='05-static-interface'><a>静态接口</a></li>\
                     <li dt='06-parameter-mapping'><a>参数映射</a></li>\
-                    <li dt='07-path'>\
-						<a href='#path'>路径</a>\
-						<ul class='nav'>\
-							<li><a href='#absolute-path'>绝对路径</a></li>\
-							<li><a href='#relative-path'>相对路径</a></li>\
-						</ul>\
-					</li>\
+                    <i:Path dt='07-path'/>\
                     <li dt='08-inheritting'><a>继承</a></li>\
                     <li dt='09-searching'><a>检索</a></li>\
                     <li dt='10-nesting'><a>嵌套</a></li>\
@@ -143,11 +137,10 @@ xmlplus("xp", function (xp, $_, t) {
                 setTimeout(function() {
                     sys.first.trigger("click");
                 });
-                sys.nav.on("click", "./li", function (e) {
+                sys.nav.on("click", "./*", function (e) {
                     e.stopPropagation();
                     this.trigger("change", "docs/" + this.attr("dt"));
                 });
-				sys.nav.attr("id", "navigator");
             }
         },
         Content: {
@@ -174,6 +167,17 @@ xmlplus("xp", function (xp, $_, t) {
 			xml: "<div id=\"preloader\"> <span id=\"spinner\"/> </div>"
 		}
     });
+	$_("docs/nav").imports({
+		Path: {
+			xml: "<li>\
+				 	<a href='#path'>路径</a>\
+				 	<ul class='nav'>\
+				 		<li><a href='#absolute-path'>绝对路径</a></li>\
+				 		<li><a href='#relative-path'>相对路径</a></li>\
+				 	</ul>\
+				  </li>"
+		}
+	});
     $_("tools").imports({
         AJAX: {
             xml: "<void id='ajax'/>",
