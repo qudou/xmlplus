@@ -45,7 +45,7 @@ xmlplus("xp", function (xp, $_, t) {
 			css: "#docs { position: relative; }",
             xml: "<div id='docs' class='container bs-docs-container' xmlns:i='docs'>\
                     <div class='row'>\
-                        <div id='content' class='col-md-9'>\
+                        <div id='content' class='col-md-9' data-spy='scroll'>\
 							<i:Article url='01-components-and-space'/>\
 							<i:Article url='02-naming'/>\
 							<i:Article url='03-abstract'/>\
@@ -142,7 +142,7 @@ xmlplus("xp", function (xp, $_, t) {
 						ul += template.replace('%href', '#' + h2.getAttribute("id")).replace('%text', h2.innerHTML);
 					});
 					sys[dt.url].append(ul += "</ul>");
-					$(sys.nav.elem()).scrollspy("refresh");
+					$('[data-spy="scroll"]').scrollspy("refresh");
 				});
             }
         },
