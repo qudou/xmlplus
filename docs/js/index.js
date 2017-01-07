@@ -67,7 +67,7 @@ xmlplus("xp", function (xp, $_, t) {
 					sys.overlay.hide();
 					items.content.val(table[ptr] = data);
 				});
-				$(sys.docs.elem()).scrollspy();
+				$(document.body).scrollspy();
             }
         }
     });
