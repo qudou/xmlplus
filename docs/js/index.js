@@ -11,7 +11,7 @@ xmlplus("xp", function (xp, $_, t) {
                         <Docs id='docs'/>\
                     </i:ViewStack>\
                   </div>",
-			//map: { defer: "docs" },
+			map: { defer: "docs" },
             fun: function( sys, items, opts ) {
                 sys.banner.on("change", function(e, target) {
                     sys.home.trigger("switch", target);
@@ -66,8 +66,8 @@ xmlplus("xp", function (xp, $_, t) {
                 sys.ajax.on("success", function(e, data) {
 					sys.overlay.hide();
 					items.content.val(table[ptr] = data);
+					$(sys.content.elem()).scrollspy({ target: '#navigator' });
 				});
-				// ScrollSpy(sys.docs.elem());
             }
         }
     });
@@ -142,15 +142,14 @@ xmlplus("xp", function (xp, $_, t) {
                     <li dt='15-lazy-instantiation'><a>延迟实例化</a></li>\
                  </ul>",
             fun: function( sys, items, opts ) {
-                var prev = sys.first;
                 setTimeout(function() {
                     sys.first.trigger("click");
                 });
                 sys.nav.on("click", "./li", function (e) {
                     e.stopPropagation();
-                    prev.removeClass("active");
-                    prev = this.trigger("change", "docs/" + this.attr("dt")).addClass("active");
+                    this.trigger("change", "docs/" + this.attr("dt"));
                 });
+				sys.nav.attr("id", "navigater");
             }
         },
         Content: {
