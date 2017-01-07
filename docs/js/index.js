@@ -138,7 +138,7 @@ xmlplus("xp", function (xp, $_, t) {
 					article = sys.article.elem(),
 					ajax = this.append("/tools/AJAX"),
 					regexp = /body\>((.|\r|\n)*)\<\/body/g;
-				ajax.once("success", function (e, data) {
+				ajax.once("success", function (e, value) {
                     regexp.test(value);
                     str = RegExp.$1.trim();
 					article.innerHTML = str.substr(5, str.length - 11);
