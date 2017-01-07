@@ -133,7 +133,7 @@ xmlplus("xp", function (xp, $_, t) {
         },
 		Article: {
 			xml: "<div id='article' class='bs-docs-section'/>",
-			fun: fun: function( sys, items, opts ) {
+			fun: function( sys, items, opts ) {
 				var str, msg, 
 					article = sys.article.elem(),
 					ajax = this.append("/tools/AJAX"),
