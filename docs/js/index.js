@@ -11,6 +11,7 @@ xmlplus("xp", function (xp, $_, t) {
                         <Docs id='docs'/>\
                     </i:ViewStack>\
                   </div>",
+			map: { defer: "docs" },
             fun: function( sys, items, opts ) {
                 sys.banner.on("change", function(e, target) {
                     sys.home.trigger("switch", target);
@@ -65,7 +66,14 @@ xmlplus("xp", function (xp, $_, t) {
                             <div class='bs-docs-sidebar hidden-print hidden-xs hidden-sm affix-top'><i:Navigator id='nav'/></div>\
                         </div>\
                     </div>\
-                  </div>"
+                  </div>",
+			fun: function( sys, items, opts ) {
+				var body = $(document.body);
+				this.once("show", function (e) {
+					body.scrollspy({target:".bs-docs-sidebar"});
+					body.scrollspy("refresh");
+				});
+			}
         }
     });
     $_("banner").imports({
