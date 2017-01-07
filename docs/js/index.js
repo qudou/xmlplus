@@ -11,7 +11,7 @@ xmlplus("xp", function (xp, $_, t) {
                         <Docs id='docs'/>\
                     </i:ViewStack>\
                   </div>",
-			map: { defer: "docs" },
+			// map: { defer: "docs" },
             fun: function( sys, items, opts ) {
                 sys.banner.on("change", function(e, target) {
                     sys.home.trigger("switch", target);
@@ -67,7 +67,7 @@ xmlplus("xp", function (xp, $_, t) {
 					sys.overlay.hide();
 					items.content.val(table[ptr] = data);
 				});
-				$(sys.content.elem()).scrollspy({target: "#navigator"});
+				//$(sys.content.elem()).scrollspy({target: "#navigator"});
             }
         }
     });
@@ -153,7 +153,7 @@ xmlplus("xp", function (xp, $_, t) {
             }
         },
         Content: {
-            xml: "<div id='content' class='col-md-9' data-spy='scroll' data-target='#navigator' data-offset='0'/>",
+            xml: "<div id='content' class='col-md-9'/>",
             fun: function( sys, items, opts ) {
                 var content = sys.content.elem();
                 function setValue( value ) {
