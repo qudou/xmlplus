@@ -66,8 +66,8 @@ xmlplus("xp", function (xp, $_, t) {
                 sys.ajax.on("success", function(e, data) {
 					sys.overlay.hide();
 					items.content.val(table[ptr] = data);
-					$(sys.content.elem()).scrollspy({target: "#navigator"});
 				});
+				$(sys.content.elem()).scrollspy({target: "#navigator"});
             }
         }
     });
