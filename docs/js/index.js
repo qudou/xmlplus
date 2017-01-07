@@ -66,7 +66,15 @@ xmlplus("xp", function (xp, $_, t) {
                             <div class='bs-docs-sidebar hidden-print hidden-xs hidden-sm affix-top'><i:Navigator id='nav'/></div>\
                         </div>\
                     </div>\
-                  </div>"
+                  </div>",
+			fun: function () {
+				this.on("show", function() {
+						$('[data-spy="scroll"]').each(function () {
+						  var $spy = $(this);
+						  $.fn.scrollspy.call($spy, $spy.data())
+						});
+				});
+			}
         }
     });
     $_("banner").imports({
@@ -142,10 +150,6 @@ xmlplus("xp", function (xp, $_, t) {
 						ul += template.replace('%href', '#' + h2.getAttribute("id")).replace('%text', h2.innerHTML);
 					});
 					sys[dt.url].append(ul += "</ul>");
-					    $('[data-spy="scroll"]').each(function () {
-						  var $spy = $(this);
-						  $.fn.scrollspy.call($spy, $spy.data())
-						})
 				});
             }
         },
