@@ -69,7 +69,7 @@ xmlplus("xp", function (xp, $_, t) {
                   </div>",
 			fun: function () {
 				this.on("show", function() {
-						$(document.body).scrollspy('refresh');
+					$(document.body).scrollspy({target: ".bs-docs-sidebar"});
 				});
 			}
         }
