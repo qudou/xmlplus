@@ -129,6 +129,7 @@ xmlplus("xp", function (xp, $_, t) {
 						ul += template.replace('%href', '#' + h2.getAttribute("id")).replace('%text', h2.innerHTML);
 					});
 					sys[dt.url].append(ul += "</ul>");
+					$(sys.nav.elem()).scrollspy("refresh");
 				});
             }
         },
