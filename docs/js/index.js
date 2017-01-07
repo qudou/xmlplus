@@ -137,7 +137,7 @@ xmlplus("xp", function (xp, $_, t) {
                 setTimeout(function() {
                     sys.first.trigger("click");
                 });
-                sys.nav.on("click", "./*", function (e) {
+                sys.nav.on("click", "./*[@dt]", function (e) {
                     e.stopPropagation();
                     this.trigger("change", "docs/" + this.attr("dt"));
                 });
