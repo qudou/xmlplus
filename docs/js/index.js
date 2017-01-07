@@ -142,7 +142,7 @@ xmlplus("xp", function (xp, $_, t) {
 				ajax.once("success", function (e, value) {
                     regexp.test(value);
                     str = RegExp.$1.trim();
-					article.innerHTML = str.substr(5, str.length - 11);
+					article.innerHTML = str.substr(24, str.length - 11);
 					(msg = [].slice.call(article.querySelectorAll("h1,h2"))).forEach(function(item) {
 						item.setAttribute("id", xp.guid());
 					});
