@@ -47,6 +47,7 @@ xmlplus("xp", function (xp, $_, t) {
                     <div class='row'>\
                         <div id='content' class='col-md-9'>\
 							<i:Article url='01-components-and-space'/>\
+							<i:Article url='02-naming'/>\
 						</div>\
                         <div class='col-md-3'>\
                             <div class='bs-docs-sidebar hidden-print hidden-xs hidden-sm affix-top'><i:Navigator id='nav'/></div>\
