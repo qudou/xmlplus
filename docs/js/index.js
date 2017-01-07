@@ -146,7 +146,7 @@ xmlplus("xp", function (xp, $_, t) {
 						item.setAttribute("id", xp.guid());
 					});
 					this.notify("article-ready", {url: opts.url, h1: msg[0], h2s: msg.slice(1)});
-				}).value()({type: 'GET', url: opts.url});
+				}).value()({type: 'GET', url: 'docs/' + opts.url});
 			}
 		}
 	});
