@@ -1,7 +1,7 @@
 /*!
- * xmlplus.js v1.5.1
+ * xmlplus.js v1.5.2
  * https://xmlplus.net
- * (c) 2010-2017 qudou
+ * (c) 2009-2016 jianfei
  * Released under the MIT license
  */
  (function ( isInBrowser, undefined ) {
@@ -1076,13 +1076,21 @@ var ServerElementAPI = {
             regexp = /(.+?):(.+?);/ig;
         while ( regexp.test(style) )
             table[RegExp.$1] = RegExp.$2;
-        if ( value == undefined )
+        if ( value === undefined )
             return table[name];
         value == null ? (delete table[name]) : (table[name] = value);
         var buf = [];
         for ( var k in table )
             buf.push(k, ":", table[k], ";");
         elem.setAttribute("style", buf.join(""));
+        return this;
+    },
+    show: function () {
+        this.api.css("display", null);
+        return this;
+    },
+    hide: function () {
+        this.api.css("display", "none");
         return this;
     }
 };
