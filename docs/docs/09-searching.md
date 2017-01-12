@@ -76,9 +76,9 @@ Button: {
 Index: {
    xml: "<div id='top'>\
              <div id='sub'>\
-                 <button id="foo">foo</button>\
+                 <button id='foo'>foo</button>\
              </div>\
-             <button id="bar">bar</button>\
+             <button id='bar'>bar</button>\
          </div>",
    fun: function ( sys, items, opts ) {
        console.log(items("button", sys.index).length);
@@ -102,8 +102,8 @@ Index: {
 ```js
 Index: {
    xml: "<div id='top'>\
-             <button id="foo">foo</button>\
-             <button id="bar">bar</button>\
+             <button id='foo'>foo</button>\
+             <button id='bar'>bar</button>\
          </div>",
    fun: function ( sys, items, opts ) {
        var res = sys.top.find("button");
@@ -120,8 +120,8 @@ Index: {
 ```js
 Index: {
    xml: "<div id='top'>first\
-             <button id="foo">foo</button>\
-             <button id="bar">bar</button>last\
+             <button id='foo'>foo</button>\
+             <button id='bar'>bar</button>last\
          </div>",
    fun: function ( sys, items, opts ) {
        console.log(sys.top.first().text()); // foo
@@ -150,15 +150,15 @@ var COMMENT_NODE                = 8;
 ```js
 Index: {
    xml: "<div id='top'>first\
-             <button id="foo">foo</button>\
-             <button id="bar">bar</button>last\
+             <button id='foo'>foo</button>\
+             <button id='bar'>bar</button>last\
          </div>",
    fun: function ( sys, items, opts ) {
        console.log(sys.foo.next().text());               // bar
        console.log(sys.bar.prev().text());               // foo
-       console.log(sys.top.prev(), sys.top.next());      // null null
-       console.log(sys.bar.prev(3).text());              // first
-       console.log(sys.foo.next(3).text());              // last
+       console.log(sys.top.prev(), sys.top.next());      // undefined undefined
+       console.log(sys.foo.prev(3).text());              // first
+       console.log(sys.bar.next(3).text());              // last
    }
 }
 ```
@@ -172,8 +172,8 @@ Index: {
 ```js
 Index: {
    xml: "<div id='top'>\
-             <button id="foo">foo</button>\
-             <button id="bar">bar</button>\
+             <button id='foo'>foo</button>\
+             <button id='bar'>bar</button>\
          </div>",
    fun: function ( sys, items, opts ) {
        console.log(sys.top.children().length); // 2
@@ -181,13 +181,13 @@ Index: {
 }
 ```
 
-上面`children`函数获取到了所有的`button`对象，其用法等价于`sys("*>*", sys.top)`。`children`函数有一个可选的参数`nodeType`，其用法与`first`函数和`last`函数类似。不同的是，此函数的`nodeType`可以取`0`值，它代表返回所有的儿子对象。请看下面的示例。
+上面`children`函数获取到了所有的`button`对象，其用法等价于`sys("*", sys.top)`。`children`函数有一个可选的参数`nodeType`，其用法与`first`函数和`last`函数类似。不同的是，此函数的`nodeType`可以取`0`值，它代表返回所有的儿子对象。请看下面的示例。
 
 ```js
 Index: {
    xml: "<div id='top'>\
-             <button id="foo">foo</button>\
-             <button id="bar">bar</button>\
+             <button id='foo'>foo</button>\
+             <button id='bar'>bar</button>\
          </div>",
    fun: function ( sys, items, opts ) {
        console.log(sys.top.children(0).length); // 5
@@ -195,4 +195,4 @@ Index: {
 }
 ```
 
-该示例打印出的结果是`5`，这是由于当给`children`函数指定实参为`0`后，检索的结果把文本也包含在内了。
+该示例打印出的结果是`5`，这是由于当给`children`函数指定实参为`0`后，检索的结果把空白文本也包含在内了。

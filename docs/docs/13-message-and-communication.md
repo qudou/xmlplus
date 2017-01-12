@@ -72,15 +72,40 @@ Index: {
 }
 ```
 
+## 指定消息侦听器的优先级别
+
+默认情况下，对于侦听同一个消息的不同组件对象，先注册的比后注册的会优先得到回馈。如果想改变这样次序，可以为系统函数 watch 或者 glance 指定第三个参数。请看下面的示例。
+
+```js
+Index: {
+    xml: "<div>\
+             <span id='foo'>foo</foo>\
+             <span id='bar'>bar</span>\
+             <span id='alice'>alice</span>\
+          </div>",
+    fun: function(sys, items, opts) {
+        sys.foo.watch("msg", function(e) {
+            console.log("foo");
+        });
+        sys.bar.watch("msg", function(e) {
+            console.log("bar");
+        }, 1);
+        sys.alice.notify("msg");
+    }
+}
+```
+
+在该示例的函数项中，如果对于 `sys.bar.watch` 不指定第三个参数，那么控制台会先打印 `foo`，再打印 `bar`。而现在的结果确是相反的，表明该参数改变了回调函数调用次序的。此参数是一个数值，不指定则等同于指定为 -Infinity 。数值越大的，则优先级越高，相应的回调函数也就越先被调用。
+
 ## 消息的注销
 
 系统函数`unwatch`用于注销一个消息的侦听，下面是该函数的完整声明。此函数允许提供最多两个实参，分别是消息类型和侦听函数。如果不提供任何的实参，则该函数执行后将注销与相应对象相关联的所有侦听器。
 
 ```js
-unwatch([msgType][,listener])
+sys.target.unwatch([msgType][,listener])
 ```
 
-在下面这个例子中，由于在`sys.foo.watch`的回调函数中注销了被侦听的消息，所以这个回调函数只能被执行一次，这与另一个系统函数`glance`的功能是一致的。
+在下面这个例子中，由于在`sys.foo.watch`的回调函数中注销了被侦听的消息，所以这个回调函数只能被执行一次。
 
 ```js
 Index: {
@@ -88,6 +113,20 @@ Index: {
     fun: function ( sys, items, opts ) {
         sys.foo.watch("msg", function(e) {
             sys.foo.unwatch("msg");
+            console.log(this.text());
+        });
+        sys.foo.notify("msg").notify("msg");
+    }
+}
+```
+
+另外，可以使用系统函数`glance`达到与上例同样的目的，这时无需在回调函数中显示地移除侦听器。该函数确保注册的回调函数只能被执行一次，下面的示例展示了这一点。
+
+```js
+Index: {
+    xml: "<span id='foo'>foo</span>",
+    fun: function ( sys, items, opts ) {
+        sys.foo.glance("msg", function(e) {
             console.log(this.text());
         });
         sys.foo.notify("msg").notify("msg");

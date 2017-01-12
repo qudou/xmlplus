@@ -71,7 +71,7 @@ Index: {
 sys.target.off([eventType][,listener])
 ```
 
-在下面这个例子中，由于在`sys.btn.on`的回调函数中注销了被侦听的事件，所以这个回调函数只能被执行一次，这与另一个系统函数`once`的功能是一致的。
+在下面这个例子中，由于在`sys.btn.on`的回调函数中注销了被侦听的事件，所以这个回调函数只能被执行一次。
 
 ```js
 Index: {
@@ -79,6 +79,19 @@ Index: {
     fun: function ( sys, items, opts ) {
         sys.btn.on("click", function (e) {
             sys.btn.off("click");
+            console.log("hello, world");
+        });
+    }
+}
+```
+
+另外，可以使用系统函数`once`达到与上例同样的目的，这时无需在回调函数中显示地移除侦听器。该函数确保注册的回调函数只能被执行一次，下面的示例展示了这一点。
+
+```js
+Index: {
+    xml: "<button id='btn'>click</button>",
+    fun: function ( sys, items, opts ) {
+        sys.btn.once("click", function (e) {
             console.log("hello, world");
         });
     }
@@ -205,7 +218,7 @@ Index: {
 
 ## 事件通信的介质
 
-在`W3C`制定的`DOM`事件标准中，事件在`DOM`元素之间传递。虽然表面上系统中的事件的传递发生在组件对象之间，但在其本质上，事件的传递发生于`DOM`元素之间。在《组件与空间》的章节中讲过，每一组件实例都与一个`DOM`元素相对应，从而`DOM`元素成为事件通信的介质就再自然不过了。现在通过下面的示例来看看空组件是如何传递事件的。
+在`W3C`制定的`DOM`事件标准中，事件在`DOM`元素之间传递。虽然表面上系统中的事件的传递发生在组件对象之间，但在其本质上，事件的传递发生于`DOM`元素之间。在《嵌套》的章节中讲过，每一组件实例都与一个`DOM`元素相对应，从而`DOM`元素成为事件通信的介质就再自然不过了。现在通过下面的示例来看看空组件是如何传递事件的。
 
 ```js
 Index: {
