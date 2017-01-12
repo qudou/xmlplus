@@ -25,13 +25,13 @@ Widget: {
 下面是另一种追加方式，它明确给出`xml`字符串。这与前一种方式是等价的。
 
 ```js
-sys.top.append("<Widget/>");
+sys.top.append("<Widget xmlns='.'/>");
 ```
 
 还可以先解析出`xml`节点，然后追加解析后的节点，这与前两种方式等价。
 
 ```js
-var xml = "<Widget/>";
+var xml = "<Widget xmlns='.'/>";
 var xmlNode = xmlplus.parseXML(xml).lastChild;
 sys.top.append(xmlNode);
 ```
