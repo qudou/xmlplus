@@ -172,7 +172,7 @@ var $ = {
 		return xml;
 	},
     serialize: function ( node ) {
-        return (new XMLSerializer_).serializeToString(node);
+        return (new XMLSerializer_).serializeToString(node, true);
     },
     hasNamespace: function ( space ) {
         return !!Library[space];
@@ -1604,7 +1604,9 @@ function startup( xml, parent, param ) {
         if ( typeof define === "function" && define.amd )
             define( "xmlplus", [], new Function("return xmlplus;"));
         $.ready(function () {
-            $document.body.hasAttribute("noparse") || hp.parseHTML($document.body);
+			setTimeout(function () {
+				$document.body.hasAttribute("noparse") || hp.parseHTML($document.body);
+			});
         });
     } else {
         delete $.ready;
