@@ -22,6 +22,7 @@
 var WELL = /#(?=([^}])+?{)/ig;
 var svgns = "http://www.w3.org/2000/svg";
 var htmlns = "http://www.w3.org/1999/xhtml";
+var xlinkns = "http://www.w3.org/1999/xlink";
 var xdocument, $document, XPath, DOMParser_, XMLSerializer_, NodeElementAPI;
 var Manager = [HtmlManager(),CompManager(),,TextManager(),TextManager(),,,,TextManager(),,];
 var Formater = { "int": parseInt, "float": parseFloat, "bool": new Function("v","return v==true || v=='true';") };
@@ -172,7 +173,7 @@ var $ = {
 		return xml;
 	},
     serialize: function ( node ) {
-        return (new XMLSerializer_).serializeToString(node, true);
+        return (new XMLSerializer_).serializeToString(node);
     },
     hasNamespace: function ( space ) {
         return !!Library[space];
@@ -342,6 +343,8 @@ var hp = {
             parent.appendChild(elem);
             for ( var i = 0; i < node.attributes.length; i++ ) {
                 var attr = node.attributes[i];
+				if ( attr.prefix == "xlink" )
+					elem.setAttributeNS(xlinkns, attr.nodeName, attr.nodeValue);
                 if (  attr.nodeName != "id" && (!isHTML[nodeName] || !attr.prefix) )
                     elem.setAttribute(attr.nodeName, attr.nodeValue);
             }
@@ -1388,7 +1391,7 @@ function Finder( env ) {
     }
     function refresh() {
         var i, k, id, item,
-            list = isInBrowser ? env.xml.querySelectorAll("*[id]") : XPath.select("//*[@id]", env.xml);
+            list = env.xml.querySelector ? env.xml.querySelectorAll("*[id]") : XPath.select("//*[@id]", env.xml);
         for ( i in items ) {
             delete sys[i]; delete items[i];
         }
@@ -1604,9 +1607,7 @@ function startup( xml, parent, param ) {
         if ( typeof define === "function" && define.amd )
             define( "xmlplus", [], new Function("return xmlplus;"));
         $.ready(function () {
-			setTimeout(function () {
-				$document.body.hasAttribute("noparse") || hp.parseHTML($document.body);
-			});
+            $document.body.hasAttribute("noparse") || hp.parseHTML($document.body);
         });
     } else {
         delete $.ready;
