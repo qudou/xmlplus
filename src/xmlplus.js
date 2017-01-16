@@ -53,27 +53,27 @@ var $ = {
         throw new Error(msg);
     },
     ready: isInBrowser && (function () {
-		var fn = [], d = document,
-			ie = !!(window.attachEvent && !window.opera),
-			wk = /webkit\/(\d+)/i.test(navigator.userAgent) && (RegExp.$1 < 525),
-			run = function () { for (var i = 0; i < fn.length; i++) fn[i](); };
-		return function ( f ) {
-			if ( !ie && !wk && d.addEventListener )
-				return d.addEventListener('DOMContentLoaded', f, false);
-			if (fn.push(f) > 1) return;
-			if ( ie ) {
-				(function () {
-					try { d.documentElement.doScroll('left'); run(); }
-					catch (err) { setTimeout(arguments.callee, 0); }
-				})();
-		    } else if ( wk ) {
-				var t = setInterval(function () {
-					if (/^(loaded|complete)$/.test(d.readyState))
-						clearInterval(t), run();
-				}, 0);
-			}
-		};
-	})(),
+        var fn = [], d = document,
+            ie = !!(window.attachEvent && !window.opera),
+            wk = /webkit\/(\d+)/i.test(navigator.userAgent) && (RegExp.$1 < 525),
+            run = function () { for (var i = 0; i < fn.length; i++) fn[i](); };
+        return function ( f ) {
+            if ( !ie && !wk && d.addEventListener )
+                return d.addEventListener('DOMContentLoaded', f, false);
+            if (fn.push(f) > 1) return;
+            if ( ie ) {
+                (function ff() {
+                    try { d.documentElement.doScroll('left'); run(); }
+                    catch (err) { setTimeout(ff, 0); }
+                })();
+            } else if ( wk ) {
+                var t = setInterval(function () {
+                    if (/^(loaded|complete)$/.test(d.readyState))
+                        clearInterval(t), run();
+                }, 0);
+            }
+        };
+    })(),
     type: (function () {
         var i, class2type = {},
             types = "Boolean Number String Function Array Date RegExp Object Error".split(" ");
@@ -175,21 +175,21 @@ var $ = {
         $.extend(DeferElementAPI, obj), $.extend(ShareElementAPI, obj);
         return this;
     },
-	parseXML: function standard( data ) {
-		var xml;
-		if ( !data || typeof data !== "string" )
-			return null;
-		try {
-			xml = ( new DOMParser_() ).parseFromString( data, "text/xml" );
-		} catch ( e ) {
-			xml = undefined;
-		}
-		if ( !xml || xml.getElementsByTagName( "parsererror" ).length )
-			$.error( "Invalid XML: " + data );
-		return xml;
-	},
+    parseXML: function standard( data ) {
+        var xml;
+        if ( !data || typeof data !== "string" )
+            return null;
+        try {
+            xml = ( new DOMParser_() ).parseFromString( data, "text/xml" );
+        } catch ( e ) {
+            xml = undefined;
+        }
+        if ( !xml || xml.getElementsByTagName( "parsererror" ).length )
+            $.error( "Invalid XML: " + data );
+        return xml;
+    },
     serialize: function ( node ) {
-        return (new XMLSerializer_).serializeToString(node);
+        return (new XMLSerializer_).serializeToString(node, true);
     },
     hasNamespace: function ( space ) {
         return !!Library[space];
@@ -359,8 +359,8 @@ var hp = {
             parent.appendChild(elem);
             for ( var i = 0; i < node.attributes.length; i++ ) {
                 var attr = node.attributes[i];
-				if ( attr.prefix == "xlink" )
-					elem.setAttributeNS(xlinkns, attr.nodeName, attr.nodeValue);
+                if ( attr.prefix == "xlink" )
+                    elem.setAttributeNS(xlinkns, attr.nodeName, attr.nodeValue);
                 if (  attr.nodeName != "id" && (!isHTML[nodeName] || !attr.prefix) )
                     elem.setAttribute(attr.nodeName, attr.nodeValue);
             }
