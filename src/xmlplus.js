@@ -324,8 +324,12 @@ var hp = {
         return elem.style[name] || getComputedStyle(elem, "").getPropertyValue(name);
     },
     callback: function () {
-        var ret = this.fn.apply(this.data, [].slice.call(arguments));
-        return ret == this.data ? this.api : ret;
+		if ( this.data.stopCallChaining ) {
+			this.data.stopCallChaining = false;
+		} else {
+			var ret = this.fn.apply(this.data, [].slice.call(arguments));
+			return ret == this.data ? this.api : ret;
+		}
     },
     build: (function () {
         var table = [], objects = [];
@@ -740,10 +744,11 @@ var CommonElementAPI = {
         this.elem().removeAttribute(name);
         return this;
     },
-    addClass: function ( value ) {
+    addClass: function ( value, ctx ) {
         var elem = this.elem(),
+			ctx = Store[ctx] || this.env,
             klass = elem.getAttribute("class"),
-            input = value.replace(/#/g, this.env.aid + this.env.cid).split(/\s+/),
+            input = value.replace(/#/g, ctx.aid + ctx.cid).split(/\s+/),
             result = klass ? klass.split(/\s+/) : [];
         for ( var i = 0; i < input.length; i++ )
             if ( result.indexOf(input[i]) < 0 )
@@ -751,10 +756,11 @@ var CommonElementAPI = {
         elem.setAttribute("class", result.join(" "));
         return this;
     },
-    removeClass: function ( value ) {
+    removeClass: function ( value, ctx ) {
         var elem = this.elem(),
+			ctx = Store[ctx] || this.env,
             klass = elem.getAttribute("class"),
-            input = value.replace(/#/g, this.env.aid + this.env.cid).split(/\s+/),
+            input = value.replace(/#/g, ctx.aid + ctx.cid).split(/\s+/),
             result = klass ? klass.split(/\s+/) : [];
         for ( var i = 0; i < input.length; i++ ) {
             var k = result.indexOf(input[i]);
@@ -989,7 +995,10 @@ var CommonElementAPI = {
         if ( prev && prev.nodeType == DOCUMENT_TYPE_NODE )
             elem = elem.ownerDocument;
         return $.serialize(elem);
-    }
+    },
+	stopCallChaining: function () {
+		this.stopCallChaining = true;
+	}
 };
 
 var ClientElementAPI = {
@@ -1494,7 +1503,7 @@ function resetOptions( env, ins ) {
 }
 
 function parseEnvXML( env, parent, node ) {
-    function iterate( node, parent ) { 
+    function iterate( node, parent ) {
         if ( node.nodeType > 1 ) {
             if ( Manager[node.nodeType] )
                 return Manager[node.nodeType].create(env, node, parent);
