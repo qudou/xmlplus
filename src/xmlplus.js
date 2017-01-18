@@ -757,8 +757,10 @@ var CommonElementAPI = {
         return this;
     },
     removeClass: function ( value, ctx ) {
-        var elem = this.elem(),
-			ctx = Store[ctx] || this.env,
+        var elem = this.elem();
+		if ( value === undefined )
+			return elem.setAttribute("class", ""), this;
+		var	ctx = Store[ctx] || this.env,
             klass = elem.getAttribute("class"),
             input = value.replace(/#/g, ctx.aid + ctx.cid).split(/\s+/),
             result = klass ? klass.split(/\s+/) : [];
@@ -913,7 +915,6 @@ var CommonElementAPI = {
             this.node.nodeType == ELEMENT_NODE && this.node.hasAttribute("id") && this.env.fdr.refresh();
             Manager[this.typ].recycle(this);
         }
-        return this;
     },
     find: function ( expr ) {
         return this.env.fdr.sys(expr, this.api);
