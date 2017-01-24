@@ -49,8 +49,8 @@ var $ = {
             return intToABC(counter++);
         };
     }()),
-    error: function ( msg ) {
-        throw new Error(msg);
+    error: function ( message ) {
+        throw new Error(message);
     },
     ready: isInBrowser && (function () {
         var fn = [], d = document,
@@ -96,14 +96,6 @@ var $ = {
         var type = $.type( obj );
         return ( type === "number" || type === "string" ) && !isNaN( obj - parseFloat( obj ) );
     },
-    isArraylike: function ( obj ) {
-        var length = !!obj && "length" in obj && obj.length,
-            type = $.type( obj );
-        if ( type === "function" || $.isWindow( obj ) )
-            return false;
-        return type === "array" || length === 0 ||
-            typeof length === "number" && length > 0 && ( length - 1 ) in obj;
-    },
     isPlainObject: function (obj) {
         return $.type(obj) == "object" && !$.isWindow(obj) && Object.getPrototypeOf(obj) == Object.prototype;
     },
@@ -116,15 +108,15 @@ var $ = {
         return obj && typeof obj.guid == "function" && !!Store[obj.guid()];
     },
     each: function ( objs, callback ) {
-        var i, key;
-        if ( $.isArraylike( objs ) ) {
-            for ( i = 0; i < objs.length; i++ )
-                if ( callback.call(objs[i], i, objs[i]) === false ) break;
-        } else for ( key in objs ) {
-            if ( callback.call(objs[key], key, objs[key] ) === false ) break;
-        }
-        return objs;
-    },
+		var i, key;
+		if ( hp.likeArray( objs ) ) {
+			for ( i = 0; i < objs.length; i++ )
+				if ( callback.call(objs[i], i, objs[i]) === false ) break;
+		} else for ( key in objs ) {
+			if ( callback.call(objs[key], key, objs[key] ) === false ) break;
+		}
+		return objs;
+	},
     extend: function () {
         var options, name, src, copy, copyIsArray, clone,
             target = arguments[ 0 ] || {},
@@ -280,6 +272,14 @@ var ph = (function () {
 }());
 
 var hp = {
+	likeArray: function ( obj ) {
+        var length = !!obj && "length" in obj && obj.length,
+            type = $.type( obj );
+        if ( type === "function" || $.isWindow( obj ) )
+            return false;
+        return type === "array" || length === 0 ||
+            typeof length === "number" && length > 0 && ( length - 1 ) in obj;
+    },
     parseToXML: function ( input ) {
         if ( input == null )
             $.error("invalid input, expected a string a xml node");
@@ -324,8 +324,8 @@ var hp = {
         return elem.style[name] || getComputedStyle(elem, "").getPropertyValue(name);
     },
     callback: function () {
-		if ( this.data.stopCallChaining ) {
-			this.data.stopCallChaining = false;
+		if ( this.data.emptySystemCall ) {
+			this.data.emptySystemCall = false;
 		} else {
 			var ret = this.fn.apply(this.data, [].slice.call(arguments));
 			return ret == this.data ? this.api : ret;
@@ -990,15 +990,15 @@ var CommonElementAPI = {
     toString: function () {
         return this.node.getAttribute("id") || this.node.uid;
     },
-    serialize: function ( isNode ) {
-        var elem = isNode ? this.node : this.elem(),
+    serialize: function ( serializeXML ) {
+        var elem = serializeXML ? this.node : this.elem(),
             prev = elem.previousSibling;
         if ( prev && prev.nodeType == DOCUMENT_TYPE_NODE )
             elem = elem.ownerDocument;
         return $.serialize(elem);
     },
-	stopCallChaining: function () {
-		this.stopCallChaining = true;
+	emptySystemCall: function () {
+		this.emptySystemCall = true;
 	}
 };
 
