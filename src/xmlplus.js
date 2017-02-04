@@ -1,7 +1,7 @@
 /*!
  * xmlplus.js v1.5.2
  * https://xmlplus.net
- * (c) 2009-2016 jianfei
+ * (c) 2009-2016 qudou
  * Released under the MIT license
  */
  (function ( isInBrowser, undefined ) {
