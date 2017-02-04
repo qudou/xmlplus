@@ -26,8 +26,8 @@ var xlinkns = "http://www.w3.org/1999/xlink";
 var xdocument, $document, XPath, DOMParser_, XMLSerializer_, NodeElementAPI;
 var Manager = [HtmlManager(),CompManager(),,TextManager(),TextManager(),,,,TextManager(),,];
 var Formater = { "int": parseInt, "float": parseFloat, "bool": new Function("v","return v==true || v=='true';") };
-var isSVG = {}, isHTML = {}, Paths = {}, Themes = {}, Source = {}, Library = {}, Original = {}, Store = {}, Extends = [], Global = {};
 var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", defer: "", cfgs: {}, attrs: {}, format: {} }, fun: new Function };
+var isReady, isSVG = {}, isHTML = {}, Paths = {}, Themes = {}, Source = {}, Library = {}, Original = {}, Store = {}, Extends = [], Global = {};
 
 (function () {
     var i = -1, k = -1,
@@ -52,28 +52,13 @@ var $ = {
     error: function ( message ) {
         throw new Error(message);
     },
-    ready: isInBrowser && (function () {
-        var fn = [], d = document,
-            ie = !!(window.attachEvent && !window.opera),
-            wk = /webkit\/(\d+)/i.test(navigator.userAgent) && (RegExp.$1 < 525),
-            run = function () { for (var i = 0; i < fn.length; i++) fn[i](); };
-        return function ( f ) {
-            if ( !ie && !wk && d.addEventListener )
-                return d.addEventListener('DOMContentLoaded', f, false);
-            if (fn.push(f) > 1) return;
-            if ( ie ) {
-                (function ff() {
-                    try { d.documentElement.doScroll('left'); run(); }
-                    catch (err) { setTimeout(ff, 0); }
-                })();
-            } else if ( wk ) {
-                var t = setInterval(function () {
-                    if (/^(loaded|complete)$/.test(d.readyState))
-                        clearInterval(t), run();
-                }, 0);
-            }
-        };
-    })(),
+    ready: function ( callback ) {
+		if ( isReady ) return callback($);
+        var t = setInterval(function() {
+			if ( isReady )
+				clearInterval(t), callback($);
+		}, 0);
+    },
     type: (function () {
         var i, class2type = {},
             types = "Boolean Number String Function Array Date RegExp Object Error".split(" ");
@@ -104,7 +89,7 @@ var $ = {
         for ( name in obj ) return false;
         return true;
     },
-    isInnerObject: function ( obj ) {
+    isSystemObject: function ( obj ) {
         return obj && typeof obj.guid == "function" && !!Store[obj.guid()];
     },
     each: function ( objs, callback ) {
@@ -207,11 +192,10 @@ var $ = {
             }
         return this;
     },
-    getElementById: function ( id ) {
-        return Global[id] || document.getElementById(id);
-    },
-    getElementByGuid: function ( guid ) {
-        return Store[guid] && Store[guid].api;
+    getElementById: function ( id, isGuid ) {
+		if ( isGuid ) 
+			return Store[id] && Store[id].api;
+		return isInBrowser ? (Global[id] || $document.getElementById(id)) : null;
     }
 };
 
@@ -398,7 +382,29 @@ var hp = {
             id && (Global[id] = val) && val.attr("id", id);
             node.parentNode.replaceChild(node.parentNode.lastChild, node);
         }
-    }
+    },
+    ready: isInBrowser && (function () {
+        var fn = [], d = document,
+            ie = !!(window.attachEvent && !window.opera),
+            wk = /webkit\/(\d+)/i.test(navigator.userAgent) && (RegExp.$1 < 525),
+            run = function () { for (var i = 0; i < fn.length; i++) fn[i](); };
+        return function ( f ) {
+            if ( !ie && !wk && d.addEventListener )
+                return d.addEventListener('DOMContentLoaded', f, false);
+            if (fn.push(f) > 1) return;
+            if ( ie ) {
+                (function ff() {
+                    try { d.documentElement.doScroll('left'); run(); }
+                    catch (err) { setTimeout(ff, 0); }
+                })();
+            } else if ( wk ) {
+                var t = setInterval(function () {
+                    if (/^(loaded|complete)$/.test(d.readyState))
+                        clearInterval(t), run();
+                }, 0);
+            }
+        };
+    })()
 };
 
 $.extend(hp, (function () {
@@ -774,7 +780,7 @@ var CommonElementAPI = {
     contains: function ( obj ) {
         if ( !obj ) return false;
         var target = this.elem(),
-            elem = $.isInnerObject(obj) && obj.elem() || obj;
+            elem = $.isSystemObject(obj) && obj.elem() || obj;
         do {
             if ( elem == target ) return true;
             elem = elem.parentNode;
@@ -809,7 +815,7 @@ var CommonElementAPI = {
     },
     append: function ( target, param ) {
         var parent = this.appendTo();
-        if ( $.isInnerObject(target) ) {
+        if ( $.isSystemObject(target) ) {
             if ( target.contains(this.api) )
                 $.error("attempt to append a target which contains current");
             var src = Store[target.guid()],
@@ -841,7 +847,7 @@ var CommonElementAPI = {
         if ( this.node == this.env.xml.lastChild )
             $.error("insert before document node is not allow");
         var elem = this.elem();
-        if ( $.isInnerObject(target) ) {
+        if ( $.isSystemObject(target) ) {
             if ( target.contains(this.api) )
                 $.error("attempt to insert a target which contains current");
             var src = Store[target.guid()],
@@ -872,7 +878,7 @@ var CommonElementAPI = {
     },
     replace: function ( target, param ) {
         var elem = this.elem();
-        if ( $.isInnerObject(target) ) {
+        if ( $.isSystemObject(target) ) {
             if ( target.contains(this.api) )
                 $.error("attempt to replace a target which contains current");
             var src = Store[target.guid()],
@@ -1332,11 +1338,11 @@ function StyleManager() {
             value = theme[key.replace(/%/g, "")];
             value && (text = text.replace(key, value));
         });
-        return text;
+        return $document.createTextNode(text);
     }
     function newStyle( ins ) {
         var style = $document.createElement("style");
-        style.appendChild($document.createTextNode(cssText(ins)));
+        style.appendChild(cssText(ins));
         return parent.appendChild(style);
     }
     function addClass( elem, value ) {
@@ -1376,7 +1382,7 @@ function StyleManager() {
         current = value;
         for ( var k in table )
             if ( Themes[table[k].ins.root][current] )
-                table[k].style.innerHTML = cssText(table[k].ins);
+				parent.replaceChild(cssText(table[k].ins), table[k].style.lastChild);
         return this;
     }
     function style() {
@@ -1395,7 +1401,7 @@ function Finder( env ) {
             $.error("invalid expression, expected a css selector");
         if ( context == undefined )
             return env.xml;
-        if ( $.isInnerObject(context) )
+        if ( $.isSystemObject(context) )
             return Store[context.guid()].node;
         $.error("invalid context, expected a InnerObject");
     }
@@ -1598,27 +1604,30 @@ function xmlplus( root, callback ) {
 
 function startup( xml, parent, param ) {
     var instance, fragment,
-        parent = typeof parent == "string" ? $document.getElementById(parent) : parent,
         env = $.extend(true, {xml: hp.parseToXML(xml), cid: $.guid(), share: {}, dir: ""}, Template);
-    parent = parent || $document.body || $document.cloneNode();
-    if ( parent ) {
-        env.fdr = Finder(env);
-        env.smr = StyleManager();
-        env.ctr = Communication();
-        env.aid = isInBrowser ? $.guid() : "";
-        env.api = hp.build(env, NodeElementAPI);
-        if ( env.xml.nodeType == ELEMENT_NODE && $.isPlainObject(param) ) {
-            env.xml.getAttribute("id") || env.xml.setAttribute("id", $.guid());
-            env.cfg[env.xml.getAttribute("id")] = param;
-        }
-        env.xml = env.xml.parentNode || xdocument.cloneNode().appendChild(env.xml).parentNode;
-        fragment = isInBrowser ? $document.createDocumentFragment() : parent;
-        instance = parseEnvXML(env, fragment, env.xml.lastChild);
-        isInBrowser && parent.appendChild(fragment);
-        $.extend(hp.create(instance).api, {theme: env.smr.theme, style: env.smr.style});
-        return instance.api;
-    }
-    $.error("invalid parent element");
+	if ( $.isPlainObject(parent) ) {
+		param = parent;
+		parent = $document.body || $document.cloneNode();
+	} else if ( parent === undefined ) {
+		parent = $document.body || $document.cloneNode();
+	} else if ( typeof parent == "string" ) {
+		parent =  $document.getElementById(parent) || $.error("parent element " + parent + " not found");
+	}
+	env.fdr = Finder(env);
+	env.smr = StyleManager();
+	env.ctr = Communication();
+	env.aid = isInBrowser ? $.guid() : "";
+	env.api = hp.build(env, NodeElementAPI);
+	if ( env.xml.nodeType == ELEMENT_NODE && $.isPlainObject(param) ) {
+		env.xml.getAttribute("id") || env.xml.setAttribute("id", $.guid());
+		env.cfg[env.xml.getAttribute("id")] = param;
+	}
+	env.xml = env.xml.parentNode || xdocument.cloneNode().appendChild(env.xml).parentNode;
+	fragment = isInBrowser ? $document.createDocumentFragment() : parent;
+	instance = parseEnvXML(env, fragment, env.xml.lastChild);
+	isInBrowser && parent.appendChild(fragment);
+	$.extend(hp.create(instance).api, {theme: env.smr.theme, style: env.smr.style});
+	return instance.api;
 }
 
 (function () {
@@ -1629,15 +1638,15 @@ function startup( xml, parent, param ) {
         $document = document;
         xdocument = $.parseXML("<void/>");
         NodeElementAPI = $.extend(ClientElementAPI, EventModuleAPI, CommonElementAPI);
-        window.xmlplus = $.extend(xmlplus, $);
+        window.xmlplus = window.xp = $.extend(xmlplus, $);
         if ( typeof define === "function" && define.amd )
             define( "xmlplus", [], new Function("return xmlplus;"));
-        $.ready(function () {
+        hp.ready(function () {
             $document.body.hasAttribute("noparse") || hp.parseHTML($document.body);
+			isReady = true;
         });
     } else {
         delete $.ready;
-        delete $.getElementById;
         XPath = require("xpath");
         DOMParser_ = require("xmldom").DOMParser;
         XMLSerializer_ = require("xmldom").XMLSerializer;
