@@ -33,7 +33,8 @@ xmlplus("xp", function (xp, $_, t) {
 					 price: <Input id='foo' value='2.2'/><br/>\
 					 count: <Input id='bar' value='3.3'/>\
 				  </div>",
-			map: { attrs: { foo: "format", bar: "format" } },
+			ali: { inputs: "//Input" },
+			map: { cfgs: { inputs: "format" } },
 			fun: function (sys, items, opts) {
 				function getValue() {
 					return [items.foo.value, items.bar.value];

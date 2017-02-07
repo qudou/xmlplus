@@ -4,7 +4,7 @@ xmlplus("xp", function ( xp, $_, t) {
 			xml: "<Format fontSize='16'/>"
 		},
 		Format: {
-			opt: { fontSize: "24", width: "28px", disabled: "true" },
+			opt: { step: "28.5", fontSize: "24", width: "28px", disabled: "true" },
 			map: { format: {"int": "step", "float": "fontSize width", "bool": "disabled"} },
 			fun: function (sys, items, opts) {
 				console.log(opts.step, typeof opts.step);

@@ -2,8 +2,8 @@ xmlplus("xp", function (xp, $_, t) {
     $_().imports({
 		Index: {
 			xml: "<div id='index'>\
-					<Form id='foo' format='int'/>\
-					<Form id='bar' format='float'/>\
+					<Form_1 id='foo' format='int'/>\
+					<Form_1 id='bar' format='float'/>\
 					<button id='btn'>check</button>\
 				  </div>",
 			fun: function ( sys, items, opts ) {
@@ -33,7 +33,8 @@ xmlplus("xp", function (xp, $_, t) {
 					 price: <Input id='foo' value='2.2'/><br/>\
 					 count: <Input id='bar' value='3.3'/>\
 				  </div>",
-			map: { attrs: { foo: "format", bar: "format" } },
+			cfg: { foo: {format: "string"}, bar: {format: "string"} },
+			map: { cfgs: { foo: "format", bar: "format" } },
 			fun: function (sys, items, opts) {
 				function getValue() {
 					return [items.foo.value, items.bar.value];

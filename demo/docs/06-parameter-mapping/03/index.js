@@ -1,14 +1,15 @@
 xmlplus("xp", function (xp, $_, t) {
     $_().imports({
 		Index: {
-			xml: "<Input placeholder='please input' value='hello world'/>"
+			xml: "<Input disabled='true'/>"
 		},
 		Input: {
 			xml: "<input id='input' type='text'/>",
 			opt: { format: 'string' },
-			map: { attrs: { input: "disabled value placeholder readonly" } },
 			fun: function (sys, items, opts) {
 				var parse = {"int": parseInt, "float": parseFloat, "string": String}[opts.format];
+				if (opts.disabled)
+					sys.input.attr("disabled", opts.disabled);
 				function getValue() {
 					return parse(sys.input.prop("value"));
 				}

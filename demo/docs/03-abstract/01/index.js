@@ -1,20 +1,21 @@
 xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
+			css: "#addr { margin-bottom: 5px; }",
 			xml: "<div id='index'>\
-					  地址：<IPv4Box id='addr'/>\
+					  地址：<IPv4Box id='addr'/><br/>\
 					  掩码：<IPv4Box id='musk'/>\
 				  </div>",
 			fun: function (sys, items, opts) {
 				items.addr.value = "192.168.0.1";
-				items.musk.value = "172.163.0.1";
+				items.musk.value = "255.255.255.0";
 				console.log("addr", items.addr.value);
 				console.log("musk", items.musk.value);
 			}
 		},
         IPv4Box: {
 			css: "#box { border:1px solid #ABADB3; display: inline-block; }\
-				  #box input { width: 28px; border:0; text-align:center; outline:none; }",
+				  #box input { width: 28px; line-height: 19px; border:0; text-align:center; outline:none; }",
 			xml: "<div id='box'>\
 					<input/>.<input/>.<input/>.<input/>\
 				  </div>",

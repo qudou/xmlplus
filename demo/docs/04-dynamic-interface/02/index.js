@@ -1,16 +1,16 @@
 xmlplus("xp", function ( xp, $_, t) {
     $_().imports({
 		Index: {
-			xml: "<Ipv4Box id='list'/>",
+			xml: "<Ipv4Box id='ipbox'/>",
 			fun: function (sys, items, opts) {
-				items.list.value = "192.168.0.1";
-				console.log(items.list.value);
-				console.log(sys.list.value() == items.list);
+				items.ipbox.value = "192.168.0.1";
+				console.log(items.ipbox.value);
+				console.log(sys.ipbox.value() == items.ipbox);
 			}
 		},
         IPv4Box: {
 			css: "#box { border:1px solid #ABADB3; display: inline-block; }\
-				  #box input { width: 28px; border:0; text-align:center; outline:none; }",
+				  #box input { width: 28px; line-height: 19px; border:0; text-align:center; outline:none; }",
 			xml: "<div id='box'>\
 					<input/>.<input/>.<input/>.<input/>\
 				  </div>",
