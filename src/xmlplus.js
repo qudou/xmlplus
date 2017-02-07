@@ -53,11 +53,11 @@ var $ = {
         throw new Error(message);
     },
     ready: function ( callback ) {
-		if ( isReady ) return callback($);
+        if ( isReady ) return callback($);
         var t = setInterval(function() {
-			if ( isReady )
-				clearInterval(t), callback($);
-		}, 0);
+            if ( isReady )
+                clearInterval(t), callback($);
+        }, 0);
     },
     type: (function () {
         var i, class2type = {},
@@ -93,15 +93,15 @@ var $ = {
         return obj && typeof obj.guid == "function" && !!Store[obj.guid()];
     },
     each: function ( objs, callback ) {
-		var i, key;
-		if ( hp.likeArray( objs ) ) {
-			for ( i = 0; i < objs.length; i++ )
-				if ( callback.call(objs[i], i, objs[i]) === false ) break;
-		} else for ( key in objs ) {
-			if ( callback.call(objs[key], key, objs[key] ) === false ) break;
-		}
-		return objs;
-	},
+        var i, key;
+        if ( hp.likeArray( objs ) ) {
+            for ( i = 0; i < objs.length; i++ )
+                if ( callback.call(objs[i], i, objs[i]) === false ) break;
+        } else for ( key in objs ) {
+            if ( callback.call(objs[key], key, objs[key] ) === false ) break;
+        }
+        return objs;
+    },
     extend: function () {
         var options, name, src, copy, copyIsArray, clone,
             target = arguments[ 0 ] || {},
@@ -193,9 +193,9 @@ var $ = {
         return this;
     },
     getElementById: function ( id, isGuid ) {
-		if ( isGuid ) 
-			return Store[id] && Store[id].api;
-		return isInBrowser ? (Global[id] || $document.getElementById(id)) : null;
+        if ( isGuid ) 
+            return Store[id] && Store[id].api;
+        return isInBrowser ? (Global[id] || $document.getElementById(id)) : null;
     }
 };
 
@@ -256,7 +256,7 @@ var ph = (function () {
 }());
 
 var hp = {
-	likeArray: function ( obj ) {
+    likeArray: function ( obj ) {
         var length = !!obj && "length" in obj && obj.length,
             type = $.type( obj );
         if ( type === "function" || $.isWindow( obj ) )
@@ -308,12 +308,12 @@ var hp = {
         return elem.style[name] || getComputedStyle(elem, "").getPropertyValue(name);
     },
     callback: function () {
-		if ( this.data.emptySystemCall ) {
-			this.data.emptySystemCall = false;
-		} else {
-			var ret = this.fn.apply(this.data, [].slice.call(arguments));
-			return ret == this.data ? this.api : ret;
-		}
+        if ( this.data.emptySystemCall ) {
+            this.data.emptySystemCall = false;
+        } else {
+            var ret = this.fn.apply(this.data, [].slice.call(arguments));
+            return ret == this.data ? this.api : ret;
+        }
     },
     build: (function () {
         var table = [], objects = [];
@@ -479,7 +479,7 @@ $.extend(hp, (function () {
             result.fun = function () {
                 var foo = source.fun.apply(this, [].slice.call(arguments));
                 var bar = target.fun.apply(this, [].slice.call(arguments));
-                return bar ? $.extend(bar, foo) : foo;
+                return bar ? $.extend(foo, bar) : foo;
             };
         }
         result.css = (extend.css == "r") ? target.css : (source.css || '') + (target.css || '');
@@ -752,7 +752,7 @@ var CommonElementAPI = {
     },
     addClass: function ( value, ctx ) {
         var elem = this.elem(),
-			ctx = Store[ctx] || this.env,
+            ctx = Store[ctx] || this.env,
             klass = elem.getAttribute("class"),
             input = value.replace(/#/g, ctx.aid + ctx.cid).split(/\s+/),
             result = klass ? klass.split(/\s+/) : [];
@@ -764,9 +764,9 @@ var CommonElementAPI = {
     },
     removeClass: function ( value, ctx ) {
         var elem = this.elem();
-		if ( value === undefined )
-			return elem.setAttribute("class", ""), this;
-		var	ctx = Store[ctx] || this.env,
+        if ( value === undefined )
+            return elem.setAttribute("class", ""), this;
+        var ctx = Store[ctx] || this.env,
             klass = elem.getAttribute("class"),
             input = value.replace(/#/g, ctx.aid + ctx.cid).split(/\s+/),
             result = klass ? klass.split(/\s+/) : [];
@@ -1003,9 +1003,9 @@ var CommonElementAPI = {
             elem = elem.ownerDocument;
         return $.serialize(elem);
     },
-	emptySystemCall: function () {
-		this.emptySystemCall = true;
-	}
+    emptySystemCall: function () {
+        this.emptySystemCall = true;
+    }
 };
 
 var ClientElementAPI = {
@@ -1381,8 +1381,8 @@ function StyleManager() {
             $.error("invalid theme, excepted a string");
         current = value;
         for ( var k in table )
-            if ( Themes[table[k].ins.root][current] )
-				parent.replaceChild(cssText(table[k].ins), table[k].style.lastChild);
+            if ( Themes[table[k].ins.dir.split('/')[0]][current] )
+                table[k].style.replaceChild(cssText(table[k].ins), table[k].style.lastChild);
         return this;
     }
     function style() {
@@ -1605,29 +1605,29 @@ function xmlplus( root, callback ) {
 function startup( xml, parent, param ) {
     var instance, fragment,
         env = $.extend(true, {xml: hp.parseToXML(xml), cid: $.guid(), share: {}, dir: ""}, Template);
-	if ( $.isPlainObject(parent) ) {
-		param = parent;
-		parent = $document.body || $document.cloneNode();
-	} else if ( parent === undefined ) {
-		parent = $document.body || $document.cloneNode();
-	} else if ( typeof parent == "string" ) {
-		parent =  $document.getElementById(parent) || $.error("parent element " + parent + " not found");
-	}
-	env.fdr = Finder(env);
-	env.smr = StyleManager();
-	env.ctr = Communication();
-	env.aid = isInBrowser ? $.guid() : "";
-	env.api = hp.build(env, NodeElementAPI);
-	if ( env.xml.nodeType == ELEMENT_NODE && $.isPlainObject(param) ) {
-		env.xml.getAttribute("id") || env.xml.setAttribute("id", $.guid());
-		env.cfg[env.xml.getAttribute("id")] = param;
-	}
-	env.xml = env.xml.parentNode || xdocument.cloneNode().appendChild(env.xml).parentNode;
-	fragment = isInBrowser ? $document.createDocumentFragment() : parent;
-	instance = parseEnvXML(env, fragment, env.xml.lastChild);
-	isInBrowser && parent.appendChild(fragment);
-	$.extend(hp.create(instance).api, {theme: env.smr.theme, style: env.smr.style});
-	return instance.api;
+    if ( $.isPlainObject(parent) ) {
+        param = parent;
+        parent = $document.body || $document.cloneNode();
+    } else if ( parent === undefined ) {
+        parent = $document.body || $document.cloneNode();
+    } else if ( typeof parent == "string" ) {
+        parent =  $document.getElementById(parent) || $.error("parent element " + parent + " not found");
+    }
+    env.fdr = Finder(env);
+    env.smr = StyleManager();
+    env.ctr = Communication();
+    env.aid = isInBrowser ? $.guid() : "";
+    env.api = hp.build(env, NodeElementAPI);
+    if ( env.xml.nodeType == ELEMENT_NODE && $.isPlainObject(param) ) {
+        env.xml.getAttribute("id") || env.xml.setAttribute("id", $.guid());
+        env.cfg[env.xml.getAttribute("id")] = param;
+    }
+    env.xml = env.xml.parentNode || xdocument.cloneNode().appendChild(env.xml).parentNode;
+    fragment = isInBrowser ? $document.createDocumentFragment() : parent;
+    instance = parseEnvXML(env, fragment, env.xml.lastChild);
+    isInBrowser && parent.appendChild(fragment);
+    $.extend(hp.create(instance).api, {theme: env.smr.theme, style: env.smr.style});
+    return instance.api;
 }
 
 (function () {
@@ -1643,7 +1643,7 @@ function startup( xml, parent, param ) {
             define( "xmlplus", [], new Function("return xmlplus;"));
         hp.ready(function () {
             $document.body.hasAttribute("noparse") || hp.parseHTML($document.body);
-			isReady = true;
+            isReady = true;
         });
     } else {
         delete $.ready;
