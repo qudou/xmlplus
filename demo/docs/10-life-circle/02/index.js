@@ -6,7 +6,7 @@ xmlplus("xp", function (xp, $_, t) {
 				  </div>",
 			fun: function (sys, items, opts) {
 				sys.foo.on("click", function (event) {
-					sys.index.append("./Widget", { label: "I'm Button!" });
+					sys.index.append("Widget", { label: "I'm Button!" });
 				});
 			}
 		},

@@ -264,7 +264,7 @@ var hp = {
         return type === "array" || length === 0 ||
             typeof length === "number" && length > 0 && ( length - 1 ) in obj;
     },
-    parseToXML: function ( input ) {
+    parseToXML: function ( input, dir ) {
         if ( input == null )
             $.error("invalid input, expected a string a xml node");
         if ( input.ownerDocument )
@@ -275,11 +275,14 @@ var hp = {
             return xdocument.createElement(input);
         if ( input.charAt(0) == '<' ) try {
             return $.parseXML(input).lastChild;
-        } catch (e) {}
-        var i = input.lastIndexOf('/');
-        try {
-            return xdocument.createElementNS(input.substring(0, i) || ".", 'i:' + input.substr(i+1));
-        } catch (e) {}
+        } catch (e) {
+			return xdocument.createTextNode(input);
+		}
+        var i = input.lastIndexOf('/'),
+			dir = ph.fullPath(dir || "", input.substring(0, i) || "."),
+			basename = input.substr(i+1);
+        if ( Library[dir] && Library[dir][basename.toLowerCase()] )
+            return xdocument.createElementNS("//" + dir, 'i:' + basename);
         return xdocument.createTextNode(input);
     },
     defDisplay: (function () {
@@ -833,7 +836,7 @@ var CommonElementAPI = {
             this.env.fdr.refresh();
             return target;
         }
-        target = hp.parseToXML(target);
+        target = hp.parseToXML(target, this.env.dir);
         if ( target.nodeType == ELEMENT_NODE && $.isPlainObject(param) ) {
             target.getAttribute("id") || target.setAttribute("id", $.guid());
             this.env.cfg[target.getAttribute("id")] = param;
@@ -865,7 +868,7 @@ var CommonElementAPI = {
             this.env.fdr.refresh();
             return target;
         }
-        target = hp.parseToXML(target);
+        target = hp.parseToXML(target, this.env.dir);
         if ( target.nodeType == ELEMENT_NODE && $.isPlainObject(param) ) {
             target.getAttribute("id") || target.setAttribute("id", $.guid());
             this.env.cfg[target.getAttribute("id")] = param;
@@ -898,7 +901,7 @@ var CommonElementAPI = {
             Manager[this.typ].recycle(this);
             return target;
         }
-        target = hp.parseToXML(target);
+        target = hp.parseToXML(target, this.env.dir);
         if ( target.nodeType == ELEMENT_NODE && $.isPlainObject(param) ) {
             target.getAttribute("id") || target.setAttribute("id", $.guid());
             this.env.cfg[target.getAttribute("id")] = param;

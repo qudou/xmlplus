@@ -8,7 +8,7 @@ xmlplus("xp", function (xp, $_, t) {
 					 <button id='bar'>bar</button>\
 				 </div>",
 		   fun: function (sys, items, opts) {
-			   console.log(items("button", sys.index).length);
+			   console.log(items("button", sys.index).length); // 1
 			   sys("button", sys.sub).call("css", "color", "blue");
 		   }
 		}
