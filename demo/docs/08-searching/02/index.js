@@ -6,7 +6,7 @@ xmlplus("xp", function (xp, $_, t) {
 					 <Button>bar</Button>\
 				 </div>",
 		   fun: function (sys, items, opts) {
-			   console.log(items("*").length); // 3
+			   console.log(items("//*").length); // 3
 			   items("//Button").call("color", "blue");
 		   }
 		},

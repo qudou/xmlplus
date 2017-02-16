@@ -4,7 +4,7 @@ xmlplus("xp", function (xp, $_, t) {
 			xml: "<div id='index'>\
 					  <button id='foo'>append</button>\
 				  </div>",
-			fun: function ( sys, items, opts ) {
+			fun: function (sys, items, opts) {
 				sys.foo.on( "click", function (e) {
 					sys.index.append("Widget");
 				});

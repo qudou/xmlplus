@@ -177,7 +177,7 @@ var $ = {
         if ( isHTML[path] )
             return true;
         var s = ph.split(path);
-        return Library[s.dir] && Library[s.dir][s.basename];
+        return Library[s.dir] && Library[s.dir][s.basename] || false;
     },
     clearLibrary: function ( space ) {
         if ( space == null )
@@ -300,7 +300,13 @@ var hp = {
             return elemDisplay[nodeName];
         };
     }()),
-    offset: function ( elem ) {
+    offsetParent: function (elem) {
+        var parent = elem.offsetParent;
+        while ( parent && hp.css(parent, "position") == "static" )
+            parent = parent.offsetParent;
+        return parent || $document.documentElement; 
+    },
+    offset: function (elem) {
         var obj = elem.getBoundingClientRect();
         return {
             left: obj.left + pageXOffset,
@@ -755,7 +761,7 @@ var CommonElementAPI = {
     },
     addClass: function ( value, ctx ) {
         var elem = this.elem(),
-            ctx = Store[ctx] || this.env,
+            ctx = (ctx && Store[ctx.guid()] || this).env,
             klass = elem.getAttribute("class"),
             input = value.replace(/#/g, ctx.aid + ctx.cid).split(/\s+/),
             result = klass ? klass.split(/\s+/) : [];
@@ -769,7 +775,7 @@ var CommonElementAPI = {
         var elem = this.elem();
         if ( value === undefined )
             return elem.setAttribute("class", ""), this;
-        var ctx = Store[ctx] || this.env,
+        var ctx = (ctx && Store[ctx.guid()] || this).env,
             klass = elem.getAttribute("class"),
             input = value.replace(/#/g, ctx.aid + ctx.cid).split(/\s+/),
             result = klass ? klass.split(/\s+/) : [];
@@ -816,7 +822,7 @@ var CommonElementAPI = {
     unwatch: function ( type, fn ) {
         return this.ctr.unwatch.apply(this, [type, fn]);
     },
-    append: function ( target, param ) {
+    append: function ( target, options ) {
         var parent = this.appendTo();
         if ( $.isSystemObject(target) ) {
             if ( target.contains(this.api) )
@@ -837,16 +843,16 @@ var CommonElementAPI = {
             return target;
         }
         target = hp.parseToXML(target, this.env.dir);
-        if ( target.nodeType == ELEMENT_NODE && $.isPlainObject(param) ) {
+        if ( target.nodeType == ELEMENT_NODE && $.isPlainObject(options) ) {
             target.getAttribute("id") || target.setAttribute("id", $.guid());
-            this.env.cfg[target.getAttribute("id")] = param;
+            this.env.cfg[target.getAttribute("id")] = options;
         }
         this.node.appendChild(target);
         parseEnvXML(this.env, parent, this.node.lastChild);
         target.nodeType == ELEMENT_NODE && target.hasAttribute("id") && this.env.fdr.refresh();
         return hp.create(Store[this.node.lastChild.uid]).api;
     },
-    before: function ( target, param ) {
+    before: function ( target, options ) {
         if ( this.node == this.env.xml.lastChild )
             $.error("insert before document node is not allow");
         var elem = this.elem();
@@ -869,9 +875,9 @@ var CommonElementAPI = {
             return target;
         }
         target = hp.parseToXML(target, this.env.dir);
-        if ( target.nodeType == ELEMENT_NODE && $.isPlainObject(param) ) {
+        if ( target.nodeType == ELEMENT_NODE && $.isPlainObject(options) ) {
             target.getAttribute("id") || target.setAttribute("id", $.guid());
-            this.env.cfg[target.getAttribute("id")] = param;
+            this.env.cfg[target.getAttribute("id")] = options;
         }
         var newNode = this.node.parentNode.insertBefore(target, this.node);
         parseEnvXML(this.env, elem, newNode);
@@ -879,7 +885,7 @@ var CommonElementAPI = {
         target.nodeType == ELEMENT_NODE && target.hasAttribute("id") && this.env.fdr.refresh();
         return hp.create(Store[this.node.previousSibling.uid]).api;
     },
-    replace: function ( target, param ) {
+    replace: function ( target, options ) {
         var elem = this.elem();
         if ( $.isSystemObject(target) ) {
             if ( target.contains(this.api) )
@@ -902,9 +908,9 @@ var CommonElementAPI = {
             return target;
         }
         target = hp.parseToXML(target, this.env.dir);
-        if ( target.nodeType == ELEMENT_NODE && $.isPlainObject(param) ) {
+        if ( target.nodeType == ELEMENT_NODE && $.isPlainObject(options) ) {
             target.getAttribute("id") || target.setAttribute("id", $.guid());
-            this.env.cfg[target.getAttribute("id")] = param;
+            this.env.cfg[target.getAttribute("id")] = options;
         }
         this.node.appendChild(target);
         parseEnvXML(this.env, elem, target);
@@ -991,7 +997,7 @@ var CommonElementAPI = {
     },
     namespace: function () {
         var uri = this.node.namespaceURI;
-        return isHTML[this.node.nodeName] ? uri : ph.fullPath(this.env.dir, uri || '');
+        return isHTML[this.node.nodeName] ? uri : "//" + ph.fullPath(this.env.dir, uri || '');
     },
     guid: function () {
         return this.node.uid;
@@ -1050,18 +1056,13 @@ var ClientElementAPI = {
         elem.style.height = parseFloat(value) + "px";
         return this;
     },
-    offsetParent: function () {
-        var parent = this.elem().offsetParent;
-        while ( parent && hp.css(parent, "position") == "static" )
-            parent = parent.offsetParent;
-        return parent || $document.documentElement; 
-    },
     offset: function ( coordinates ) {
         var elem = this.elem();
         if ( coordinates ) {
-            var parentOffset = this.api.offsetParent();
+            var parentOffset = hp.offset(hp.offsetParent(elem));
             elem.style.top = coordinates.top  - parentOffset.top + "px";
             elem.style.left = coordinates.left  - parentOffset.left + "px";
+			(hp.css(elem,'position') == 'static') && (elem.style.position = 'relative');
             return this;
         }
         var obj = elem.getBoundingClientRect();
@@ -1075,7 +1076,7 @@ var ClientElementAPI = {
     position: function  () {
         var elem = this.elem(),
             offset = hp.offset(elem),
-            offsetParent = this.api.offsetParent(),
+            offsetParent = hp.offsetParent(elem),
             parentOffset = hp.offset(offsetParent);
         offset.top  -= parseFloat(hp.css(elem, "margin-top"));
         offset.left -= parseFloat(hp.css(elem, "margin-left"));
