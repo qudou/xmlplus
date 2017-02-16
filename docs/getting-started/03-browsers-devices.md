@@ -95,9 +95,9 @@ xmlplus 支持主流的浏览器以及平台。在 Windows 平台，其支持 In
 
 ## Internet Explorer
 
-前面提到 xmlplus 对 Internet Explorer 9-11 提供支持，不过这需要额外引入两个文件，xpath.js 以及 xmldom.js。
+前面提到 xmlplus 对 Internet Explorer 9-11 提供支持，不过这需要额外引入两个文件，`xpath.js` 以及 `xmldom.js`。
 
-这两个文件可在安装包的目录patch中找到。也就是说，如果你想在 Internet Explorer 9-11 中运行基于 xmlplus 的应用，你需要导入三个 js 文件。
+这两个文件可在安装包的目录 patch 中找到。也就是说，如果你想在 Internet Explorer 9-11 中运行基于 xmlplus 的应用，你需要导入三个 js 文件。
 
 ```html
 <script src='xpath.js'></script>
