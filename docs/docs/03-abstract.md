@@ -42,7 +42,7 @@ xmlplus("xp", function (xp, $_, t) {
 ```js
 // 03-01
 function (sys, items, opts) {
-	var inputs = sys.box.children();
+    var inputs = sys.box.children();
     sys.box.on("keypress", "input", function(e) {
         var next, ch = String.fromCharCode(e.which);
         if (!/[0-9]/.test(ch))
@@ -52,17 +52,17 @@ function (sys, items, opts) {
             next && next.elem().select();
         }
     });
-	function getValue() {
-		return inputs.map(function (item) {
-			return item.prop("value")
-		}).join('.');
-	}
+    function getValue() {
+        return inputs.map(function (item) {
+            return item.prop("value")
+        }).join('.');
+    }
     function setValue(input) {
         var input = input.split(".");
         for (var i = 0; i < inputs.length; i++)
             inputs[i].prop("value", input[i]);
     }
-	return Object.defineProperty({}, "value", { get: getValue, set: setValue });
+    return Object.defineProperty({}, "value", { get: getValue, set: setValue });
 }
 ```
 
@@ -75,7 +75,7 @@ function (sys, items, opts) {
 ```js
 // 03-01
 Index: {
-	css: "#addr { margin-bottom: 5px; }",
+    css: "#addr { margin-bottom: 5px; }",
     xml: "<div id='index'>\
               地址：<IPv4Box id='addr'/><br/>\
               掩码：<IPv4Box id='musk'/>\

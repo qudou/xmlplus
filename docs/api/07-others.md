@@ -15,16 +15,16 @@ value()
 ```js
 // 07-01
 Example: {
-	xml: "<Target id='example'/>",
-	fun: function (sys, items, opts) {
-		var value = sys.example.value();
-		console.log(value.text, value == items.example); // hello,world true
-	}
+    xml: "<Target id='example'/>",
+    fun: function (sys, items, opts) {
+        var value = sys.example.value();
+        console.log(value.text, value == items.example); // hello,world true
+    }
 },
 Target: {
-	fun: function (sys, items, opts) {
-		return { text: "hello,world" };                  // 值对象由此返回
-	}
+    fun: function (sys, items, opts) {
+        return { text: "hello,world" };                  // 值对象由此返回
+    }
 }
 ```
 
@@ -41,13 +41,13 @@ localName()
 ```js
 // 07-02
 Example: {
-	xml: "<div id='example'>\
-			<Target id='target'/>\
-		  </div>",
-	fun: function (sys, items, opts) {
-		console.log(sys.example.localName());  // div
-		console.log(sys.target.localName());   // Target
-	}
+    xml: "<div id='example'>\
+            <Target id='target'/>\
+          </div>",
+    fun: function (sys, items, opts) {
+        console.log(sys.example.localName());  // div
+        console.log(sys.target.localName());   // Target
+    }
 },
 Target: {}
 ```
@@ -65,10 +65,10 @@ namespace()
 ```js
 // 07-03
 Example: {
-	xml: "<Target id='example'/>",
-	fun: function (sys, items, opts) {
-		console.log(sys.example.namespace());  // //xp
-	}
+    xml: "<Target id='example'/>",
+    fun: function (sys, items, opts) {
+        console.log(sys.example.namespace());  // //xp
+    }
 },
 Target: {}
 ```
@@ -86,10 +86,10 @@ guid()
 ```js
 // 07-04
 Example: {
-	xml: "<div id='example'/>",
-	fun: function (sys, items, opts) {
-		console.log(sys.example.guid());  // 一个组件对象标识符
-	}
+    xml: "<div id='example'/>",
+    fun: function (sys, items, opts) {
+        console.log(sys.example.guid());  // 一个组件对象标识符
+    }
 }
 ```
 
@@ -106,11 +106,11 @@ toString()
 ```js
 // 07-05
 Example: {
-	xml: "<div id='example'><span/></div>",
-	fun: function (sys, items, opts) {
-		console.log(sys.example.toString());         // example
-		console.log(sys.example.first().toString()); // 组件对象标识符
-	}
+    xml: "<div id='example'><span/></div>",
+    fun: function (sys, items, opts) {
+        console.log(sys.example.toString());         // example
+        console.log(sys.example.first().toString()); // 组件对象标识符
+    }
 }
 ```
 
@@ -128,16 +128,16 @@ serialize([serializeXML])
 ```js
 // 07-06
 Example: {
-	xml: "<div id='example'>\
-			<Target id='target'/>\
-		  </div>",
-	fun: function (sys, items, opts) {
-		console.log(sys.example.serialize());      // <div><h1>hello, world</h1></div>
-		console.log(sys.example.serialize(true));  // <div><Target id='target'/></div>
-	}
+    xml: "<div id='example'>\
+            <Target id='target'/>\
+          </div>",
+    fun: function (sys, items, opts) {
+        console.log(sys.example.serialize());      // <div><h1>hello, world</h1></div>
+        console.log(sys.example.serialize(true));  // <div><Target id='target'/></div>
+    }
 },
 Target: {
-	xml: "<h1>hello, world</h1>"
+    xml: "<h1>hello, world</h1>"
 }
 ```
 
@@ -165,11 +165,11 @@ data(key,value)
 ```js
 // 07-07
 Example: {
-	xml: "<div id='example'/>",
-	fun: function (sys, items, opts) {
-		sys.example.data("key", "value");
-		console.log(sys.example.data("key"));   // value
-	}
+    xml: "<div id='example'/>",
+    fun: function (sys, items, opts) {
+        sys.example.data("key", "value");
+        console.log(sys.example.data("key"));   // value
+    }
 }
 ```
 
@@ -187,13 +187,13 @@ removeData(key)
 ```js
 // 07-08
 Example: {
-	xml: "<div id='example'/>",
-	fun: function (sys, items, opts) {
-		sys.example.data("key", "value");
-		console.log(sys.example.data("key"));    // value
-		sys.example.removeData("key");
-		console.log(sys.example.data("key"));    // undefined
-	}
+    xml: "<div id='example'/>",
+    fun: function (sys, items, opts) {
+        sys.example.data("key", "value");
+        console.log(sys.example.data("key"));    // value
+        sys.example.removeData("key");
+        console.log(sys.example.data("key"));    // undefined
+    }
 }
 ```
 
@@ -210,11 +210,11 @@ emptySystemCall()
 ```js
 // 07-09
 Example: {
-	xml: "<h1 id='example'>hello, world</h1>",
-	fun: function (sys, items, opts) {
-		sys.example.emptySystemCall();
-		sys.example.css("color", "blue");             // 此语句无任何效果
-		sys.example.css("border", "1px solid red");   // 此语句生效
-	}
+    xml: "<h1 id='example'>hello, world</h1>",
+    fun: function (sys, items, opts) {
+        sys.example.emptySystemCall();
+        sys.example.css("color", "blue");             // 此语句无任何效果
+        sys.example.css("border", "1px solid red");   // 此语句生效
+    }
 }
 ```

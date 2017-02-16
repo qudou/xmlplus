@@ -125,21 +125,21 @@ function () {
 ```js
 // 07-08
 Index: {
-	xml: "<Button id='index'/>",
-	fun: function (sys, items, opts) {
-		console.log(items.index);  // { "a": 2, "b": 1, "c": 3 }
+    xml: "<Button id='index'/>",
+    fun: function (sys, items, opts) {
+        console.log(items.index);  // { "a": 2, "b": 1, "c": 3 }
     }
 },
 Widget: {
     fun: function (sys, items, opts) {
-		return { "a": 0, "b": 1 };
+        return { "a": 0, "b": 1 };
     }
 },
 Button: {
-	xml: "<button id='btn'>label</button>",
+    xml: "<button id='btn'>label</button>",
     map: { extend: {"from": "Widget"} },
     fun: function (sys, items, opts) {
-		return { "a": 2, "c": 3 };
+        return { "a": 2, "c": 3 };
     }
 }
 ```
@@ -160,7 +160,7 @@ Button: {
     opt: { border: "1px", color: "blue" },
     map: { extend: {"from": "Widget", "opt": "r"} },
     fun: function (sys, items, opts) {
-		console.log(opts); // { border: "1px", color: "blue" }
+        console.log(opts); // { border: "1px", color: "blue" }
     }
 }
 ```

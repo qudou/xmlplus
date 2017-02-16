@@ -42,9 +42,9 @@ Input: {
     opt: { format: "string" },
     fun: function (sys, items, opts) {
         var parse = {"int": parseInt, "float": parseFloat, "string": String}[opts.format];
-		function getValue() {
-			return parse(sys.input.prop("value"));
-		}
+        function getValue() {
+            return parse(sys.input.prop("value"));
+        }
         function setValue(value) {
             sys.input.prop("value", parse(value));
         }
@@ -73,9 +73,9 @@ Input: {
         var parse = {"int": parseInt, "float": parseFloat, "string": String}[opts.format];
         if (opts.disabled)
             sys.input.attr("disabled", opts.disabled);
-		function getValue() {
-			return parse(sys.input.prop("value"));
-		}
+        function getValue() {
+            return parse(sys.input.prop("value"));
+        }
         function setValue(value) {
             sys.input.prop("value", parse(value));
         }
@@ -93,9 +93,9 @@ Input: {
     map: { attrs: { input: "disabled value placeholder readonly" } },
     fun: function (sys, items, opts) {
         var parse = {"int": parseInt, "float": parseFloat, "string": String}[opts.format];
-		function getValue() {
-			return parse(sys.input.prop("value"));
-		}
+        function getValue() {
+            return parse(sys.input.prop("value"));
+        }
         function setValue(value) {
             sys.input.prop("value", parse(value));
         }
@@ -207,7 +207,7 @@ Form: {
 // 06-08
 Input_1: {
     xml: "<input id='foo'/>",
-	opt: { val: "hello, world" },
+    opt: { val: "hello, world" },
     map: { attrs: { foo: "val->value" } }
 }
 ```
@@ -218,7 +218,7 @@ Input_1: {
 // 06-08
 Input_2: {
     xml: "<Input id='foo'/>",
-	opt: { val: "hello, world" },
+    opt: { val: "hello, world" },
     map: { cfgs: { foo: "val->value" } }
 }
 ```

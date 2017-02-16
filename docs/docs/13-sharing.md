@@ -20,9 +20,9 @@ Index: {
 },
 Audio: {
     xml: "<audio autoplay='autoplay'/>",
-	fun: function (sys, items, opts) {
-		return { desc: "audio desc" };
-	}
+    fun: function (sys, items, opts) {
+        return { desc: "audio desc" };
+    }
 }
 ```
 
@@ -60,9 +60,9 @@ Index: {
 },
 Music: {
     xml: "<Audio id='music'/>",
-	fun: function (sys, items, opts) {
-		return items.music;
-	}
+    fun: function (sys, items, opts) {
+        return items.music;
+    }
 }
 ```
 
@@ -143,10 +143,10 @@ Index: {
 
 ```js
 Sqlite: {
-	fun: function (sys, items, opts) {
-		var sqlite = require("sqlite3").verbose(),
-		return new sqlite.Database("data.db");
-	}
+    fun: function (sys, items, opts) {
+        var sqlite = require("sqlite3").verbose(),
+        return new sqlite.Database("data.db");
+    }
 }
 ```
 
@@ -159,9 +159,9 @@ Sqlite: {
 ```js
 Index: {
     xml: "<HTTP id='index'>\
-			<Signin id='signin'/>\
-			<Logout id='logout'/>\
-		  </HTTP>
+            <Signin id='signin'/>\
+            <Logout id='logout'/>\
+          </HTTP>
     map: { share: "/db/Sqlite" }
 }
 ```

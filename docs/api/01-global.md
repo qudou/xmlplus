@@ -16,13 +16,13 @@ startup(object[,parent][,options])
 ```js
 // 01-01
 xmlplus("xp", function (xp, $_, t) {
-	$_().imports({
-		Example: {
-			xml: "<h1>hello, world</h1>"
-		}
-	});
+    $_().imports({
+        Example: {
+            xml: "<h1>hello, world</h1>"
+        }
+    });
 }).ready(function() {
-	xp.startup("//xp/Example");
+    xp.startup("//xp/Example");
 });
 ```
 
@@ -69,7 +69,7 @@ ready(handler)
 ```js
 // 01-04
 xp.ready(function () {
-	console.log("DOM is ready.")
+    console.log("DOM is ready.")
 });
 ```
 
@@ -201,12 +201,12 @@ isSystemObject(obj)
 ```js
 // 01-12
 Example: {
-	xml: "<h1 id='example'>hello, world</h1>",
-	fun: function (sys, items, opts) {
-		console.log(xp.isSystemObject({}));            // false
-		console.log(xp.isSystemObject(this));          // true
-		console.log(xp.isSystemObject(sys.example));   // true
-	}
+    xml: "<h1 id='example'>hello, world</h1>",
+    fun: function (sys, items, opts) {
+        console.log(xp.isSystemObject({}));            // false
+        console.log(xp.isSystemObject(this));          // true
+        console.log(xp.isSystemObject(sys.example));   // true
+    }
 }
 ```
 
@@ -242,9 +242,9 @@ expand(object)
 ```js
 // 01-14
 xp.expand({
-	sayHello: function () {
-		console.log("hello");
-	}
+    sayHello: function () {
+        console.log("hello");
+    }
 });
 ```
 
@@ -262,10 +262,10 @@ each(object,callback)
 ```js
 // 01-15
 xp.each(['a','b','c'], function (index, value) {
-	console.log(index, value);
+    console.log(index, value);
 });
 xp.each({a:1,b:2,c:3}, function (key, value) {
-	console.log(key, value);
+    console.log(key, value);
 });
 ```
 
@@ -353,11 +353,11 @@ getElementById(id[,isGuid])
 ```js
 // 01-20
 Example: {
-	xml: "<div id='example'/>",
-	fun: function (sys, items, opts) {
-		var guid = sys.index.guid();
-		console.log(sys.index == xp.getElementById(guid, true); // true
-	}
+    xml: "<div id='example'/>",
+    fun: function (sys, items, opts) {
+        var guid = sys.index.guid();
+        console.log(sys.index == xp.getElementById(guid, true); // true
+    }
 }
 ```
 
@@ -372,8 +372,8 @@ Example: {
     <body>
         <span id="text">text</span>
         <script>
-			console.log(xp.getElementById("text") == document.getElementById("text")); // true
-		</script>
+            console.log(xp.getElementById("text") == document.getElementById("text")); // true
+        </script>
     </body>
 </html>
 ```
@@ -386,14 +386,14 @@ Example: {
     <head>
         <script src="xmlplus.js"></script>
         <script>
-			xmlplus("xp", function (xp, $_, t) {
-				$_().imports({
-					Index: {}
-				});
-			}).ready(function() {
-				console.log(xp.getElementById("index")); // SystemObject
-			});
-		</script>
+            xmlplus("xp", function (xp, $_, t) {
+                $_().imports({
+                    Index: {}
+                });
+            }).ready(function() {
+                console.log(xp.getElementById("index")); // SystemObject
+            });
+        </script>
     </head>
     <body>
         <i:Index id="index" xmlns='//xp'></i:Index>
