@@ -9,7 +9,7 @@
 ```js
 // 16-01
 Index: {
-    css: "#index button { color: blue }",
+    css: "#index button { color: blue; }",
     xml: "<div id='index'>\
             <button>hell</button>\
             <button>world</button>\
@@ -74,7 +74,7 @@ Index: {
 
 上面的示例来自 [延迟实例化](/docs#延迟实例化)，该示例中，组件对象 `foo` 被设计成延迟实例化的。当然这个示例较为简单，你可以尝试把组件对象 `foo` 替换成复杂的，需要初始化较长时长的组件对象以观察延迟实例化特性的功效。
 
-// 这里插入 ajax 动态抓取代码导入并执行
+更近一步，你可以利用 `require.js` 等工具动态获取组件包并导入系统，然后实例化相关的组件对象。此方案适用于体积较大的应用，它能按需分块加载组件集，使得应用的初始化快速进行。
 
 ## 复用已创建的组件对象
 
@@ -105,7 +105,7 @@ Item: {
 ```js
 // 16-05
 Index: {
-    xml: "<List id=list/>",
+    xml: "<List id='list'/>",
     fun: function (sys, items, opts) {
         items.list.value = ["hello","world"];
         items.list.value = ["1","2","3","4"];

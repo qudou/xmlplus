@@ -6,4 +6,4 @@ xmlplus("xp", function (xp, $_, t) {
             }
         }
     });
-}).startup("xp/Index");
+}).startup("//xp/Index");

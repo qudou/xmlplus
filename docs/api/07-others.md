@@ -8,9 +8,7 @@ value()
 
 - `Returns` : `ValueObject` 值对象
 
-该函数用于返回组件对象的值对象。值对象可以是 `String`、`null` 以及 `undefined` 等任何类型。
-
-在下面示例中，组件 Target 的函数项返回值即所谓的值对象，此处的值对象与 `items.example` 相等。
+该函数用于返回组件对象的值对象。值对象可以是 `String`、`null` 以及 `undefined` 等任何类型。在下面示例中，组件 Target 的函数项的返回值即所谓的值对象，此处的值对象与 `items.example` 相等。
 
 ```js
 // 07-01
