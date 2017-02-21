@@ -317,12 +317,8 @@ var hp = {
         return elem.style[name] || getComputedStyle(elem, "").getPropertyValue(name);
     },
     callback: function () {
-        if ( this.data.emptySystemCall ) {
-            this.data.emptySystemCall = false;
-        } else {
-            var ret = this.fn.apply(this.data, [].slice.call(arguments));
-            return ret == this.data ? this.api : ret;
-        }
+        var ret = this.fn.apply(this.data, [].slice.call(arguments));
+        return ret == this.data ? this.api : ret;
     },
     build: (function () {
         var table = [], objects = [];
@@ -1011,9 +1007,6 @@ var CommonElementAPI = {
         if ( prev && prev.nodeType == DOCUMENT_TYPE_NODE )
             elem = elem.ownerDocument;
         return $.serialize(elem);
-    },
-    emptySystemCall: function () {
-        this.emptySystemCall = true;
     }
 };
 
