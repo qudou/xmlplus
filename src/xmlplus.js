@@ -8,7 +8,7 @@
 "use strict";
   var ELEMENT_NODE                = 1;
 //var ATTRIBUTE_NODE              = 2;
-  var TEXT_NODE                   = 3;
+//var TEXT_NODE                   = 3;
 //var CDATA_SECTION_NODE          = 4;
 //var ENTITY_REFERENCE_NODE       = 5;
 //var ENTITY_NODE                 = 6;
@@ -1602,6 +1602,8 @@ function xmlplus( root, callback ) {
 function startup( xml, parent, param ) {
     var instance, fragment,
         env = $.extend(true, {xml: hp.parseToXML(xml), cid: $.guid(), share: {}, dir: ""}, Template);
+    if ( env.xml.nodeType !== ELEMENT_NODE )
+        $.error("target type must be ELEMENT_NODE");
     if ( $.isPlainObject(parent) ) {
         param = parent;
         parent = $document.body || $document.cloneNode();
@@ -1615,10 +1617,7 @@ function startup( xml, parent, param ) {
     env.ctr = Communication();
     env.aid = isInBrowser ? $.guid() : "";
     env.api = hp.build(env, NodeElementAPI);
-    if ( env.xml.nodeType !== ELEMENT_NODE ) {
-        var xml = $.parseXML("<div/>").lastChild;
-        env.xml = xml.appendChild(env.xml).parentNode
-    } else if ( $.isPlainObject(param) ) {
+    if ( $.isPlainObject(param) ) {
         env.xml.getAttribute("id") || env.xml.setAttribute("id", $.guid());
         env.cfg[env.xml.getAttribute("id")] = param;
     }
@@ -1626,8 +1625,7 @@ function startup( xml, parent, param ) {
     fragment = isInBrowser ? $document.createDocumentFragment() : parent;
     instance = parseEnvXML(env, fragment, env.xml.lastChild);
     isInBrowser && parent.appendChild(fragment);
-    $.extend(hp.create(instance).api, {theme: env.smr.theme, style: env.smr.style});
-    return instance.api;
+    return $.extend(hp.create(instance).api, {theme: env.smr.theme, style: env.smr.style});
 }
 
 (function () {
