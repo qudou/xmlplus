@@ -1615,7 +1615,7 @@ function startup( xml, parent, param ) {
     env.ctr = Communication();
     env.aid = isInBrowser ? $.guid() : "";
     env.api = hp.build(env, NodeElementAPI);
-    if ( env.xml.nodeType == TEXT_NODE ) {
+    if ( env.xml.nodeType !== ELEMENT_NODE ) {
         var xml = $.parseXML("<div/>").lastChild;
         env.xml = xml.appendChild(env.xml).parentNode
     } else if ( $.isPlainObject(param) ) {
