@@ -8,7 +8,7 @@
 "use strict";
   var ELEMENT_NODE                = 1;
 //var ATTRIBUTE_NODE              = 2;
-//var TEXT_NODE                   = 3;
+  var TEXT_NODE                   = 3;
 //var CDATA_SECTION_NODE          = 4;
 //var ENTITY_REFERENCE_NODE       = 5;
 //var ENTITY_NODE                 = 6;
@@ -1615,7 +1615,10 @@ function startup( xml, parent, param ) {
     env.ctr = Communication();
     env.aid = isInBrowser ? $.guid() : "";
     env.api = hp.build(env, NodeElementAPI);
-    if ( env.xml.nodeType == ELEMENT_NODE && $.isPlainObject(param) ) {
+    if ( env.xml.nodeType == TEXT_NODE ) {
+        var xml = $.parseXML("<div/>").lastChild;
+        env.xml = xml.appendChild(env.xml).parentNode
+    } else if ( $.isPlainObject(param) ) {
         env.xml.getAttribute("id") || env.xml.setAttribute("id", $.guid());
         env.cfg[env.xml.getAttribute("id")] = param;
     }
