@@ -206,7 +206,7 @@ xmlplus.startup("//xp/Calendar", parent);
 xmlplus.startup("//xp/Calendar", "parent"); 
 ```
 
-另外如果不提供第二个参数，那么将采用默认值作为组件实例化后被追加到的 HTML DOM 元素对象。在浏览器端该值为 `window.body`，在服务端该值由系统内部创建。
+另外如果不提供第二个参数，那么将采用默认值作为组件实例化后被追加到的 DOM 元素对象。在浏览器端该值为 `window.body`，在服务端该值由系统内部创建。
 
 下面是另一种组件的执行方式，它明确给出了组件的 XML 字符串描述，这与前一种方式等价。
 
@@ -223,18 +223,11 @@ var xmlNode = xmlplus.parseXML(xml).lastChild;
 xmlplus.startup(xmlNode, "parent");
 ```
 
-当然，直接提供基组件也是可以的。下面的第一行会创建一个 span 元素对象，第二行会创建一个文本对象。
+当然，直接提供基组件也是可以的，但必需是 HTML 元素。下面的第一行会创建一个 span 元素对象，第二行则会抛出一个错误。
 
 ```js
 xmlplus.startup("<span/>", "parent");
 xmlplus.startup("hello, world", "parent");
-```
-
-现在有一个问题，为什么上面的第一个语句不是创建一个文本对象，而是创建一个 span 元素对象？这是系统自动判断的结果，如果想要得到 `<span/>` 这个文本对象，可以这么做。
-
-```js
-var textNode = document.createTextNode("<span/>");
-xmlplus.startup(textNode, "parent");
 ```
 
 函数 `startup` 还有可选的第三个参数，该参数可以为目标组件提供初始输入值。如下面的示例，组件 Calendar 在初始化时将采用第三个参数提供的初始日期值。关于组件参数方面的详细内容，后续会有章节专门介绍，这里可先跳过。

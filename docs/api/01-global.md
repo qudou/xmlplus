@@ -7,7 +7,7 @@ startup(object[,parent][,options])
 ```
 
 - `object` : `XMLElement | SystemObject | String` 用于实例化的内容
-- `parent` : `String | HTMLElement` 一个 `HTML` 元素 `ID` 或者一个 `HTML` 元素对象
+- `parent` : `String | HTMLElement` 一个 `HTML` 元素 `ID` 或者一个 `HTML` 元素
 - `options` : `PlainObject` 为目标组件提供初始输入值的普通对象
 - `Returns` : `SystemObject` 实例化出的系统对象
 
@@ -257,7 +257,7 @@ each(object,callback)
 - `array` : `Array | Object` 要迭代的数组或对象
 - `callback` : `Function` 在每个对象上执行的函数
 
-一个通用的迭代器函数，可以用来无缝地迭代对象和数组。其中，对于具有 length 属性的数组和数组类对象（例如函数的 arguments 对象），则通过数字索引（从0到长度-1）进行迭代。而其他对象则通过它们的命名属性进行迭代。
+一个通用的迭代器函数，可以用来无缝地迭代对象和数组。其中，对于具有 length 属性的数组和数组类对象（例如函数的 arguments 对象），则通过数字索引（从 0 到长度 length - 1）进行迭代。而其他对象则通过它们的命名属性进行迭代。
 
 ```js
 // 01-15

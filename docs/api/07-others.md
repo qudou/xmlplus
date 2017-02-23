@@ -194,25 +194,3 @@ Example: {
     }
 }
 ```
-
-## emptySystemCall
-
-```js
-emptySystemCall()
-```
-
-- `Returns` : `SystemObject` 函数的调用者
-
-该函数的执行会使后续同一对象的系统接口调用失效，注意仅失效一次。
-
-```js
-// 07-09
-Example: {
-    xml: "<h1 id='example'>hello, world</h1>",
-    fun: function (sys, items, opts) {
-        sys.example.emptySystemCall();
-        sys.example.css("color", "blue");             // 此语句无任何效果
-        sys.example.css("border", "1px solid red");   // 此语句生效
-    }
-}
-```
