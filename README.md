@@ -1,7 +1,5 @@
 # [xmlplus](http://xmlplus.net)
 
-------
-
 xmlplus 是一个用 javascript 写就的框架，它既可以在浏览器端运行，又可以在服务端运行，它统一了前后端的组件书写方式。更多内容请查看 [http://xmlplus.net](http://xmlplus.net)。
 
 ## License
