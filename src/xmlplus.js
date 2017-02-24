@@ -4,7 +4,7 @@
  * (c) 2009-2016 qudou
  * Released under the MIT license
  */
- (function ( isInBrowser, undefined ) {
+ (function (isInBrowser, undefined) {
 "use strict";
   var ELEMENT_NODE                = 1;
 //var ATTRIBUTE_NODE              = 2;
