@@ -49,10 +49,10 @@ var $ = {
             return intToABC(counter++);
         };
     }()),
-    error: function ( message ) {
+    error: function (message) {
         throw new Error(message);
     },
-    ready: function ( callback ) {
+    ready: function (callback) {
         if ( isReady ) return callback($);
         var t = setInterval(function() {
             if ( isReady )
@@ -68,31 +68,31 @@ var $ = {
              return obj == null ? obj + "" : class2type[class2type.toString.call(obj)] || "object";
         };
     }()),
-    isArray: Array.isArray || function( obj ) {
+    isArray: Array.isArray || function (obj) {
         return obj instanceof Array
     },
-    isWindow: function ( obj ) {
+    isWindow: function (obj) {
         return obj != null && obj == obj.window;
     },
-    isFunction: function ( obj ) {
+    isFunction: function (obj) {
         return $.type(obj) == "function";
     },
-    isNumeric: function ( obj ) {
+    isNumeric: function (obj) {
         var type = $.type( obj );
         return ( type === "number" || type === "string" ) && !isNaN( obj - parseFloat( obj ) );
     },
     isPlainObject: function (obj) {
         return $.type(obj) == "object" && !$.isWindow(obj) && Object.getPrototypeOf(obj) == Object.prototype;
     },
-    isEmptyObject: function ( obj ) {
+    isEmptyObject: function (obj) {
         var name;
         for ( name in obj ) return false;
         return true;
     },
-    isSystemObject: function ( obj ) {
+    isSystemObject: function (obj) {
         return obj && typeof obj.guid == "function" && !!Store[obj.guid()];
     },
-    each: function ( objs, callback ) {
+    each: function (objs, callback) {
         var i, key;
         if ( hp.likeArray( objs ) ) {
             for ( i = 0; i < objs.length; i++ )
@@ -145,14 +145,14 @@ var $ = {
         }
         return target;
     },
-    expand: function ( obj ) {
+    expand: function (obj) {
         for ( var name in obj )
             NodeElementAPI[name] && $.error("the api '" + name + "', already exists");
         $.extend(NodeElementAPI, obj), $.extend(CopyElementAPI, obj);
         $.extend(DeferElementAPI, obj), $.extend(ShareElementAPI, obj);
         return this;
     },
-    parseXML: function standard( data ) {
+    parseXML: function (data) {
         var xml;
         if ( !data || typeof data !== "string" )
             return null;
@@ -165,13 +165,13 @@ var $ = {
             $.error( "Invalid XML: " + data );
         return xml;
     },
-    serialize: function ( node ) {
+    serialize: function (node) {
         return (new XMLSerializer_).serializeToString(node, true);
     },
-    hasNamespace: function ( space ) {
+    hasNamespace: function (space) {
         return !!Library[space];
     },
-    hasComponent: function ( path ) {
+    hasComponent: function (path) {
         if ( typeof path != "string" ) 
             return false;
         if ( isHTML[path] )
@@ -179,7 +179,7 @@ var $ = {
         var s = ph.split(path);
         return Library[s.dir] && Library[s.dir][s.basename] || false;
     },
-    clearLibrary: function ( space ) {
+    clearLibrary: function (space) {
         if ( space == null )
             Library = {}, Original = {};
         else if ( typeof space != "string" )
@@ -192,7 +192,7 @@ var $ = {
             }
         return this;
     },
-    getElementById: function ( id, isGuid ) {
+    getElementById: function (id, isGuid) {
         if ( isGuid ) 
             return Store[id] && Store[id].api;
         return isInBrowser ? (Global[id] || $document.getElementById(id)) : null;
@@ -201,7 +201,7 @@ var $ = {
 
 var ph = (function () {
     var table = {};
-    function normalizeArray( parts, allowAboveRoot ) {
+    function normalizeArray(parts, allowAboveRoot) {
         var i = parts.length - 1, up = 0;
         for ( ; i >= 0; i-- ) {
             var last = parts[i];
@@ -217,16 +217,16 @@ var ph = (function () {
                 parts.unshift('..');
         return parts;
     }
-    function filter( xs ) {
+    function filter(xs) {
         var i = 0, res = [];
         for ( ; i < xs.length; i++ )
             xs[i] && res.push(xs[i]);
         return res;
     }
-    function isAbsolute( path ) {
+    function isAbsolute(path) {
         return path.charAt(0) === '/';
     }
-    function normalize( path ) {
+    function normalize(path) {
         var absolute = isAbsolute(path),
             trailingSlash = path.substr(-1) === '/';
         path = normalizeArray(filter(path.split('/')), !absolute).join('/');
@@ -236,15 +236,15 @@ var ph = (function () {
             path += '/';
         return (absolute ? '/' : '') + path;
     }
-    function join( part1, part2 ) {
+    function join(part1, part2) {
         var paths = [part1,part2];
         return normalize(filter(paths).join('/'));
     }
-    function split( path ) {
+    function split(path) {
         var i = path.lastIndexOf('/');
         return { dir: path.substring(0, i), basename: path.substr(i+1).toLowerCase() };
     }
-    function fullPath( dir, patt ) {
+    function fullPath(dir, patt) {
         var key = dir + patt;
         if ( table[key] )
             return table[key];
@@ -256,7 +256,7 @@ var ph = (function () {
 }());
 
 var hp = {
-    likeArray: function ( obj ) {
+    likeArray: function (obj) {
         var length = !!obj && "length" in obj && obj.length,
             type = $.type( obj );
         if ( type === "function" || $.isWindow( obj ) )
@@ -264,7 +264,7 @@ var hp = {
         return type === "array" || length === 0 ||
             typeof length === "number" && length > 0 && ( length - 1 ) in obj;
     },
-    parseToXML: function ( input, dir ) {
+    parseToXML: function (input, dir) {
         if ( input == null )
             $.error("invalid input, expected a string a xml node");
         if ( input.ownerDocument )
@@ -313,7 +313,7 @@ var hp = {
             top: obj.top + pageYOffset
         };
     },
-    css: function ( elem, name ) { 
+    css: function (elem, name) { 
         return elem.style[name] || getComputedStyle(elem, "").getPropertyValue(name);
     },
     callback: function () {
@@ -331,7 +331,7 @@ var hp = {
             return api;
         }
     }()),
-    create: function ( item ) {
+    create: function (item) {
         item.api || (item.api = item.back = hp.build(item, item.typ > 1 ? TextElementAPI : NodeElementAPI));
         return item;
     },
@@ -360,11 +360,11 @@ var hp = {
             return elem;
         };
     }()),
-    nodeIsMatch: function ( xml, expr, node ) {
+    nodeIsMatch: function (xml, expr, node) {
         var i = XPath.select(expr, xml);
         return [].slice.call(i).indexOf(node) != -1
     },
-    xpathQuery: function ( expr, xml ) {
+    xpathQuery: function (expr, xml) {
         var nodes = [],
             evaluator = new XPathEvaluator,
             result = evaluator.evaluate(expr, xml, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
@@ -373,7 +373,7 @@ var hp = {
                 nodes.push(result.snapshotItem(i));
         return nodes;
     },
-    parseHTML: function parse( node ) {
+    parseHTML: function parse(node) {
         if ( node.nodeType != ELEMENT_NODE ) return;
         if ( isHTML[node.nodeName.toLowerCase()] ) {
             for ( var k in node.childNodes )
@@ -413,7 +413,7 @@ var hp = {
 };
 
 $.extend(hp, (function () {
-    function assert( obj ) {
+    function assert(obj) {
         typeof obj.css == "string" || $.error("invalid css, expected a string");
         typeof obj.fun == "function" || $.error("invalid fun, expected a function");
         ["opt","cfg","map","ali"].forEach(function (k) {
@@ -426,7 +426,7 @@ $.extend(hp, (function () {
         typeof obj.map.share == "string" || $.error("invalid share in map, expected a string");
         typeof obj.xml == "string" || typeof obj.xml == "undefined" || $.error("invalid xml, expected a undefined value or a string");
     }
-    function resetInput( item ) {
+    function resetInput(item) {
         for ( var key in item ) {
             if ( typeof item[key] != "string" ) 
                 continue;
@@ -439,7 +439,7 @@ $.extend(hp, (function () {
             item[key] = buf;
         }
     }
-    function initialize( obj ) {
+    function initialize(obj) {
         var i, formats = {}, map = obj.map;
         for ( i in map.format )
             Formater[i] && (formats[i] = obj.map.format[i].split(' '));
@@ -451,7 +451,7 @@ $.extend(hp, (function () {
         obj.css = obj.css.replace(/%@/g, Paths[root]);
         obj.xml = $.parseXML(obj.xml && obj.xml.replace(/%@/g, Paths[root]) || "<void/>");
     }
-    function imports( obj, name, space ) {
+    function imports(obj, name, space) {
         Source[space][name] = obj;
         Library[space][name] = obj = $.extend(true, {}, Template, obj);
         $.release || assert(obj);
@@ -461,15 +461,15 @@ $.extend(hp, (function () {
         obj.the = obj.css.match(/%[-a-z]+/ig) || [];
         initialize(obj);
     }
-    function source( dir, patt ) {
+    function source(dir, patt) {
         var s = ph.split(ph.fullPath(dir, patt));
         return Source[s.dir] && Source[s.dir][s.basename];
     }
-    function component( dir, node ) {
+    function component(dir, node) {
         var p = ph.fullPath(dir, node.namespaceURI || "");
         return Library[p] && Library[p][node.localName.toLowerCase()];
     }
-    function extend( target, source ) {
+    function extend(target, source) {
         var result = {},
             extend = target.map.extend;
         result.xml = target.xml || source.xml;
@@ -513,7 +513,7 @@ var Collection = (function () {
                 table[this[i]] = this[i];
             return table;
         },
-        call: function ( fnName ) {
+        call: function (fnName) {
             if ( typeof fnName != "string" )
                 $.error("invalid function name, expected a string");
             var args = slice.call(arguments).slice(1);
@@ -536,7 +536,7 @@ var Collection = (function () {
 
 var Communication = function () {
     var table = {};
-    function watch( type, fn, priority ) {
+    function watch(type, fn, priority) {
         var list = table[type] = table[type] || [],
             priority = $.isNumeric(priority) ? priority : -Infinity,
             target = { source: this, fn: fn, priority: priority };
@@ -549,14 +549,14 @@ var Communication = function () {
         list.length == len && list.push(target);
         return this;
     }
-    function glance( type, fn, priority ) {
-        function callback( e ) {
+    function glance(type, fn, priority) {
+        function callback(e) {
             e.currentTarget.unwatch(type, callback);
             fn.apply(this, [].slice.call(arguments));
         }
         return this.api.watch(type, callback, priority);
     }
-    function unwatch( type, fn ) {
+    function unwatch(type, fn) {
         var key, buf;
         if ( type == undefined ) {
             for ( key in table )
@@ -577,14 +577,14 @@ var Communication = function () {
         }
         return this;
     }
-    function notify( type, data ) {
+    function notify(type, data) {
         if ( !table[type] ) return;
         data = data == null ? [] : ($.isArray(data) ? data : [data]);
         for ( var i = 0; i < table[type].length; i++ )
             table[type][i].fn.apply(this.api, [{type: type, target: this.api, currentTarget: table[type][i].source.api}].concat(data));
         return this;
     }
-    function remove( item ) {
+    function remove(item) {
         for ( var type in table ) {
             var i, array = [];
             for ( i = 0; i < table[type].length; i++ )
@@ -601,12 +601,12 @@ var EventModuleAPI = (function () {
         ignoreProps = /^([A-Z]|returnValue$|layer[XY]$|keyLocation$)/,
         eventMethods = "preventDefault stopImmediatePropagation stopPropagation".split(" "),
         specialEvents={ click: "MouseEvents", mousedown: "MouseEvents", mouseup: "MouseEvents", mousemove: "MouseEvents" };
-    function assert( type, selector, fn ) {
+    function assert(type, selector, fn) {
         typeof type == "string" || $.error("invalid type, expected a string");
         typeof fn == "function" || $.error("invalid handler, expected a function");
         selector == undefined || typeof selector == "string" || $.error("invalid selector, expected a string");
     }
-    function on( type, selector, fn ) {
+    function on(type, selector, fn) {
         if ( typeof selector == "function" )
             fn = selector, selector = undefined;
         assert(type, selector, fn);
@@ -627,7 +627,7 @@ var EventModuleAPI = (function () {
         eventTable[uid][type].push({ selector: selector, fn: fn, handler: handler})
         return this;
     }
-    function once( type, selector, fn ) {
+    function once(type, selector, fn) {
         var realCallback;
         if ( $.isFunction(fn) )
             realCallback = fn, fn = callback;
@@ -635,13 +635,13 @@ var EventModuleAPI = (function () {
             realCallback = selector, selector = callback;
         else 
             $.error("invalid handler, expected a function");
-        function callback( e ) {
+        function callback(e) {
             e.currentTarget.off(type, callback);
             realCallback.apply(this, [].slice.call(arguments));
         }
         return this.api.on(type, selector, fn);
     }
-    function off( type, selector, fn ) {
+    function off(type, selector, fn) {
         var k, elem = this.elem(),
             item = eventTable[this.uid] || {};
         if ( type == undefined ) {
@@ -676,23 +676,23 @@ var EventModuleAPI = (function () {
         }
         return this;
     }
-    function trigger( type, data, bubble ) {
+    function trigger(type, data, bubble) {
         var event = Event(type, bubble);
         event.xmlTarget = Store[this.uid];
         event.data = data == null ? [] : ($.isArray(data) ? data : [data]);
         this.elem().dispatchEvent(event);
         return this;
     }
-    function remove( item ) {
+    function remove(item) {
         delete eventTable[item.uid];
     }
-    function Event( type, bubble ) {
-        var canBubble = bubble === false ? false : true,
+    function Event(type, bubble) {
+        var canBubble = !(bubble === false),
             event = $document.createEvent(specialEvents[type] || "Events");
         event.initEvent(type, canBubble, true);
         return event;
     }
-    function createProxy( event, listener ) {
+    function createProxy(event, listener) {
         var proxy = { originalEvent: event };
         for ( var key in event )
             if ( !ignoreProps.test(key) && event[key] !== undefined)
@@ -701,7 +701,7 @@ var EventModuleAPI = (function () {
         proxy.target = (event.xmlTarget || hp.create(event.target.xmlTarget)).api;
         return compatible(proxy, event);
     }
-    function compatible( event, source ) {
+    function compatible(event, source) {
         eventMethods.forEach(function( name ) {
             var method = source[name];
             event[name] = function () {
@@ -717,7 +717,7 @@ var CommonElementAPI = {
     elem: function elem() {
         return this.elem();
     },
-    text: function ( value ) {
+    text: function (value) {
         var elem = this.elem();
         if ( value === undefined )
             return elem.textContent;
@@ -729,17 +729,17 @@ var CommonElementAPI = {
         }
         return this;
     },
-    prop: function ( name, value ) {
+    prop: function (name, value) {
         if ( value === undefined )
             return this.elem()[name];
         this.elem()[name] = value;
         return this;
     },
-    removeProp: function ( name ) {
+    removeProp: function (name) {
         delete this.elem()[name];
         return this;
     },
-    attr: function ( name, value ) {
+    attr: function (name, value) {
         var elem = this.elem();
         if ( typeof name !== "string" )
             $.error("invalid attribute name, expected a string");
@@ -751,11 +751,11 @@ var CommonElementAPI = {
         }
         $.error("invalid attribute value, expected a string");
     },
-    removeAttr: function ( name ) {
+    removeAttr: function (name) {
         this.elem().removeAttribute(name);
         return this;
     },
-    addClass: function ( value, ctx ) {
+    addClass: function (value, ctx) {
         var elem = this.elem(),
             ctx = (ctx && Store[ctx.guid()] || this).env,
             klass = elem.getAttribute("class"),
@@ -767,7 +767,7 @@ var CommonElementAPI = {
         elem.setAttribute("class", result.join(" "));
         return this;
     },
-    removeClass: function ( value, ctx ) {
+    removeClass: function (value, ctx) {
         var elem = this.elem();
         if ( value === undefined )
             return elem.setAttribute("class", ""), this;
@@ -782,7 +782,7 @@ var CommonElementAPI = {
         elem.setAttribute("class", result.join(" "));
         return this;
     },
-    contains: function ( obj ) {
+    contains: function (obj) {
         if ( !obj ) return false;
         var target = this.elem(),
             elem = $.isSystemObject(obj) && obj.elem() || obj;
@@ -792,33 +792,33 @@ var CommonElementAPI = {
         } while (elem);
         return false;
     },
-    data: function ( key, value ) {
+    data: function (key, value) {
         if ( value === undefined )
             return this.data[key];
         this.data[key] = value;
         return this;
     },
-    removeData: function ( key ) {
+    removeData: function (key) {
         delete this.data[key];
         return this;
     },
-    notify: function ( type, data ) {
+    notify: function (type, data) {
         return this.ctr.notify.apply(this, [type, data]);
     },
-    watch: function ( type, fn, priority ) {
+    watch: function (type, fn, priority) {
         if ( typeof fn != "function" )
             $.error("invalid callback, expected a function");
         return this.ctr.watch.apply(this, [type, fn, priority]);
     },
-    glance: function ( type, fn, priority ) {
+    glance: function (type, fn, priority) {
         if ( typeof fn != "function" )
             $.error("invalid callback, expected a function");
         return this.ctr.glance.apply(this, [type, fn, priority]);
     },
-    unwatch: function ( type, fn ) {
+    unwatch: function (type, fn) {
         return this.ctr.unwatch.apply(this, [type, fn]);
     },
-    append: function ( target, options ) {
+    append: function (target, options) {
         var parent = this.appendTo();
         if ( $.isSystemObject(target) ) {
             if ( target.contains(this.api) )
@@ -848,7 +848,7 @@ var CommonElementAPI = {
         target.nodeType == ELEMENT_NODE && target.hasAttribute("id") && this.env.fdr.refresh();
         return hp.create(Store[this.node.lastChild.uid]).api;
     },
-    before: function ( target, options ) {
+    before: function (target, options) {
         if ( this.node == this.env.xml.lastChild )
             $.error("insert before document node is not allow");
         var elem = this.elem();
@@ -881,7 +881,7 @@ var CommonElementAPI = {
         target.nodeType == ELEMENT_NODE && target.hasAttribute("id") && this.env.fdr.refresh();
         return hp.create(Store[this.node.previousSibling.uid]).api;
     },
-    replace: function ( target, options ) {
+    replace: function (target, options) {
         var elem = this.elem();
         if ( $.isSystemObject(target) ) {
             if ( target.contains(this.api) )
@@ -927,10 +927,10 @@ var CommonElementAPI = {
             Manager[this.typ].recycle(this);
         }
     },
-    find: function ( expr ) {
+    find: function (expr) {
         return this.env.fdr.sys(expr, this.api);
     },
-    get: function ( index, nodeType ) {
+    get: function (index, nodeType) {
         var nodeType = nodeType || ELEMENT_NODE,
             next = this.node.firstChild,
             count = -1;
@@ -941,21 +941,21 @@ var CommonElementAPI = {
         }
         return next && hp.create(Store[next.uid]).api;
     },
-    first: function ( nodeType ) {
+    first: function (nodeType) {
         var nodeType = nodeType || ELEMENT_NODE,
             next = this.node.firstChild;
         while ( next && next.nodeType != nodeType )
             next = next.nextSibling;
         return next && hp.create(Store[next.uid]).api;
     },
-    last: function ( nodeType ) {
+    last: function (nodeType) {
         var nodeType = nodeType || ELEMENT_NODE,
             prev = this.node.lastChild;
         while ( prev && prev.nodeType != nodeType )
             prev = prev.previousSibling;
         return prev && hp.create(Store[prev.uid]).api;
     },
-    prev: function ( nodeType ) {
+    prev: function (nodeType) {
         var nodeType = nodeType || ELEMENT_NODE,
             prev = this.node.previousSibling;
         while ( prev ) {
@@ -964,7 +964,7 @@ var CommonElementAPI = {
             prev = prev.previousSibling;
         }
     },
-    next: function ( nodeType ) {
+    next: function (nodeType) {
         var nodeType = nodeType || ELEMENT_NODE,
             next = this.node.nextSibling;
         while ( next ) {
@@ -973,7 +973,7 @@ var CommonElementAPI = {
             next = next.nextSibling;
         }
     },
-    children: function ( nodeType ) {
+    children: function (nodeType) {
         if ( nodeType == undefined )
             nodeType = ELEMENT_NODE;
         var result = new Collection,
@@ -1001,7 +1001,7 @@ var CommonElementAPI = {
     toString: function () {
         return this.node.getAttribute("id") || this.node.uid;
     },
-    serialize: function ( serializeXML ) {
+    serialize: function (serializeXML) {
         var elem = serializeXML ? this.node : this.elem(),
             prev = elem.previousSibling;
         if ( prev && prev.nodeType == DOCUMENT_TYPE_NODE )
@@ -1011,7 +1011,7 @@ var CommonElementAPI = {
 };
 
 var ClientElementAPI = {
-    css: function ( name, value ) {
+    css: function (name, value) {
         var elem = this.elem();
         if ( typeof name != "string" )
             $.error("invalid style name, expected a string");
@@ -1035,21 +1035,21 @@ var ClientElementAPI = {
         this.elem().style.display = "none";
         return this;
     },
-    width: function ( value ) {
+    width: function (value) {
         var elem = this.elem();
         if (value === undefined)
             return elem.getBoundingClientRect().width;
         elem.style.width = parseFloat(value) + "px";
         return this;
     },
-    height: function ( value ) {
+    height: function (value) {
         var elem = this.elem();
         if (value === undefined)
             return elem.getBoundingClientRect().height;
         elem.style.height = parseFloat(value) + "px";
         return this;
     },
-    offset: function ( coordinates ) {
+    offset: function (coordinates) {
         var elem = this.elem();
         if ( coordinates ) {
             var parentOffset = hp.offset(hp.offsetParent(elem));
@@ -1080,7 +1080,7 @@ var ClientElementAPI = {
             left: offset.left - parentOffset.left
         };
     },
-    scrollTop: function ( value ) {
+    scrollTop: function (value) {
         var elem = this.elem(), 
             hasScrollTop = "scrollTop" in elem;
         if ( value === undefined ) 
@@ -1088,7 +1088,7 @@ var ClientElementAPI = {
         hasScrollTop ? (elem.scrollTop = value) : elem.scrollTo(elem.scrollX, value);
         return this;
     },
-    scrollLeft: function ( value ) {
+    scrollLeft: function (value) {
         var elem = this.elem(),
             hasScrollLeft = "scrollLeft" in elem;
         if ( value === undefined ) 
@@ -1099,7 +1099,7 @@ var ClientElementAPI = {
 };
 
 var ServerElementAPI = {
-    css: function ( name, value ) {
+    css: function (name, value) {
         if ( typeof name != "string" )
             $.error("invalid style name, expected a string");
         var table = {},
@@ -1132,7 +1132,7 @@ var TextElementAPI = (function () {
     ["before","replace","prev","next","guid","toString"].forEach(function(k) {
         api[k] = CommonElementAPI[k];
     });
-    api.text = function ( value ) {
+    api.text = function (value) {
         if ( value == undefined )
             return this.ele.textContent;
         this.ele.textContent = value;
@@ -1187,13 +1187,13 @@ var TextElement = (function() {
     };
 }());
 
-function HtmlElement( node, parent ) {
+function HtmlElement(node, parent) {
     var o = { typ: 0, elem: hp.elem, uid: $.guid() };
     o.appendTo = hp.appendTo;
     return o;
 }
 
-function CompElement( node, parent ) {
+function CompElement(node, parent) {
     var o = { typ: 1, elem: hp.elem, uid: $.guid(), appendTo: hp.appendTo };
     o.fdr = Finder(o);
     o.back = hp.build(o, NodeElementAPI);
@@ -1210,12 +1210,12 @@ function TextManager() {
         parent.appendChild(o.ele);
         return Store[o.uid] = o;
     }
-    function recycle( item ) {
+    function recycle(item) {
         delete Store[item.uid];
         //isInBrowser || (item.ele.parentNode = null);
         table[item.typ].push(item);
     }
-    function chenv( env, item ) {
+    function chenv(env, item) {
         item.env = env;
     }
     return { create: create, recycle: recycle, chenv: chenv };
@@ -1223,7 +1223,7 @@ function TextManager() {
 
 function HtmlManager() {
     var table = {};
-    function create( env, node, parent ) {
+    function create(env, node, parent) {
         var k = node.nodeName,
             o = (table[k] || (table[k] = [])).pop() || HtmlElement(node, parent);
         node.defer || resetAttrs(env, node);
@@ -1232,7 +1232,7 @@ function HtmlManager() {
         o.ctr = env.ctr, o.env = env, o.node = node, node.uid = o.uid, o.data = {}, o.ele.xmlTarget = o;
         return Store[o.uid] = o;
     }
-    function recycle( item ) {
+    function recycle(item) {
         var i = 0, o, c = XPath.select("./*", item.node); 
         for ( ; i < c.length; i++ ) {
             o = Store[c[i].uid];
@@ -1244,7 +1244,7 @@ function HtmlManager() {
         EventModuleAPI.remove(item);
         table[item.node.nodeName].push(item);
     }
-    function chenv( env, item ) {
+    function chenv(env, item) {
         var i = 0, o, c = item.node.childNodes;
         for ( ; i < c.length; i++ ) {
             o = Store[c[i].uid];
@@ -1256,7 +1256,7 @@ function HtmlManager() {
     return { create: create, recycle: recycle, chenv: chenv };
 }
 
-function setComponent( env, ins ) {
+function setComponent(env, ins) {
     var share = ins.env.share[ins.dir + "/" + ins.node.localName];
     if ( !share ) {
         ins.api = ins.back;
@@ -1274,7 +1274,7 @@ function setComponent( env, ins ) {
 
 function CompManager() {
     var table = [];
-    function create( env, node, parent ) {
+    function create(env, node, parent) {
         var w = hp.component(env.dir, node);
         if ( !w ) return;
         var k, o = table.pop() || CompElement(node, parent);
@@ -1296,7 +1296,7 @@ function CompManager() {
         o.xml = w.xml.cloneNode(true);
         return Store[o.uid] = setComponent(env, o);
     }
-    function recycle( item ) {
+    function recycle(item) {
         var i = 0, o, 
             c = XPath.select("./*", item.node),
             deep = Store[item.xml.lastChild.uid];
@@ -1311,7 +1311,7 @@ function CompManager() {
         EventModuleAPI.remove(item);
         table.push(item);
     }
-    function chenv( env, item ) {
+    function chenv(env, item) {
         var i = 0, o, c = item.node.childNodes;
         for ( ; i < c.length; i++ ) {
             o = Store[c[i].uid];
@@ -1327,7 +1327,7 @@ function StyleManager() {
     var table = {},
         current = "default",
         parent = $document.body ? $document.getElementsByTagName("head")[0] : $document.createElement("void");
-    function cssText( ins ) {
+    function cssText(ins) {
         var value, theme = Themes[ins.dir.split('/')[0]][current],
             klass = ins.aid + ins.cid,
             text = ins.css.replace(WELL, "." + klass).replace(/\$/ig, klass);
@@ -1337,12 +1337,12 @@ function StyleManager() {
         });
         return $document.createTextNode(text);
     }
-    function newStyle( ins ) {
+    function newStyle(ins) {
         var style = $document.createElement("style");
         style.appendChild(cssText(ins));
         return parent.appendChild(style);
     }
-    function addClass( elem, value ) {
+    function addClass(elem, value) {
         var klass = elem.getAttribute("class"),
             input = value.split(/\s+/),
             result = klass ? klass.split(/\s+/) : [];
@@ -1351,7 +1351,7 @@ function StyleManager() {
                 result.push(input[i]);
         elem.setAttribute("class", result.join(" "));
     }
-    function create( ins ) {
+    function create(ins) {
         var key = ins.env.aid + ins.cid;
         if ( table[key] ) {
             table[key].count++;
@@ -1363,7 +1363,7 @@ function StyleManager() {
             addClass(ins.elem(), ins.env.aid + ins.env.cid + id);
         }
     }
-    function remove( ins ) {
+    function remove(ins) {
         var key = ins.env.aid + ins.cid,
             item = table[key];
         if (item && --item.count == 0 ) {
@@ -1371,7 +1371,7 @@ function StyleManager() {
             delete table[key];
         }
     }
-    function theme( value ) {
+    function theme(value) {
         if ( value == undefined )
             return current;
         if ( typeof value != "string" ) 
@@ -1393,7 +1393,7 @@ function StyleManager() {
 }
 
 function Finder( env ) {
-    function assert( expr, context ) {
+    function assert(expr, context) {
         if ( typeof expr != "string" )
             $.error("invalid expression, expected a css selector");
         if ( context == undefined )
@@ -1402,7 +1402,7 @@ function Finder( env ) {
             return Store[context.guid()].node;
         $.error("invalid context, expected a InnerObject");
     }
-    function sys( expr, context ) {
+    function sys(expr, context) {
         var context = assert(expr, context),
             result = new Collection,
             list = XPath.select(expr, context);
@@ -1410,7 +1410,7 @@ function Finder( env ) {
             result.push(hp.create(Store[list[i].uid]).api);
         return result;
     }
-    function items( expr, context ) {
+    function items(expr, context) {
         var context = assert(expr, context),
             result = new Collection,
             list = XPath.select(expr, context);
@@ -1440,7 +1440,7 @@ function Finder( env ) {
     return { sys: sys, items: items, refresh: refresh };
 }
 
-function setDeferNode( env, node ) {
+function setDeferNode(env, node) {
     var index = -1, temp, k, newNode = node;
     for ( k in env.ali ) {
         temp = env.map.defer.indexOf(k);
@@ -1459,7 +1459,7 @@ function setDeferNode( env, node ) {
     return newNode;
 }
 
-function resetAttrs( env, node ) {
+function resetAttrs(env, node) {
     var k, attrs = {}, id = node.getAttribute("id");
     for ( k in env.ali )
         if ( hp.nodeIsMatch(env.xml, env.ali[k], node) )
@@ -1472,7 +1472,7 @@ function resetAttrs( env, node ) {
     }
 }
 
-function resetConfigs( env, node ) {
+function resetConfigs(env, node) {
     var k, cfgs = {}, id = node.getAttribute("id");
     for ( k in env.ali )
         if ( hp.nodeIsMatch(env.xml, env.ali[k], node) )
@@ -1486,7 +1486,7 @@ function resetConfigs( env, node ) {
     }
 }
 
-function resetOptions( env, ins ) {
+function resetOptions(env, ins) {
     var i, k, o, list, id = ins.node.getAttribute("id");
     for ( k in env.ali )
         if ( hp.nodeIsMatch(env.xml, env.ali[k], ins.node) )
@@ -1506,7 +1506,7 @@ function resetOptions( env, ins ) {
     }
 }
 
-function parseEnvXML( env, parent, node ) {
+function parseEnvXML(env, parent, node) {
     function iterate( node, parent ) {
         if ( node.nodeType > 1 ) {
             if ( Manager[node.nodeType] )
@@ -1541,7 +1541,7 @@ function parseEnvXML( env, parent, node ) {
     return iterate(node, parent);
 }
 
-function makeTheme( root, theme ) {
+function makeTheme(root, theme) {
     function imports( target ) {
         if ( !$.isPlainObject(target) )
             $.error("invalid target, expected a plainObject");
@@ -1551,7 +1551,7 @@ function makeTheme( root, theme ) {
     return { imports: imports };
 }
 
-function makePackage( root, space ) {
+function makePackage(root, space) {
     if ( !Library[space] )
         Source[space] = {}, Library[space] = {}, Original[space] = {};
     function imports( components ) {
@@ -1579,19 +1579,19 @@ function makePackage( root, space ) {
     return { imports: imports };
 }
 
-function xmlplus( root, callback ) {
+function xmlplus(root, callback) {
     if ( $.type(root) != "string" || root.indexOf('/') > -1 )
         $.error("invalid root, expected a string");
     if ( !$.isFunction(callback) )
         $.error("invalid callback, expected a function");
     Themes[root] = Themes[root] || {};
     Paths[root] = ph.split([].slice.call($document.scripts || [{src:"./i"}]).pop().src).dir;
-    function createPackage( space ) {
+    function createPackage(space) {
         if ( $.type(space) != "string" && space != null )
             $.error("invalid namespace, expected a null value or a string");
         return makePackage(root, space ? (root + "/" + space) : root);
     }
-    function createTheme( theme ) {
+    function createTheme(theme) {
         Themes[root][theme] = Themes[root][theme] || {};
         return makeTheme(root, theme);
     }
@@ -1599,7 +1599,7 @@ function xmlplus( root, callback ) {
     return xmlplus;
 }
 
-function startup( xml, parent, param ) {
+function startup(xml, parent, param) {
     var instance, fragment,
         env = $.extend(true, {xml: hp.parseToXML(xml), cid: $.guid(), share: {}, dir: ""}, Template);
     if ( env.xml.nodeType !== ELEMENT_NODE )
