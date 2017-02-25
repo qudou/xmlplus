@@ -5,7 +5,7 @@ xmlplus("xp", function (xp, $_, t) {
                      <span id='span'>trigger</span>\
                   </div>",
             fun: function (sys, items, opts) {
-                sys.example.on("event", function(e) {
+                sys.example.on("event", function (e) {
                     console.log("hello, world");
                 });
                 sys.span.trigger("event");

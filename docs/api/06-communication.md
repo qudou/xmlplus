@@ -20,7 +20,7 @@ on(eventType[,selector],handler)
 Example: {
     xml: "<button id='example'>click</button>",
     fun: function (sys, items, opts) {
-        sys.example.on("click", function(e) {
+        sys.example.on("click", function (e) {
             console.log("hello, world");
         });
     }
@@ -99,7 +99,7 @@ Example: {
              <span id='span'>trigger</span>\
           </div>",
     fun: function (sys, items, opts) {
-        sys.example.on("event", function(e) {
+        sys.example.on("event", function (e) {
             console.log("hello, world");
         });
         sys.span.trigger("event");
@@ -125,7 +125,7 @@ watch(messageType,handler[,priority])
 Example: {
     xml: "<div id='example'/>",
     fun: function (sys, items, opts) {
-        sys.example.watch("msg", function(e) {
+        sys.example.watch("msg", function (e) {
             console.log(this.toString());
         }).notify("msg");
     }
@@ -143,14 +143,14 @@ unwatch(messageType[,handler])
 - `handler` : `Function(Message message)` 侦听器
 - `Returns` : `SystemObject` 函数的调用者
 
-该函数用于取消一个消息的侦听，其中，不提供任何参数的函数调用将取消目标对象上注册的所有消息的侦听。更多内容请参考 [消息的注销](/docs#消息与通信-消息的注销)。
+该函数用于取消一个消息的侦听。其中，不提供任何参数的函数调用将取消目标对象上注册的所有消息的侦听。更多内容请参考 [消息的注销](/docs#消息与通信-消息的注销)。
 
 ```js
 // 06-06
 Example: {
     xml: "<span id='example'>foo</span>",
     fun: function (sys, items, opts) {
-        sys.example.watch("msg", function(e) {
+        sys.example.watch("msg", function (e) {
             sys.example.unwatch("msg");
             console.log(this.text());
         });
@@ -177,7 +177,7 @@ glance(messageType,handler[,priority])
 Example: {
     xml: "<span id='example'>foo</span>",
     fun: function (sys, items, opts) {
-        sys.example.glance("msg", function(e) {
+        sys.example.glance("msg", function (e) {
             console.log(this.text());
         });
         sys.example.notify("msg").notify("msg");
@@ -205,7 +205,7 @@ Example: {
              <span id='bar'>bar</span>\
           </div>",
     fun: function (sys, items, opts) {
-        sys.bar.watch("msg", function(e, a, b) {
+        sys.bar.watch("msg", function (e, a, b) {
             console.log(a, b); // 37 hello,world
         });
         sys.foo.notify("msg", [37, "hello,world"]);

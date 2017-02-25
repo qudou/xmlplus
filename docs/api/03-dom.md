@@ -358,7 +358,7 @@ Example: {
 height()
 ```
 
-- `Returns` : `Number` 返回的宽度值
+- `Returns` : `Number` 返回的高度值
 
 该函数用于获取组件对象的高度值。
 

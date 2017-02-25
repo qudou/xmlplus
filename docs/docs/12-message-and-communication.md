@@ -19,7 +19,7 @@ Index: {
              <span id='bar'>bar</span>\
           </div>",
     fun: function (sys, items, opts) {
-        sys.bar.watch("msg", function(e) {
+        sys.bar.watch("msg", function (e) {
             console.log(this.text());
         });
         sys.foo.notify("msg");
@@ -37,7 +37,7 @@ Index: {
              <span id='bar'>bar</span>\
           </div>",
     fun: function (sys, items, opts) {
-        sys.bar.watch("msg", function(e) {
+        sys.bar.watch("msg", function (e) {
             console.log(e.target == this, this == sys.foo); // true true
         });
         sys.foo.notify("msg");
@@ -55,7 +55,7 @@ Index: {
              <span id='bar'>bar</span>\
           </div>",
     fun: function (sys, items, opts) {
-        sys.bar.watch("msg", function(e) {
+        sys.bar.watch("msg", function (e) {
             console.log(sys.bar == e.currentTarget); // true
         });
         sys.foo.notify("msg");
@@ -73,7 +73,7 @@ Index: {
              <span id='bar'>bar</span>\
           </div>",
     fun: function(sys, items, opts) {
-        sys.bar.watch("msg", function(e, a, b) {
+        sys.bar.watch("msg", function (e, a, b) {
             console.log(a, b); // 37 hello,world
         });
         sys.foo.notify("msg", [37, "hello,world"]);
@@ -100,10 +100,10 @@ Index: {
              <span id='alice'>alice</span>\
           </div>",
     fun: function (sys, items, opts) {
-        sys.foo.watch("msg", function(e) {
+        sys.foo.watch("msg", function (e) {
             console.log("foo");
         });
-        sys.bar.watch("msg", function(e) {
+        sys.bar.watch("msg", function (e) {
             console.log("bar");
         }, 1);
         sys.alice.notify("msg");
@@ -124,7 +124,7 @@ Index: {
 Index: {
     xml: "<span id='index'>foo</span>",
     fun: function (sys, items, opts) {
-        sys.index.watch("msg", function(e) {
+        sys.index.watch("msg", function (e) {
             sys.index.unwatch("msg");
             console.log(this.text());
         });
@@ -140,7 +140,7 @@ Index: {
 Index: {
     xml: "<span id='foo'>foo</span>",
     fun: function (sys, items, opts) {
-        sys.foo.glance("msg", function(e) {
+        sys.foo.glance("msg", function (e) {
             console.log(this.text());
         });
         sys.foo.notify("msg").notify("msg");
@@ -158,7 +158,7 @@ Index: {
              <span id='bar'>bar</span>\
           </div>",
     fun: function (sys, items, opts) {
-        sys.foo.watch("msg", function(e) {
+        sys.foo.watch("msg", function (e) {
             sys.bar.unwatch("msg");
             console.log(this.text());
         });
@@ -179,7 +179,7 @@ Index: {
              <span id='bar'>bar</span>\
           </div>",
     fun: function (sys, items, opts) {
-        sys.foo.watch("msg", function(e) {
+        sys.foo.watch("msg", function (e) {
             console.log("I can receive message.");
         });
         sys.bar.watch("msg", function(e) {
@@ -192,7 +192,7 @@ Foo: {
     xml: "<span id='foo'>foo</span>",
     map: { msgscope: true },
     fun: function (sys, items, opts) {
-        sys.foo.watch("msg", function(e) {
+        sys.foo.watch("msg", function (e) {
             console.log("I can receive message too.");
         });
     }
@@ -209,7 +209,7 @@ Index: {
              <span id='bar'>bar</span>\
           </div>",
     fun: function (sys, items, opts) {
-        sys.foo.watch("msg", function(e) {
+        sys.foo.watch("msg", function (e) {
             console.log("I can't receive message.");
         });
         sys.bar.notify("msg");
