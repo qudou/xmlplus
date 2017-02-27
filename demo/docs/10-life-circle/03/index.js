@@ -5,7 +5,7 @@ xmlplus("xp", function (xp, $_, t) {
                       <button id='foo'>before</button>\
                   </div>",
             fun: function (sys, items, opts) {
-                sys.foo.on("click", function (event) {
+                sys.foo.on("click", function (e) {
                     sys.foo.before("Widget");
                 });
             }

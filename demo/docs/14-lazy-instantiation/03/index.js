@@ -7,7 +7,7 @@ xmlplus("xp", function (xp, $_, t) {
                   </ViewStack>",
             map: { defer: "bar" },
             fun: function (sys, items, opts) {
-                sys.index.on("click", "button", function(e) {
+                sys.index.on("click", "button", function (e) {
                     this.trigger("switch", this.text().substr(3));
                 });
             }
@@ -19,7 +19,7 @@ xmlplus("xp", function (xp, $_, t) {
                     table = children.call("hide").hash(),
                     ptr = table[opts.index] || children[0];
                 if (ptr) ptr = ptr.trigger("show").show();
-                this.on("switch", function ( e, to ) {
+                this.on("switch", function (e, to) {
                     table = this.children().hash();
                     if ( !table[to] || table[to] == ptr ) return;
                     e.stopPropagation();

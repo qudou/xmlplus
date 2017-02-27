@@ -4,8 +4,8 @@ xmlplus("xp", function (xp, $_, t) {
             xml: "<div id='index'/>",
             map: { share: "Audio" },
             fun: function (sys, items, opts) {
-                 var foo = sys.index.append("./Audio");
-                 var bar = sys.index.append("./Audio");
+                 var foo = sys.index.append("Audio");
+                 var bar = sys.index.append("Audio");
                  console.log(foo == bar);                 // false
                  console.log(foo.value() == bar.value()); // true
             }
