@@ -1,6 +1,6 @@
 # [xmlplus](http://xmlplus.cn)
 
-xmlplus 是一个 javascript 框架，它既可以在浏览器端运行，又可以在服务端运行，它统一了前后端的组件书写方式。更多内容请查看 [http://xmlplus.net](http://xmlplus.net)。
+xmlplus is a JavaScript framework，It can not only run in the browser side, but also in the server running. For more information, see [http://xmlplus.net](http://xmlplus.net)。
 
 ## License
 
