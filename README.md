@@ -1,6 +1,6 @@
 # [xmlplus](http://xmlplus.cn)
 
-xmlplus is a JavaScript framework，It can not only run in the browser side, but also in the server running. For more information, see [http://xmlplus.net](http://xmlplus.net)。
+xmlplus is a JavaScript framework，It can not only run in the browser side, but also in the server side. For more information, see [http://xmlplus.net](http://xmlplus.net)。
 
 ## License
 
