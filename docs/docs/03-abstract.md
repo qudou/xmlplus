@@ -6,7 +6,7 @@
 
 为了探讨抽象这个主题，本章会实现一个 IP 输入框，并达到类似下图右侧所示的输入框的效果。
 
-<img src="/assets/images/docs/ipv4.jpg"/>
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIcAAAA1CAIAAADkh28jAAAACXBIWXMAAA7EAAAOxAGVKw4bAAABfklEQVR42u2au24CMRBF/f+/gqhSojT8BgXRIiElDQ0SZbISFWt2xt7xMz5XLpbHznjm+Cnb/aL25EgBVBBUoIKgAhVUncr5azp8Hnf7D0qZMmd7zrlCZbr80FQL63S+QgUqCCqDUnHOLT4+JXwTsfDIaVx1Z7Gj1lOuuYmK72nxvPZreGz+6/5DkoSmohuSBLXmKftKWirq62mp5DDSKBVjwG+7fPsjmNqni1IRcpeq3SXsiFmpGGuemIrcUgahIowT1frKmvtBqITMf3mpqAO9e1VsMMb1ZVS6N09Rwhju56HEyhixt4cKVKCCoqnc74/L941Sssw5V6igFgQVqCCoQAVBZTQq3AfjPhhibw8VBJWBqahnXOGnXv/JuOouIxX54NP/T2wYnRoPcQeVwaj4noTzansGuzNek4p688jS+vo1XpOK4MMeW7/GW5lXQsbrqNj6NV6fiv3i01p1+zVeeWWM2NtDBSpQQVuocB+M+2BoZRVHCqCCoNKt/gAhzlksZ3xdGAAAAABJRU5ErkJggg==" />
 
 这种输入框包含四个小文本框，文本框之间以句点相间隔且仅允许输入最多三位的十进制数字。当文本框中输入数字达到三位时，焦点会自动跳转到下一文本框并选中该框文本。如果焦点位于最后一个文本框，则不进行跳转。如前面章节所述，一个组件需属于某一特定的命名空间。为简单起见，现在将其置于命名空间 `//xp` 中，该空间还包含另一个组件 Index，它是用于测试 IPv4Box 组件的。下面是代码的框架结构，具体实现细节由后面给出。
 

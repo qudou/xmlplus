@@ -1,6 +1,6 @@
 {
   "name": "xmlplus",
-  "version": "1.5.5",
+  "version": "1.5.6",
   "dependencies": {
     "xpath": ">=0.0.9",
     "xmldom": "qudou/xmldom"
@@ -12,9 +12,13 @@
     "type": "git",
     "url": "git+https://github.com/qudou/xmlplus.git"
   },
+  "homepage": "http://xmlplus.net",
   "keywords": [
     "xmlplus"
   ],
-  "author": "qudou",
+  "author": {
+    "name": "qudou",
+    "email": "xmlplus@qq.com"
+  },
   "license": "MIT"
 }

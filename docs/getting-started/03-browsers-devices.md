@@ -102,3 +102,5 @@ xmlplus 支持主流的浏览器以及平台。在 Windows 平台，其支持 In
 <script src='xmldom.js'></script>
 <script src='xmlplus.js'></script>
 ```
+
+IE 浏览器注定会成为过去。如果你还在使用它，强烈建议你换成体验性更好的新版本的 Chrome、Firefox、Oprea、Safari 或者 Microsoft Edge。

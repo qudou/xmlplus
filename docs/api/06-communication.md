@@ -9,7 +9,7 @@ on(eventType[,selector],handler)
 ```
 
 - `eventType` : `String` 事件类型，比如 `click` 或者 `submit`
-- `selector` : `String` xpath 表达式，比如 `*` 或者 `/div`
+- `selector` : `String` XPath 表达式，比如 `*` 或者 `/div`
 - `handler` : `Function(Event event)` 侦听器
 - `Returns` : `SystemObject` 函数的调用者
 
@@ -36,7 +36,7 @@ off(eventType[,selector][,handler])
 ```
 
 - `eventType` : `String` 事件类型，比如 `click` 或者 `submit`
-- `selector` : `String` xpath 表达式，比如 `*` 或者 `/div`
+- `selector` : `String` XPath 表达式，比如 `*` 或者 `/div`
 - `handler` : `Function(Event event)` 侦听器
 - `Returns` : `SystemObject` 函数的调用者
 
@@ -62,7 +62,7 @@ once(eventType[,selector],handler)
 ```
 
 - `eventType` : `String` 事件类型，比如 `click` 或者 `submit`
-- `selector` : `String` xpath 表达式，比如 `*` 或者 `/div`
+- `selector` : `String` XPath 表达式，比如 `*` 或者 `/div`
 - `handler` : `Function(Event event)` 侦听器
 - `Returns` : `SystemObject` 函数的调用者
 
