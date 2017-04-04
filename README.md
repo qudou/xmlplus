@@ -217,9 +217,3 @@ These two files can be found in the path `src/patch/`. That is to say, if you wa
 <script src='xmldom.js'></script>
 <script src='xmlplus.js'></script>
 ```
-
-## License
-
-Licensed under the [MIT](http://opensource.org/licenses/MIT) License;
-
-Copyright (C) 2017 Qudou. All Rights Reserved.
