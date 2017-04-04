@@ -10,7 +10,7 @@ Xmlplus is a JavaScript framework，It can not only run in the browser side, but
 
 ## Download
 
-### Get source code by Git
+### Getting source code by Git
 
 If you install the GIT client, through the GIT can get xmlplus project file.
 
