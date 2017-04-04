@@ -41,7 +41,7 @@ $ npm install
 
 ### Install via NPM
 
-If you have installed the NPM client, you can install NPM via xmlplus.
+If you have installed the NPM client, you can install xmlplus via NPM.
 
 [![NPM](https://nodei.co/npm/xmlplus.png?downloads=true&start=true)](https://nodei.co/npm/xmlplus/)
 
