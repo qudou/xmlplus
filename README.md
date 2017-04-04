@@ -1,5 +1,11 @@
 # [xmlplus](http://xmlplus.cn)
 
+<a href="https://circleci.com/gh/qudou/xmlplus/tree/dev"><img src="https://img.shields.io/circleci/project/qudou/xmlplus/dev.svg" alt="Build Status"></a>
+<a href="https://codecov.io/github/qudou/xmlplus?branch=dev"><img src="https://img.shields.io/codecov/c/github/qudou/xmlplus/dev.svg" alt="Coverage Status"></a>
+<a href="https://www.npmjs.com/package/xmlplus"><img src="https://img.shields.io/npm/dt/xmlplus.svg" alt="Downloads"></a>
+<a href="https://www.npmjs.com/package/xmlplus"><img src="https://img.shields.io/npm/v/xmlplus.svg" alt="Version"></a>
+<a href="https://www.npmjs.com/package/xmlplus"><img src="https://img.shields.io/npm/l/xmlplus.svg" alt="License"></a>
+
 Xmlplus is a JavaScript framework，It can not only run in the browser side, but also in the server side. For more information, see [http://xmlplus.net](http://xmlplus.net).
 
 ## Download
