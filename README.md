@@ -59,7 +59,7 @@ Xmlplus is the framework which can not only run in browser but also in server, s
 
 ### Running in server
 
-The following is the JavaScript template we fist give to be able to run directly in the server. You can modify or extend the functionality based on this. The server's template is very simple. After installing the xmlplus software package, you just need to include a file as follows.
+The following is the JavaScript template we fist give to run directly in the server. You can modify or extend the functionality based on this. The server's template is very simple. After installing the xmlplus software package, you just need to include a file as follows.
 
 ```js
 // 02-01
