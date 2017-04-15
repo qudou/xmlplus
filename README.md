@@ -113,7 +113,7 @@ In addition, you also need a HTML file containing following content. Here, we na
 </html>
 ```
 
-Ensure that the above three files are in the same directory. If opennig the `index.html` by the browser, you should be able to see the red `hello, world`.
+Ensure that the above three files are in the same directory. If opening the `index.html` by the browser, you should be able to see the red `hello, world`.
 
 ## Browser and device support
 
