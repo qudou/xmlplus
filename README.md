@@ -45,9 +45,9 @@ Note, however, that the source code obtained in this way does not contain two de
 $ npm install
 ```
 
-### Install via NPM
+### Install with NPM
 
-If having installed the NPM client, you can install xmlplus via NPM with the fllowing command.
+If having installed the NPM client, you can install xmlplus with NPM.
 
 ```bash
 $ npm install xmlplus
