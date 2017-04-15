@@ -39,7 +39,7 @@ xmlplus/
 
 The `docs/` and `xmlplus/` under the `demo/` contain subfolders with the same name.  The `docs/` contains document files and the `demo/` contains the corresponding sample code. The `src/` contains the frame source file and patch files for IE9+.
 
-Note that the source code obtained in this way does not contain two dependent packages for the project running on the server side. You can locate the root of the project to get the two dependent packages using the following command.
+Note that the source code obtained in this way does not contain two dependent packages for the project running on the server side. You can locate the root of the project and use the following command to get two dependent packages.
 
 ```bash
 $ npm install
