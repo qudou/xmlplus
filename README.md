@@ -8,7 +8,7 @@ If having installed the NPM client, you can install xmlplus with NPM.
 
 [![NPM](https://nodei.co/npm/xmlplus.png?downloads=true&start=true)](https://nodei.co/npm/xmlplus/)
 
-## Structure
+## Project structure
 
 The following is the basic organizational structure of the project:
 
