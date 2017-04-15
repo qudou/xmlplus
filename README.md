@@ -4,7 +4,7 @@
 <a href="https://www.npmjs.com/package/xmlplus"><img src="https://img.shields.io/npm/v/xmlplus.svg" alt="Version"></a>
 <a href="https://www.npmjs.com/package/xmlplus"><img src="https://img.shields.io/npm/l/xmlplus.svg" alt="License"></a>
 
-Xmlplus is a JavaScript framework，It can not only run in the browser side, but also in the server side. For more information, see [http://xmlplus.net](http://xmlplus.net).
+Xmlplus is a JavaScript framework，It can not only run on the browser side, but also on the server side. For more information, see [http://xmlplus.net](http://xmlplus.net).
 
 [![NPM](https://nodei.co/npm/xmlplus.png?downloads=true&start=true)](https://nodei.co/npm/xmlplus/)
 
@@ -39,7 +39,7 @@ xmlplus/
 
 The directories, `docs/` and `xmlplus/` under the `demo/`, contain the same name sub directories. The `docs/` contains the document files, and the `demo/` contains the corresponding supporting sample code. The directory `src/` contains the frame source file `xmlplus.js` and the patch files for IE9+.
 
-Note, however, that the source code obtained in this way does not contain two dependent packages that allow the project to run on the server side. You can locate the root directory of the project, and get the two dependent packages through the following command.
+Note, however, that the source code obtained in this way does not contain two dependent packages for the project running on the server side. You can locate the root directory of the project, and get the two dependent packages through the following command.
 
 ```bash
 $ npm install
@@ -47,7 +47,7 @@ $ npm install
 
 ### Install via NPM
 
-If you have installed the NPM client, you can install xmlplus via NPM.
+If having installed the NPM client, you can install xmlplus via NPM with the fllowing command.
 
 ```bash
 $ npm install xmlplus
@@ -97,7 +97,7 @@ xmlplus("xp", function (xp, $_, t) {
 });
 ```
 
-In addition, you also need a HTML file that contains the following. Here, we named the file `index.html`.
+In addition, you also need a HTML file containing following content. Here, we name the file as `index.html`.
 
 ```html
 <!-- 02-02 -->
@@ -113,7 +113,7 @@ In addition, you also need a HTML file that contains the following. Here, we nam
 </html>
 ```
 
-Ensure that the above three files are in the same directory. Open the `index.html` by the browser, you should be able to see the red `hello, world`.
+Ensure that the above three files are in the same directory. If opennig the `index.html` by the browser, you should be able to see the red `hello, world`.
 
 ## Browser and device support
 
