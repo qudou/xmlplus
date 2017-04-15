@@ -10,7 +10,7 @@ Xmlplus is a JavaScript framework，It can not only run on the browser side, but
 
 ## Download
 
-### Getting source code by Git
+### Getting source code using Git
 
 If having installed the GIT client, you can get xmlplus project files with the following command.
 
@@ -37,9 +37,9 @@ xmlplus/
     └── patch/
 ```
 
-The directories, `docs/` and `xmlplus/` under the `demo/`, contain the same name sub directories. The `docs/` contains the document files, and the `demo/` contains the corresponding supporting sample code. The directory `src/` contains the frame source file `xmlplus.js` and the patch files for IE9+.
+The `docs/` and `xmlplus/` under the `demo/` contain subfolders with the same name.  The `docs/` contains document files and the `demo/` contains the corresponding sample code. The `src/` contains the frame source file and patch files for IE9+.
 
-Note, however, that the source code obtained in this way does not contain two dependent packages for the project running on the server side. You can locate the root directory of the project, and get the two dependent packages through the following command.
+Note that the source code obtained in this way does not contain two dependent packages for the project running on the server side. You can locate the root of the project to get the two dependent packages using the following command.
 
 ```bash
 $ npm install
