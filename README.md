@@ -37,7 +37,7 @@ Xmlplus is a framework that can not only run on browser-side but also on server-
 
 ### Server-side based
 
-The following is the JavaScript template we fist give to run directly in the server. You can modify or extend the functionality based on this. The server's template is very simple. After installing the xmlplus software package, you just need to include a file as follows.
+The following is the JavaScript template we fist give to run directly on the server-side. You can modify or extend the functionality based on this. The template is very simple. After installing the xmlplus software package, you just need to create a file containing following content.
 
 ```js
 // 02-01
@@ -52,9 +52,9 @@ xmlplus("xp", function (xp, $_, t) {
 }).startup("//xp/Index");
 ```
 
-Now assume that there is a file containing the above content, the name is `index.js`, then you can execute the command `node index` in the Node.js environment to run the above template example.
+Having created a file containing the above content. you can execute `node index` to run the above template example.
 
-In addition, please note that a comment at the beginning of the sample. Through the comment content, you can locate the software package `demo/docs/02-templete/01/` to get the source code. The `02` in the comment is the chapter order, `01` is the name of the directory containing the sample. The following example contains a similar comment, which is consistent with the content here.
+In addition, please note that a comment line at the beginning of the sample. The line indicate that the current sample code is located at `demo/docs/02-templete/01/`. The `02` here is the chapter order and the `01` is the name of the folder containing the sample.
 
 ### Browser-side based
 
