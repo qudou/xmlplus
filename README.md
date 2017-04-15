@@ -2,17 +2,13 @@
 
 Xmlplus is a JavaScript framework，It can not only run on the browser side, but also on the server side. For more information, see [http://xmlplus.net](http://xmlplus.net).
 
-[![NPM](https://nodei.co/npm/xmlplus.png?downloads=true&start=true)](https://nodei.co/npm/xmlplus/)
-
 ## Download
 
-### Getting source code using Git
+If having installed the NPM client, you can install xmlplus with NPM.
 
-If having installed the GIT client, you can get xmlplus project files with the following command.
+[![NPM](https://nodei.co/npm/xmlplus.png?downloads=true&start=true)](https://nodei.co/npm/xmlplus/)
 
-```bash
-$ git clone https://github.com/qudou/xmlplus.git
-```
+## Structure
 
 The following is the basic organizational structure of the project:
 
@@ -35,25 +31,11 @@ xmlplus/
 
 The `docs/` and `xmlplus/` under the `demo/` contain subfolders with the same name.  The `docs/` contains document files and the `demo/` contains the corresponding sample code. The `src/` contains the frame source file and patch files for IE9+.
 
-Note that the source code obtained in this way does not contain two dependent packages for the project running on the server side. You can locate the root of the project and use the following command to get two dependent packages.
-
-```bash
-$ npm install
-```
-
-### Install with NPM
-
-If having installed the NPM client, you can install xmlplus with NPM.
-
-```bash
-$ npm install xmlplus
-```
-
 ## Basic templates
 
-Xmlplus is the framework which can not only run in browser but also in server, so here we'll give two sets of basic templates corresponding to both ends of the operating environment respectively.
+Xmlplus is a framework that can not only run on browser-side but also on server-side. Here we'll give two sets of basic templates for different environments.
 
-### Running in server
+### Server-side based
 
 The following is the JavaScript template we fist give to run directly in the server. You can modify or extend the functionality based on this. The server's template is very simple. After installing the xmlplus software package, you just need to include a file as follows.
 
@@ -74,7 +56,7 @@ Now assume that there is a file containing the above content, the name is `index
 
 In addition, please note that a comment at the beginning of the sample. Through the comment content, you can locate the software package `demo/docs/02-templete/01/` to get the source code. The `02` in the comment is the chapter order, `01` is the name of the directory containing the sample. The following example contains a similar comment, which is consistent with the content here.
 
-### Running in browser
+### Browser-side based
 
 On the browser side, you need to prepare three files, the first of which is the `xmlplus.js` file that you have downloaded. In addition, you need to create a file named `index.js`, which contains the following.
 
