@@ -58,7 +58,7 @@ In addition, please note that a comment at the beginning of the sample. Through 
 
 ### Browser-side based
 
-On the browser side, you need to prepare three files, the first of which is the `xmlplus.js` file that you have downloaded. In addition, you need to create a file named `index.js`, which contains the following.
+On the browser-side, you need to prepare three files. The first is the `xmlplus.js`. The second you need to create is a file named `index.js` containing following content.
 
 ```js
 // 02-02
