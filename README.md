@@ -75,7 +75,7 @@ xmlplus("xp", function (xp, $_, t) {
 });
 ```
 
-In addition, you also need a HTML file containing following content. Here, we name the file as `index.html`.
+At last, you need a HTML file containing following content. Here, we name the file as `index.html`.
 
 ```html
 <!-- 02-02 -->
