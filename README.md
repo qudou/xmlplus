@@ -95,11 +95,11 @@ Ensure that the above three files are in the same folder. If opening the `index.
 
 ## Browser and device support
 
-For the server, xmlplus supports all versions of the node.js runtime environment. So here only to discuss its performance in the browser side. Xmlplus has the best performance on the latest desktop and mobile browsers. However, on some older browsers may fail.
+For the server-side, xmlplus supports all versions of the node.js runtime environment, so here we only to discuss its performance on the browser-side. Xmlplus has the best performance on the latest desktop and mobile browsers. However, on some older browsers it may fail.
 
 ### Supported browser
 
-Xmlplus supports mainstream browsers and platforms. On the Windows platform, which supports Internet Explorer 9-11 / Microsoft Edge. Please see the details listed below.
+Xmlplus supports mainstream browsers and platforms. On the Windows platform, it supports Internet Explorer 9-11 / Microsoft Edge. Please see the details listed below.
 
 #### Mobile device
 
