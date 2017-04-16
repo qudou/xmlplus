@@ -2,7 +2,7 @@
 
 Xmlplus is a JavaScript framework，It can not only run on the browser-side, but also on the server-side. For more information, see [http://xmlplus.net](http://xmlplus.net).
 
-## Download
+## Installation
 
 If having installed the NPM client, you can install xmlplus with NPM.
 
