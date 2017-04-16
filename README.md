@@ -188,7 +188,7 @@ Accordingly, xmlplus also supports most of the latest version of the desktop bro
 
 ### Internet Explorer
 
-Mentioned earlier, xmlplus supports Internet Explorer 9-11, but this requires the additional two files: `xpath.js` and `xmldom.js`.
+As we have mentioned earlier, xmlplus supports Internet Explorer 9-11, but this requires the additional two files: `xpath.js` and `xmldom.js`.
 
 These two files can be found in the `src/patch/`. That is to say, if you want the application based on xmlplus running on Internet Explorer 9-11, you need to import the following three JavaScript files.
 
