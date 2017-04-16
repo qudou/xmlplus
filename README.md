@@ -6,7 +6,9 @@ Xmlplus is a JavaScript framework，It can not only run on the browser-side, but
 
 If having installed the NPM client, you can install xmlplus with NPM.
 
-[![NPM](https://nodei.co/npm/xmlplus.png?downloads=true&start=true)](https://nodei.co/npm/xmlplus/)
+```bash
+$ npm install xmlplus
+```
 
 The following is the basic organizational structure of the project:
 
