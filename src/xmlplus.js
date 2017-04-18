@@ -180,11 +180,9 @@ var $ = {
         return Library[s.dir] && Library[s.dir][s.basename] || false;
     },
     clearLibrary: function (space) {
-        if ( space == null )
-            Library = {}, Original = {};
-        else if ( typeof space != "string" )
+        if ( typeof space != "string" )
             $.error("invalid space, expected a string");
-        var patt = new RegExp("^" + space);
+        var patt = new RegExp("^" + space.substr(2));
         for ( var k in Library )
             if ( k.match(patt) ) {
                 delete Library[k];
