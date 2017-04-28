@@ -328,14 +328,15 @@ console.log(xp.hasComponent("//xp/Index")); // false 或者一个组件的 JSON 
 clearLibrary(pattern)
 ```
 
-- `pattern` : `String` 一个正则字符串
+- `pattern` : `String` 一个命名空间或组件的绝对路径表示
 
-按照给定的模式清除当前系统中相关命名空间及组件。系统中的部分命名空间及组件一旦清除，将不再可用。
+按照给定的模式字符串清除当前系统中相关命名空间及组件。该模式字符串代表了命名空间或组件的绝对路径集。系统中的部分命名空间及组件一旦被清除，将不再可用。
 
 ```js
 // 01-19
-xp.clearLibrary("//xp");        // 清除根空间 "//xp" 中的所有内容，包括该根空间本身
-xp.clearLibrary("//xp/Widget"); // 清除组件 "//xp/Widget"，但不影响其他的组件与命名空间
+xp.clearLibrary("//.");         // 清除系统中的所有命名空间与组件
+xp.clearLibrary("//xp");        // 清除根空间 //xp 中的所有内容，包括该根空间本身
+xp.clearLibrary("//xp/Widget"); // 清除组件 //xp/Widget，但不影响其他的组件与命名空间
 ```
 
 ## getElementById

@@ -19,7 +19,7 @@
 - [isArray](/api#全局-isArray)：判断一个对象是不是数组类型
 - [isFunction](/api#全局-isFunction)：判断一个对象是不是函数类型
 - [isNumeric](/api#全局-isNumeric)：判断一个对象是否数值型
-- [isPlainObject](/api#全局-isPlainObject)：判断一个对象是简单对象
+- [isPlainObject](/api#全局-isPlainObject)：判断一个对象是否简单对象
 - [isEmptyObject](/api#全局-isEmptyObject)：判断一个对象是否空对象
 - [isSystemObject](/api#全局-isSystemObject)：判断一个对象是否框架的系统对象
 - [extend](/api#全局-extend)：将两个或多个对象的内容合并到第一个对象中
