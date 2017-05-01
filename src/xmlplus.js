@@ -274,11 +274,11 @@ var hp = {
         if ( input.charAt(0) == '<' ) try {
             return $.parseXML(input).lastChild;
         } catch (e) {
-			return xdocument.createTextNode(input);
-		}
+            return xdocument.createTextNode(input);
+        }
         var i = input.lastIndexOf('/'),
-			dir = ph.fullPath(dir || "", input.substring(0, i) || "."),
-			basename = input.substr(i+1);
+            dir = ph.fullPath(dir || "", input.substring(0, i) || "."),
+            basename = input.substr(i+1);
         if ( Library[dir] && Library[dir][basename.toLowerCase()] )
             return xdocument.createElementNS("//" + dir, 'i:' + basename);
         return xdocument.createTextNode(input);
@@ -1053,7 +1053,7 @@ var ClientElementAPI = {
             var parentOffset = hp.offset(hp.offsetParent(elem));
             elem.style.top = coordinates.top  - parentOffset.top + "px";
             elem.style.left = coordinates.left  - parentOffset.left + "px";
-			(hp.css(elem,'position') == 'static') && (elem.style.position = 'relative');
+            (hp.css(elem,'position') == 'static') && (elem.style.position = 'relative');
             return this;
         }
         var obj = elem.getBoundingClientRect();
