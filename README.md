@@ -52,7 +52,7 @@ xmlplus("xp", function (xp, $_, t) {
 }).startup("//xp/Index");
 ```
 
-Having created a file containing the above content. you can execute `node index` to run the above template example.
+Having created a file containing the above content, you can execute `node index` to run the above template example.
 
 In addition, please note that a comment line at the beginning of the sample. The line indicate that the current sample code is located at `demo/docs/02-templete/01/`. The `02` here is the chapter order and the `01` is the name of the folder containing the sample.
 
