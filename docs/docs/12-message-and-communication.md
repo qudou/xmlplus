@@ -2,10 +2,10 @@
 
 消息通信是除事件通信外的另一种组件对象之间的通信机制。下面列出的是与消息通信相关的系统函数，它与事件通信有许多相似之处。
 
-- [watch](/api#通信-watch)：侦听消息
-- [unwatch](/api#通信-unwatch)：取消消息侦听
-- [glance](/api#通信-glance)：仅一次侦听消息
-- [notify](/api#通信-notify)：派发消息
+- [watch](/api#通信_watch)：侦听消息
+- [unwatch](/api#通信_unwatch)：取消消息侦听
+- [glance](/api#通信_glance)：仅一次侦听消息
+- [notify](/api#通信_notify)：派发消息
 
 ## 消息的派发与捕获
 

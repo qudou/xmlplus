@@ -10,26 +10,26 @@
 
 全局接口由全局对象 xmlplus 或 xp 提供。下面给出的是所有的全局接口列表。
 
-- [startup](/api#全局.startup)：实例化一个组件
-- [guid](/api#全局.guid)：获取系统内的唯一的全局标识符
-- [error](/api#全局.error)：抛出一个错误
-- [ready](/api#全局.ready)：在页面文档加载后激活回调函数
-- [type](/api#全局.type)：判断一个对象的所属类型
-- [isWindow](/api#全局.isWindow)：判断一个对象是不是窗体
-- [isArray](/api#全局.isArray)：判断一个对象是不是数组类型
-- [isFunction](/api#全局.isFunction)：判断一个对象是不是函数类型
-- [isNumeric](/api#全局.isNumeric)：判断一个对象是否数值型
-- [isPlainObject](/api#全局.isPlainObject)：判断一个对象是否简单对象
-- [isEmptyObject](/api#全局.isEmptyObject)：判断一个对象是否空对象
-- [isSystemObject](/api#全局.isSystemObject)：判断一个对象是否框架的系统对象
-- [extend](/api#全局.extend)：将两个或多个对象的内容合并到第一个对象中
-- [expand](/api#全局.expand)：对系统接口进行扩展
-- [each](/api#全局.each)：遍历一个数组或者其它对象
-- [parseXML](/api#全局.parseXML)：将给定的字符串解析为 XML 文档
-- [hasNamespace](/api#全局.hasNamespace)：判定当前系统是否包含给定的命名空间
-- [hasComponent](/api#全局.hasComponent)：判定当前系统中是否包含给定的组件
-- [clearLibrary](/api#全局.clearLibrary)：按照给定的模式清除当前系统中相关命名空间及组件
-- [getElementById](/api#全局.getElementById)：由给定的标识符获取相关对象
+- [startup](/api#全局_startup)：实例化一个组件
+- [guid](/api#全局_guid)：获取系统内的唯一的全局标识符
+- [error](/api#全局_error)：抛出一个错误
+- [ready](/api#全局_ready)：在页面文档加载后激活回调函数
+- [type](/api#全局_type)：判断一个对象的所属类型
+- [isWindow](/api#全局_isWindow)：判断一个对象是不是窗体
+- [isArray](/api#全局_isArray)：判断一个对象是不是数组类型
+- [isFunction](/api#全局_isFunction)：判断一个对象是不是函数类型
+- [isNumeric](/api#全局_isNumeric)：判断一个对象是否数值型
+- [isPlainObject](/api#全局_isPlainObject)：判断一个对象是否简单对象
+- [isEmptyObject](/api#全局_isEmptyObject)：判断一个对象是否空对象
+- [isSystemObject](/api#全局_isSystemObject)：判断一个对象是否框架的系统对象
+- [extend](/api#全局_extend)：将两个或多个对象的内容合并到第一个对象中
+- [expand](/api#全局_expand)：对系统接口进行扩展
+- [each](/api#全局_each)：遍历一个数组或者其它对象
+- [parseXML](/api#全局_parseXML)：将给定的字符串解析为 XML 文档
+- [hasNamespace](/api#全局_hasNamespace)：判定当前系统是否包含给定的命名空间
+- [hasComponent](/api#全局_hasComponent)：判定当前系统中是否包含给定的组件
+- [clearLibrary](/api#全局_clearLibrary)：按照给定的模式清除当前系统中相关命名空间及组件
+- [getElementById](/api#全局_getElementById)：由给定的标识符获取相关对象
 
 对于这些接口的使用，下面仅给出了几个示例，具体内容请参看 [全局接口](/api#全局)。
 
@@ -48,9 +48,9 @@ console.log(xp.isSystemObject(null)); // false
 
 集合对象接口也称为集体对象接口。如[《命名》](/docs#命名)章节中所述，系统对象可以分为个体对象与集体对象。集体对象的部分接口源自数组，下面给出的是非数组包含的集体对象接口。
 
-- [call](/api#集合.call)：遍历集合对象，并调用给定的函数，其中函数的参数由函数名的后续实参提供
-- [hash](/api#集合.hash)：将类数组形式的集合对象转化包含键值对的普通对象
-- [values](/api#集合.values)：将包含系统对象的集合转化成包含值对象的集合
+- [call](/api#集合_call)：遍历集合对象，并调用给定的函数，其中函数的参数由函数名的后续实参提供
+- [hash](/api#集合_hash)：将类数组形式的集合对象转化包含键值对的普通对象
+- [values](/api#集合_values)：将包含系统对象的集合转化成包含值对象的集合
 
 对于上述接口的具体细节请参看 [集合接口](/api#集合)。下面的接口是集体对象拥有的数组对象接口。
 
@@ -64,24 +64,24 @@ every | forEach | indexOf | map | pop | push | shift | slice | some | splice | u
 
 由于每一组件对象都对应一个 DOM 元素对象，所以系统提供了相关的操作 DOM 元素对象的接口。通过这些系统接口可以间接地操作 DOM 元素对象，以下简称 DOM 元素对象为节点。
 
-- [text](/api#DOM.text)：获取或者设置节点的文本
-- [prop](/api#DOM.prop)：获取或者设置节点的属性值
-- [removeProp](/api#DOM.removeProp)：移除节点的属性值
-- [attr](/api#DOM.attr)：获取或者设置节点的属性值
-- [removeAttr](/api#DOM.removeAttr)：移除节点的属性值
-- [addClass](/api#DOM.addClass)：添加类
-- [removeClass](/api#DOM.removeClass)：移除类
-- [contains](/api#DOM.contains)：判断当前对象的是否包含给定对象
-- [css](/api#DOM.css)：获取或者设置样式值
-- [show](/api#DOM.show)：显示节点
-- [hide](/api#DOM.hide)：隐藏节点
-- [width](/api#DOM.width)：获取或者设置节点的宽度
-- [height](/api#DOM.height)：获取或者设置节点的高度
-- [offsetParent](/api#DOM.offsetParent)：获取最近定位的祖先元素
-- [offset](/api#DOM.offset)：获取或者设置节点的偏移
-- [position](/api#DOM.position)：获取节点的位置
-- [scrollTop](/api#DOM.scrollTop)：返回或设置当前对象的滚动条的垂直位置
-- [scrollLeft](/api#DOM.scrollLeft)：返回或设置当前对象的滚动条的水平位置
+- [text](/api#DOM_text)：获取或者设置节点的文本
+- [prop](/api#DOM_prop)：获取或者设置节点的属性值
+- [removeProp](/api#DOM_removeProp)：移除节点的属性值
+- [attr](/api#DOM_attr)：获取或者设置节点的属性值
+- [removeAttr](/api#DOM_removeAttr)：移除节点的属性值
+- [addClass](/api#DOM_addClass)：添加类
+- [removeClass](/api#DOM_removeClass)：移除类
+- [contains](/api#DOM_contains)：判断当前对象的是否包含给定对象
+- [css](/api#DOM_css)：获取或者设置样式值
+- [show](/api#DOM_show)：显示节点
+- [hide](/api#DOM_hide)：隐藏节点
+- [width](/api#DOM_width)：获取或者设置节点的宽度
+- [height](/api#DOM_height)：获取或者设置节点的高度
+- [offsetParent](/api#DOM_offsetParent)：获取最近定位的祖先元素
+- [offset](/api#DOM_offset)：获取或者设置节点的偏移
+- [position](/api#DOM_position)：获取节点的位置
+- [scrollTop](/api#DOM_scrollTop)：返回或设置当前对象的滚动条的垂直位置
+- [scrollLeft](/api#DOM_scrollLeft)：返回或设置当前对象的滚动条的水平位置
 
 对于上述接口的详细用法请参看 [DOM 接口](/api#DOM)。
 
@@ -89,10 +89,10 @@ every | forEach | indexOf | map | pop | push | shift | slice | some | splice | u
 
 这类接口主要完成组件对象的创建、移除与替换的操作。
 
-- [append](/api#生命周期.append)：给当前组件对象子级追加一个组件对象
-- [before](/api#生命周期.before)：在当前组件对象之前插入一个组件对象
-- [replace](/api#生命周期.replace)：用新的组件对象替换掉当前组件对象
-- [remove](/api#生命周期.remove)：移除掉当前组件对象
+- [append](/api#生命周期_append)：给当前组件对象子级追加一个组件对象
+- [before](/api#生命周期_before)：在当前组件对象之前插入一个组件对象
+- [replace](/api#生命周期_replace)：用新的组件对象替换掉当前组件对象
+- [remove](/api#生命周期_remove)：移除掉当前组件对象
 
 这些接口的用法在后续章节[《生命周期》](/docs#生命周期)中有详细的介绍。
 
@@ -100,15 +100,15 @@ every | forEach | indexOf | map | pop | push | shift | slice | some | splice | u
 
 这类接口用于在视图项的组件对象集中检索相关的组件对象。
 
-- [sys](/api#检索.sys)：以文档节点为上下文查找对象，返回系统对象集
-- [items](/api#检索.items)：以文档节点为上下文查找对象，返回组件值对象集
-- [find](/api#检索.find)：以当前节点为上下文查找对象，返回系统对象集
-- [get](/api#检索.get)：获取当前节点某一子节点对象，返回系统对象
-- [first](/api#检索.first)：获取当前节点的第一个子节点对象，返回系统对象
-- [last](/api#检索.last)：获取当前节点的最后一个子节点对象，返回系统对象
-- [next](/api#检索.next)：获取当前节点的下一个节点对象，返回系统对象
-- [prev](/api#检索.prev)：获取当前节点的前一个节点对象，返回系统对象
-- [children](/api#检索.children)：获取当前节点的所有子节点对象，返回系统对象集
+- [sys](/api#检索_sys)：以文档节点为上下文查找对象，返回系统对象集
+- [items](/api#检索_items)：以文档节点为上下文查找对象，返回组件值对象集
+- [find](/api#检索_find)：以当前节点为上下文查找对象，返回系统对象集
+- [get](/api#检索_get)：获取当前节点某一子节点对象，返回系统对象
+- [first](/api#检索_first)：获取当前节点的第一个子节点对象，返回系统对象
+- [last](/api#检索_last)：获取当前节点的最后一个子节点对象，返回系统对象
+- [next](/api#检索_next)：获取当前节点的下一个节点对象，返回系统对象
+- [prev](/api#检索_prev)：获取当前节点的前一个节点对象，返回系统对象
+- [children](/api#检索_children)：获取当前节点的所有子节点对象，返回系统对象集
 
 上面的接口中，前两个比较特殊，它们属于通用检索接口，分别等于函数项的前两个参数。它们的用法在后续章节[《检索》](docs#searching)中会有详细的介绍。
 
@@ -116,14 +116,14 @@ every | forEach | indexOf | map | pop | push | shift | slice | some | splice | u
 
 这类接口用于在各组件对象之间进行通信。通信分为两类，一类是事件通信，另一类是消息通信。下面的系统接口中，前四者属于事件通信接口，后四者属于消息通信接口。
 
-- [on](/api#通信.on)：侦听事件
-- [off](/api#通信.off)：取消事件侦听
-- [once](/api#通信.once)：仅一次侦听事件
-- [trigger](/api#通信.trigger)：派发事件
-- [watch](/api#通信.watch)：侦听消息
-- [unwatch](/api#通信.unwatch)：取消消息侦听
-- [glance](/api#通信.glance)：仅一次侦听消息
-- [notify](/api#通信.notify)：派发消息
+- [on](/api#通信_on)：侦听事件
+- [off](/api#通信_off)：取消事件侦听
+- [once](/api#通信_once)：仅一次侦听事件
+- [trigger](/api#通信_trigger)：派发事件
+- [watch](/api#通信_watch)：侦听消息
+- [unwatch](/api#通信_unwatch)：取消消息侦听
+- [glance](/api#通信_glance)：仅一次侦听消息
+- [notify](/api#通信_notify)：派发消息
 
 这些接口的用法在后续章节[《事件与通信》](docs#事件与通信)及[《消息与通信》](docs#消息与通信)中有详细的介绍。
 
@@ -131,14 +131,14 @@ every | forEach | indexOf | map | pop | push | shift | slice | some | splice | u
 
 这类接口用于获取或者设置与组件对象相关联的一些信息。
 
-- [value](/api#其它.value)：获取组件对象的值对象
-- [localName](/api#其它.localName)：获取组件对象相应的组件名
-- [namespace](/api#其它.namespace)：获取组件对象所属的命名空间
-- [guid](/api#其它.guid)：获取组件对象的唯一标识符
-- [toString](/api#其它.toString)：获得组件对象的 id 或者唯一标识符
-- [serialize](/api#其它.serialize)：序列化视图项或者视图项所对应的 HTML DOM 文档树
-- [data](/api#其它.data)：获取或者设置组件所绑定的数据
-- [removeData](/api#其它.removeData)：移除组件所绑定的数据
+- [value](/api#其它_value)：获取组件对象的值对象
+- [localName](/api#其它_localName)：获取组件对象相应的组件名
+- [namespace](/api#其它_namespace)：获取组件对象所属的命名空间
+- [guid](/api#其它_guid)：获取组件对象的唯一标识符
+- [toString](/api#其它_toString)：获得组件对象的 id 或者唯一标识符
+- [serialize](/api#其它_serialize)：序列化视图项或者视图项所对应的 HTML DOM 文档树
+- [data](/api#其它_data)：获取或者设置组件所绑定的数据
+- [removeData](/api#其它_removeData)：移除组件所绑定的数据
 
 ## 值对象接口
 
@@ -168,21 +168,21 @@ sys.ipbox.css("color","blue").value().value = "192,168,0,1";
 
 在[《组件与空间》](/docs#组件与空间)中，描述了系统内部的五种组件类型。按照拥有的接口数量划分，可以分为两类，其中 HTML 元素对象和自定义组件对象拥有所有的系统对象接口（排除 `sys` 与 `items`），而其余的组件，包括文本，CDATASection 描述以及注释，则只拥有如下的部分系统接口。
 
-- [before](/api#生命周期.before)：在当前对象之前插入一个对象
-- [replace](/api#生命周期.replace)：替换掉当前对象
-- [remove](/api#生命周期.remove)：移除掉当前对象
-- [next](/api#检索.next)：获取当前节点的下一个节点对象，返回系统对象集
-- [prev](/api#检索.prev)：获取当前节点的前一个节点对象，返回系统对象集
-- [text](/api#其它.text)：获取或者设置节点的文本
-- [guid](/api#其它.guid)：获取组件对象的唯一标识符
-- [toString](/api#其它.toString)：获得组件对象的 id 或者唯一标识符
+- [before](/api#生命周期_before)：在当前对象之前插入一个对象
+- [replace](/api#生命周期_replace)：替换掉当前对象
+- [remove](/api#生命周期_remove)：移除掉当前对象
+- [next](/api#检索_next)：获取当前节点的下一个节点对象，返回系统对象集
+- [prev](/api#检索_prev)：获取当前节点的前一个节点对象，返回系统对象集
+- [text](/api#其它_text)：获取或者设置节点的文本
+- [guid](/api#其它_guid)：获取组件对象的唯一标识符
+- [toString](/api#其它_toString)：获得组件对象的 id 或者唯一标识符
 
 另外，根据系统的运行环境不同，HTML 元素对象和自定义组件对象所拥有系统对象接口也有区别。在浏览器端，它们拥有前面所述的所有系统对象接口。但在服务端，以下接口不可见。
 
-- [width](/api#DOM.width)：获取或者设置节点的宽度
-- [height](/api#DOM.height)：获取或者设置节点的高度
-- [offsetParent](/api#DOM.offsetParent)：获取最近定位的祖先元素
-- [offset](/api#DOM.offset)：获取或者设置节点的偏移
-- [position](/api#DOM.position)：获取节点的位置
-- [scrollTop](/api#DOM.scrollTop)：返回或设置当前对象的滚动条的垂直位置
-- [scrollLeft](/api#DOM.scrollLeft)：返回或设置当前对象的滚动条的水平位置
+- [width](/api#DOM_width)：获取或者设置节点的宽度
+- [height](/api#DOM_height)：获取或者设置节点的高度
+- [offsetParent](/api#DOM_offsetParent)：获取最近定位的祖先元素
+- [offset](/api#DOM_offset)：获取或者设置节点的偏移
+- [position](/api#DOM_position)：获取节点的位置
+- [scrollTop](/api#DOM_scrollTop)：返回或设置当前对象的滚动条的垂直位置
+- [scrollLeft](/api#DOM_scrollLeft)：返回或设置当前对象的滚动条的水平位置
