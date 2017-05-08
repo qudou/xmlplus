@@ -1,7 +1,7 @@
 xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
-            css: "html,body { width: 100%; height: 100%; }",
+            css: "html,body { width: 100%; height: 100%; margin: 0; padding: 0; }",
             xml: "<PullRefresh id='index'>\
                      <h1>Twitter</h1>\
                      <h2>Loren Brichter</h2>\
@@ -11,64 +11,49 @@ xmlplus("xp", function (xp, $_, t) {
             }
         },
         PullRefresh: {
-            css: "#refresh { position: relative; height: 100%; cursor: pointer; overflow-y: auto; }\
-                  #status { position: absolute; width: 100%; left: 0; top: -2.5em; }\
-                  #content { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }",
+            css: "#refresh { position: relative; height: 100%; cursor: pointer; overflow-y: hidden; }\
+                  #page { height: 100%; } #status { width: 100%; } #content { width: 100%; height: 100%; }",
             xml: "<div id='refresh' xmlns:i='pullrefresh'>\
-                    <i:Status id='status'/>\
-                    <div id='content'></div>\
+                    <div id='page'>\
+                        <i:Status id='status'/>\
+                        <div id='content'></div>\
+                    </div>\
                   </div>",
             map: { "appendTo": "content", "nofragment": true },
             fun: function (sys, items, opts) {
-                var startY, height = sys.status.height();
-                sys.content.on("touchstart", function(e) {
-                    startY = e.targetTouches[0].pageY + sys.refresh.scrollTop();
-                    sys.content.on("touchmove", mousemove).on("touchend", mouseup);
-                    sys.status.css("transition", "");
-                    sys.content.css("transition", "");
+                var startY, translateY, height = sys.status.height();
+                sys.page.on("touchstart", function (e) {
+                    startY = e.targetTouches[0].pageY;
+                    translateY = sys.page.css("transform").match(/\d+/)[0];
+                    sys.page.on("touchmove", touchmove).on("touchend", touchend).css("transition", "");
                 });
-                function mousemove(e) {
-                    var scrollTop = sys.refresh.scrollTop(),
-                        offset = e.targetTouches[0].pageY - startY;
-                    if (scrollTop <= 0 && offset > 0) {
-                        window.locked = true;
-                        sys.content.css("top", offset + "px");
-                        sys.status.css("top", (offset - height) + "px");
-                        if (items.status() !== "release")
-                            items.status(offset > height ? "ready" : "pull");
-                    } else {
-                        window.locked = false;
+                sys.page.css("transform", "translateY(-" + height + "px)");
+                function touchmove(e) {
+                    var offset = e.targetTouches[0].pageY - startY;
+                    if ( offset > 0 ) {
+                        sys.page.css("transform", "translateY(" + (offset - translateY) + "px)");
+                        if (items.status.value != "release")
+                            items.status.value = offset > height ? "ready" : "pull";
                     }
                 }
-                function mouseup(e) {
+                function touchend(e) {
                     var offset = e.changedTouches[0].pageY - startY;
-                    window.locked = false;
-                    sys.content.off("touchmove").off("touchend");
-                    sys.content.css("transition", "all 0.3s ease-in 0s");
-                    sys.status.css("transition", "all 0.3s ease-in 0s");
-                    if (items.status() == "release") {
-                        sys.refresh.scrollTop(0);
-                        sys.status.css("top", "0");
-                        sys.content.css("top", height + "px");
-                    } else if (offset < height) {
-                        sys.content.css("top", "0");
-                        sys.status.css("top", -height + "px");
+                    sys.page.off("touchmove").off("touchend").css("transition", "all 0.3s ease-in 0s");
+                    if ( items.status.value == "release" ) {
+                        sys.page.css("transform", "translateY(0)");
+                    } else if ( offset < height ) {
+                        sys.page.css("transform", "translateY(-" + height + "px)");
                     } else {
-                        items.status("release");
-                        sys.refresh.once("complete", complete);
-                        sys.content.css("top", height + "px");
-                        sys.status.css("top", "0").trigger("ready");
+                        items.status.value = "release";
+                        sys.refresh.once("complete", () => {
+                            items.status.value = "message";
+                            setTimeout(transitionEnd, 300);
+                        });
+                        sys.page.css("transform", "translateY(0)").trigger("ready");
                     }
                 }
-                function complete() {
-                    items.status("message");
-                    setTimeout(function() {
-                        sys.content.css("top", "0");
-                        sys.status.css("top", -height + "px");
-                        sys.content.once("webkitTransitionEnd", function() {
-                            items.status("pull");
-                        });
-                    }, 300);
+                function transitionEnd() {
+                    sys.page.css("transform", "translateY(-" + height + "px)").once("webkitTransitionEnd", e => items.status.value = "pull");
                 }
             }
         }
@@ -83,12 +68,14 @@ xmlplus("xp", function (xp, $_, t) {
                     <span id='message'>刷新成功</span>\
                   </ViewStack>",
             fun: function (sys, items, opts) {
-                var stat = "pull";
-                return function ( stat_ ) {
-                    if ( stat_ === undefined )
-                        return stat;
-                    sys.statusbar.trigger("switch", stat = stat_);
-                };
+                var status = "pull";
+                function getValue() {
+                    return status;
+                }
+                function setValue(value) {
+                    sys.statusbar.trigger("switch", status = value);
+                }
+                return Object.defineProperty({}, "value", {get: getValue, set: setValue});
             }
         },
         Release: {
@@ -133,7 +120,7 @@ xmlplus("xp", function (xp, $_, t) {
                     ptr.trigger("hide", [to+''].concat(args)).hide();
                     ptr = table[to].trigger("show", [ptr+''].concat(args)).show();
                 });
-                return Object.defineProperty({}, "selected", { get: function() {return ptr;}});
+                return Object.defineProperty({}, "selected", { get: function() {return ptr}});
             }
         }
     });
