@@ -6,7 +6,7 @@
     "xmldom": "qudou/xmldom"
   },
   "description": "A JavaScript framwork for developing projects efficiently.",
-  "main": "./src/xmlplus.js",
+  "main": "xmlplus.js",
   "scripts": {},
   "repository": {
     "type": "git",

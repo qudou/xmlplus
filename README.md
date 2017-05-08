@@ -19,7 +19,7 @@ xmlplus/
 │   ├── docs/
 │   ├── components/
 │   └── api/
-├── demo/
+├── example/
 │   ├── getting-started/
 │   ├── docs/
 │   ├── components/
@@ -29,7 +29,7 @@ xmlplus/
     └── patch/
 ```
 
-The `docs/` and the `xmlplus/` under the `demo/` contain subfolders with the same name.  The `docs/` contains document files and the `demo/` contains the corresponding sample code. The `src/` contains the frame source file and patch files for IE9+.
+The `docs/` and the `xmlplus/` under the `example/` contain subfolders with the same name.  The `docs/` contains document files and the `example/` contains the corresponding sample code. The `src/` contains the frame source file and patch files for IE9+.
 
 ## Basic templates
 
