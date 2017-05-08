@@ -7,12 +7,15 @@ xmlplus("xp", function (xp, $_, t) {
                      <h2>Loren Brichter</h2>\
                   </PullRefresh>",
             fun: function (sys, items, opts) {
-                sys.index.on("ready", () => console.log("ready"));
+                this.on("ready", () => {
+                    setTimeout(() => sys.index.trigger("complete"), 3000);
+                });
             }
         },
         PullRefresh: {
             css: "#refresh { position: relative; height: 100%; cursor: pointer; overflow-y: hidden; }\
-                  #page { height: 100%; } #status { width: 100%; } #content { width: 100%; height: 100%; }",
+                  #page { height: 100%; transform: translateY(0); }\
+                  #status, #content { transform: translateY(-40px); } #content { height: 100%; }",
             xml: "<div id='refresh' xmlns:i='pullrefresh'>\
                     <div id='page'>\
                         <i:Status id='status'/>\
@@ -21,39 +24,40 @@ xmlplus("xp", function (xp, $_, t) {
                   </div>",
             map: { "appendTo": "content", "nofragment": true },
             fun: function (sys, items, opts) {
-                var startY, translateY, height = sys.status.height();
+                var startY, translateY;
                 sys.page.on("touchstart", function (e) {
                     startY = e.targetTouches[0].pageY;
-                    translateY = sys.page.css("transform").match(/\d+/)[0];
+                    translateY = parseInt(sys.page.css("transform").match(/\d+/)[0]);
                     sys.page.on("touchmove", touchmove).on("touchend", touchend).css("transition", "");
                 });
-                sys.page.css("transform", "translateY(-" + height + "px)");
                 function touchmove(e) {
                     var offset = e.targetTouches[0].pageY - startY;
                     if ( offset > 0 ) {
-                        sys.page.css("transform", "translateY(" + (offset - translateY) + "px)");
+                        sys.page.css("transform", "translateY(" + (offset + translateY) + "px)");
                         if (items.status.value != "release")
-                            items.status.value = offset > height ? "ready" : "pull";
+                            items.status.value = offset > 40 ? "ready" : "pull";
                     }
                 }
                 function touchend(e) {
                     var offset = e.changedTouches[0].pageY - startY;
                     sys.page.off("touchmove").off("touchend").css("transition", "all 0.3s ease-in 0s");
                     if ( items.status.value == "release" ) {
+                        sys.page.css("transform", "translateY(40px)");
+                    } else if ( offset < 40 ) {
                         sys.page.css("transform", "translateY(0)");
-                    } else if ( offset < height ) {
-                        sys.page.css("transform", "translateY(-" + height + "px)");
                     } else {
-                        items.status.value = "release";
-                        sys.refresh.once("complete", () => {
-                            items.status.value = "message";
-                            setTimeout(transitionEnd, 300);
-                        });
-                        sys.page.css("transform", "translateY(0)").trigger("ready");
+                        release();
                     }
                 }
-                function transitionEnd() {
-                    sys.page.css("transform", "translateY(-" + height + "px)").once("webkitTransitionEnd", e => items.status.value = "pull");
+                function release() {
+                    items.status.value = "release";
+                    sys.refresh.once("complete", () => {
+                        items.status.value = "message";
+                        setTimeout(e => {
+                            sys.page.css("transform", "translateY(0)").once("webkitTransitionEnd", e => items.status.value = "pull");
+                        }, 300);
+                    });
+                    sys.page.css("transform", "translateY(40px)").trigger("ready");
                 }
             }
         }
