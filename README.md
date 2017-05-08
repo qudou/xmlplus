@@ -14,22 +14,21 @@ The following is the basic organizational structure of the project:
 
 ```bash
 xmlplus/
+├── xmlplus.js
+├── patch/
 ├── docs/
 │   ├── getting-started/
 │   ├── docs/
 │   ├── components/
 │   └── api/
-├── example/
-│   ├── getting-started/
-│   ├── docs/
-│   ├── components/
-│   └── api/
-└── src/
-    ├── xmlplus.js
-    └── patch/
+└── example/
+    ├── getting-started/
+    ├── docs/
+    ├── components/
+    └── api/
 ```
 
-The `docs/` and the `xmlplus/` under the `example/` contain subfolders with the same name.  The `docs/` contains document files and the `example/` contains the corresponding sample code. The `src/` contains the frame source file and patch files for IE9+.
+Here, the `xmlplus.js` is the source file. Two patch files under the `patch/` are for IE9+. The `docs/` and the `example/` under the `xmlplus/` contain subfolders with the same name.  The `docs/` contains document files and the `example/` contains the corresponding sample code.
 
 ## Basic templates
 
@@ -54,7 +53,7 @@ xmlplus("xp", function (xp, $_, t) {
 
 Having created a file containing the above content, you can execute `node index` to run the above template example.
 
-In addition, please note that a comment line at the beginning of the sample. The line indicate that the current sample code is located at `demo/docs/02-templete/01/`. The `02` here is the chapter order and the `01` is the name of the folder containing the sample.
+In addition, please note that a comment line at the beginning of the sample. The line indicate that the current sample code is located at `/example/docs/02-templete/01/`. The `02` here is the chapter order and the `01` is the name of the folder containing the sample.
 
 ### Browser-side based
 
