@@ -35,13 +35,13 @@ xmlplus("xp", function (xp, $_, t) {
                     if ( offset > 0 ) {
                         sys.page.css("transform", "translateY(" + (offset + translateY) + "px)");
                         if (items.status.value != "release")
-                            items.status.value = offset > 40 ? "ready" : "pull";
+                            items.status.value = offset > 40 ? "release" : "pull";
                     }
                 }
                 function touchend(e) {
                     var offset = e.changedTouches[0].pageY - startY;
                     sys.page.off("touchmove").off("touchend").css("transition", "all 0.3s ease-in 0s");
-                    if ( items.status.value == "release" ) {
+                    if ( items.status.value == "loading" ) {
                         sys.page.css("transform", "translateY(40px)");
                     } else if ( offset < 40 ) {
                         sys.page.css("transform", "translateY(0)");
@@ -50,9 +50,9 @@ xmlplus("xp", function (xp, $_, t) {
                     }
                 }
                 function release() {
-                    items.status.value = "release";
+                    items.status.value = "loading";
                     sys.refresh.once("complete", () => {
-                        items.status.value = "message";
+                        items.status.value = "success";
                         setTimeout(e => {
                             sys.page.css("transform", "translateY(0)").once("webkitTransitionEnd", e => items.status.value = "pull");
                         }, 300);
@@ -66,10 +66,10 @@ xmlplus("xp", function (xp, $_, t) {
         Status: {
             css: "#statusbar { height: 2.5em; line-height: 2.5em; text-align: center; }",
             xml: "<ViewStack id='statusbar'>\
-                    <span id='pull'>下拉刷新</span>\
-                    <span id='ready'>松开刷新</span>\
-                    <span id='release'>加载中...</span>\
-                    <span id='message'>刷新成功</span>\
+                    <span id='pull'>Pull to refresh...</span>\
+                    <span id='release'>Release to refresh...</span>\
+                    <span id='loading'>Loading...</span>\
+                    <span id='success'>Loading success</span>\
                   </ViewStack>",
             fun: function (sys, items, opts) {
                 var status = "pull";
