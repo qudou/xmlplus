@@ -13,7 +13,7 @@ sys(selector[,context])
 - `context` : `SystemObject` 代表上下文的系统对象
 - `Returns` : `Collection` 检索到的系统对象集
 
-该函数根据给定的 XPath 表达式，获取系统对象集。若不指定上下文，则默认以 XML 文档根为上下文。更多内容请参考 [通用检索接口](/docs#检索-通用检索接口)。
+该函数根据给定的 XPath 表达式，获取系统对象集。若不指定上下文，则默认以 XML 文档根为上下文。更多内容请参考 [通用检索接口](/docs#检索_通用检索接口)。
 
 ```js
 // 04-01
@@ -39,7 +39,7 @@ items(selector[,context])
 - `context` : `SystemObject` 代表上下文的系统对象
 - `Returns` : `Collection` 检索到的值对象集
 
-该函数根据给定的 XPath 表达式，获取值对象集。若不指定上下文，则默认以 XML 文档根为上下文。更多内容请参考 [通用检索接口](/docs#检索-通用检索接口)。
+该函数根据给定的 XPath 表达式，获取值对象集。若不指定上下文，则默认以 XML 文档根为上下文。更多内容请参考 [通用检索接口](/docs#检索_通用检索接口)。
 
 ```js
 // 04-02
@@ -73,7 +73,7 @@ find(selector)
 - `selector` : `String` XPath 表达式，比如 `*` 或者 `/div`
 - `Returns` : `Collection` 检索到的系统对象集
 
-该函数以当前组件对象为上下文检索所需的对象集。更多内容请参考 [find](/docs#检索-专用检索接口-find)。
+该函数以当前组件对象为上下文检索所需的对象集。更多内容请参考 [find](/docs#检索_专用检索接口-find)。
 
 ```js
 // 04-03
@@ -98,7 +98,7 @@ get(index)
 - `index` : `Integer` 索引
 - `Returns` : `SystemObject` 子级的第 index 个系统对象
 
-该函数根据给定的索引返回当前组件对象子级的某一系统对象，若无则不返回任何对象。更多内容请参考 [get](/docs#检索-专用检索接口-get)。
+该函数根据给定的索引返回当前组件对象子级的某一系统对象，若无则不返回任何对象。更多内容请参考 [get](/docs#检索_专用检索接口_get)。
 
 ```js
 // 04-04
@@ -123,7 +123,7 @@ first([nodeType])
 - `nodeType` : `Integer` XML 的节点类型
 - `Returns` : `SystemObject` 子级的第一个系统对象
 
-该函数根据给定的 XML 节点类型，获取当前组件对象子级的第一个对象。默认节点类型为元素。更多内容请参考 [first 和 last](/docs#检索-专用检索接口-first和last)。
+该函数根据给定的 XML 节点类型，获取当前组件对象子级的第一个对象。默认节点类型为元素。更多内容请参考 [first 和 last](/docs#检索_专用检索接口_first-和-last)。
 
 ```js
 // 04-05
@@ -148,7 +148,7 @@ last([nodeType])
 - `nodeType` : `Integer` XML 的节点类型
 - `Returns` : `SystemObject` 子级的最后一个系统对象
 
-该函数根据给定的 XML 节点类型，获取当前组件对象子级的最后一个对象。默认节点类型为元素。更多内容请参考 [first 和 last](/docs#检索-专用检索接口-first和last)。
+该函数根据给定的 XML 节点类型，获取当前组件对象子级的最后一个对象。默认节点类型为元素。更多内容请参考 [first 和 last](/docs#检索_专用检索接口_first-和-last)。
 
 ```js
 // 04-06
@@ -173,7 +173,7 @@ next([nodeType])
 - `nodeType` : `Integer` XML 的节点类型
 - `Returns` : `SystemObject` 下一个系统对象
 
-该函数根据给定的 XML 节点类型，获取当前组件对象的下一个对象。默认节点类型为元素。更多内容请参考 [next 和 prev](/docs#检索-专用检索接口-next和prev)。
+该函数根据给定的 XML 节点类型，获取当前组件对象的下一个对象。默认节点类型为元素。更多内容请参考 [next 和 prev](/docs#检索_专用检索接口_next-和-prev)。
 
 ```js
 // 04-07
@@ -199,7 +199,7 @@ prev([nodeType])
 - `nodeType` : `Integer` XML 的节点类型
 - `Returns` : `SystemObject` 前一个系统对象
 
-该函数根据给定的 XML 节点类型，获取当前组件对象前一个对象。默认节点类型为元素。更多内容请参考 [next 和 prev](/docs#检索-专用检索接口-next和prev)。
+该函数根据给定的 XML 节点类型，获取当前组件对象前一个对象。默认节点类型为元素。更多内容请参考 [next 和 prev](/docs#检索_专用检索接口_next-和-prev)。
 
 ```js
 // 04-08
@@ -225,7 +225,7 @@ children([nodeType])
 - `nodeType` : `Integer` XML 的节点类型
 - `Returns` : `Collection` 儿子系统对象集
 
-该函数根据给定的 XML 节点类型，获取当前组件对象所有儿子对象。默认节点类型为元素。如果给定节点类型为 0，则获取所有类型的儿子对象。更多内容请参考 [children](/docs#检索-专用检索接口-children)。
+该函数根据给定的 XML 节点类型，获取当前组件对象所有儿子对象。默认节点类型为元素。如果给定节点类型为 0，则获取所有类型的儿子对象。更多内容请参考 [children](/docs#检索_专用检索接口_children)。
 
 ```js
 // 04-09
