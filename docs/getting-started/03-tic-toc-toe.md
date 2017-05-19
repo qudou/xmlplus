@@ -1,4 +1,4 @@
-# Tic Toc Toe
+# 井字棋
 
 TicTacToe（井字棋）是一个老少皆宜的小游戏，我们来看看如何设计与实现它。下面会涉及不少与 xmlplus 相关的知识点，当然你不需要都看懂，有个大概感觉就好了。当你学完[《文档》](/docs)的相关内容后，再来看看这一节，也许会有新的收获。
 
@@ -7,6 +7,7 @@ TicTacToe（井字棋）是一个老少皆宜的小游戏，我们来看看如�
 我们从最简单的地方开始，先实现游戏界面网格的方块组件。方块组件非常简单，仅需要一个 div 元素和一些样式就好了，具体请看下面的代码：
 
 ```js
+// 03-01
 Square: {
     css: "#square { line-height: 34px; width: 34px; height: 34px; text-align: center; }\
           #square { margin-right: -1px; margin-top: -1px; padding: 0; border: 1px solid #999;}",
@@ -23,6 +24,7 @@ Square: {
 这里我们利用 9 个上面实现的方块组件组合成一个网格组件。具体请看下面的代码：
 
 ```js
+// 03-01
 Board: {
     css: "#board { width: 106px; height: 106px; margin: 0 auto; }\
           #board div { float: left; font-size: 24px; font-weight: bold; }",
@@ -56,6 +58,7 @@ Board: {
 为了简化网格组件的内部逻辑，我们把胜负的判断独立出一个组件，该组件与网格组件之间的信息交互由系统的消息通信机制来实现。
 
 ```js
+// 03-01
 Winner: {
     xml: "<void id='winner'/>",
     fun: function (sys, items, opts) {
@@ -80,6 +83,7 @@ Winner: {
 消息显示面板的作用主要是给出游戏过程中的一些文字提示，以及提供一个可以重新开始游戏的按钮。
 
 ```js
+// 03-01
 Info: {
     xml: "<div id='info'>\
             <div id='next'>Next player: X</div>\
@@ -106,6 +110,7 @@ Info: {
 有了上面实现的网格组件、胜负判断组件以及消息面板组件，我们通过简单的组合就可以得到我们预期的可工作的 TicTacToe 了。
 
 ```js
+// 03-01
 TicTacToe: {
     css: "#index { text-align: center; margin: 20px; }",
     xml: "<div id='index'>\
