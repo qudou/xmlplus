@@ -37,7 +37,6 @@ xmlplus("xp", function (xp, $_, t) {
             xml: "<div id='square'/>",
         },
         Winner: {
-            xml: "<void id='winner'/>",
             fun: function (sys, items, opts) {
                 let squares = Array(9).fill(null);
                 const lines = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6],[1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
@@ -46,7 +45,7 @@ xmlplus("xp", function (xp, $_, t) {
                     for (let i = 0; i < lines.length; i++) {
                         const [a, b, c] = lines[i];
                         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c])
-                            return sys.winner.notify("winner", squares[a]);
+                            return this.notify("winner", squares[a]);
                     }
                 }).watch("game-start", e => squares = Array(9).fill(null));
             }
@@ -57,15 +56,15 @@ xmlplus("xp", function (xp, $_, t) {
                     <a id='start' href='javascript:void(0)'>Game start</a>\
                   </div>",
             fun: function (sys, items, opts) {
-                this.watch("game-start", e => sys.next.text('Next player: X'));
                 this.watch("board-change", (e, i) => {
                     let o = e.target.text() == 'O' ? 'X' : 'O';
                     sys.next.text("Next player: " + o);
                 }, 1);
-                sys.start.on("click", e => sys.start.notify("game-start"));
                 this.watch("winner", (e, winner) => {
                     sys.next.text("Winner: " + winner)
                 });
+                sys.start.on("click", e => this.notify("game-start"));
+                this.watch("game-start", e => sys.next.text('Next player: X'));
             }
         }
     });
