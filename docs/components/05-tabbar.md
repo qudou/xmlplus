@@ -2,7 +2,7 @@
 
 这一章将设计一个选项卡组件，选项卡组件在手持设备上用的比较多，下面是一个示意图：
 
-![输入图片说明](https://static.oschina.net/uploads/img/201704/26114201_K86z.png "在这里输入图片标题")
+<img src="/img/tabbar.png" class="img-responsive"/>
 
 ## 选项卡组成
 

@@ -2,7 +2,7 @@
 
 这一章我们要实现是一个网格组件，该组件除了最基本的数据展示功能外，还提供排序以及数据过滤功能。
 
-![输入图片说明](https://static.oschina.net/uploads/img/201705/05105721_sTbt.png "在这里输入图片标题")
+<img src="/img/datagrid.png" class="img-responsive"/>
 
 ## 数据源
 
@@ -10,7 +10,7 @@
 
 ```js
 // 10-01
-var data = {
+var data = { 
     gridColumns: ['name', 'power'],
     gridData: [
       { name: 'Chuck Norris', power: Infinity },

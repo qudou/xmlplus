@@ -2,7 +2,7 @@
 
 “下拉刷新”由著名设计师 Loren Brichter 设计，并应用于 Twitter 第三方应用 Tweetie 中。2010年4月，Twitter 收购 Tweetie 开发商 Atebits 后，该专利归 Twitter 所有。这一章我们就来看看如何实现一个简单的下拉刷新组件。
 
-![](http://images2015.cnblogs.com/blog/1151595/201704/1151595-20170427202105225-1649083437.png)
+<img src="/img/pullrefresh.png" class="img-responsive"/>
 
 ## 目标组件分析
 

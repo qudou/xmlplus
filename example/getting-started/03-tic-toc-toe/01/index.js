@@ -10,8 +10,8 @@ xmlplus("xp", function (xp, $_, t) {
             map: { msgscope: true }
         },
         Board: {
-            css: "#board { width: 106px; height: 106px; margin: 0 auto; }\
-                  #board div { float: left; font-size: 24px; font-weight: bold; }",
+            css: "#board { width: 196px; height: 196px; margin: 0 auto; }\
+                  #board div { float: left; font-size: 36px; font-weight: bold; }",
             xml: "<div id='board'>\
                     <Square id='0'/><Square id='1'/><Square id='2'/>\
                     <Square id='3'/><Square id='4'/><Square id='5'/>\
@@ -32,7 +32,7 @@ xmlplus("xp", function (xp, $_, t) {
             }
         },
         Square: {
-            css: "#square { line-height: 34px; width: 34px; height: 34px;  text-align: center; }\
+            css: "#square { line-height: 64px; width: 64px; height: 64px;  text-align: center; }\
                   #square { margin-right: -1px; margin-top: -1px; padding: 0; border: 1px solid #999;}",
             xml: "<div id='square'/>",
         },
