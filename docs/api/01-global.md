@@ -64,14 +64,19 @@ ready(handler)
 
 - `handler` : `Function` 在 DOM 准备就绪后执行的函数
 
-该函数用于在 DOM 完全加载时执行指定的函数，该函数仅在浏览器端可见。
+该函数用于在 DOM 完全加载时执行指定的函数，该函数仅在浏览器端可见。这里指的 DOM 是广义的 DOM，它包含了我们的自定义组件。请看下面的一个 HTML 文件的 body 中的内容：
 
-```js
-// 01-04
-xp.ready(function () {
-    console.log("DOM is ready.")
-});
+```html
+<h1>hello, world</h1>
+<Calendar xmlns='//ui'>custom component</Calendar>
+<script>
+  xp.ready(function () {
+      console.log("DOM is ready.")
+  });
+</script>
 ```
+
+上述的 `ready` 语句的回调函数开始执行，当且仅当 h1 元素和自定义组件 Calendar 均完成实例化后。
 
 ## type
 
