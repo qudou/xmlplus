@@ -17,7 +17,7 @@ xmlplus("xp", function (xp, $_, t) {
         List: {
             css: "#list{ list-style-type: none; margin: 0; padding: 0; width: 60%; }\
                   #list li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1.4em; height: 18px; }\
-                  #list li span { position: absolute; margin-left: -1.3em; }",
+                  #list li span:first-child { position: absolute; margin-left: -1.3em; }",
             xml: "<ul id='list'/>",
             fun: function (sys, items, opts) {
                 var elem = this.elem();

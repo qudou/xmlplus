@@ -1,6 +1,7 @@
 xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
+            css: "#index { width: 360px; margin: 10px; }",
             xml: "<TextBox id='index'/>",
             fun: function (sys, items, opts) {
                 items.index.on("input", e => {

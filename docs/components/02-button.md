@@ -2,6 +2,8 @@
 
 除了图标组件以外，按钮也许是最简单的组件了，这章就来看看如何定义按钮组件。
 
+<img src="/img/button.png" class="img-responsive"/>
+
 ## 使用原生按钮组件
 
 在 xmlplus 中，HTML 元素也以组件的方式存在。所以，你可以直接通过使用 button 标签或者 input 标签来使用按钮组件。如下面的示例所示：

@@ -67,8 +67,9 @@ ready(handler)
 该函数用于在 DOM 完全加载时执行指定的函数，该函数仅在浏览器端可见。这里指的 DOM 是广义的 DOM，它包含了我们的自定义组件。请看下面的一个 HTML 文件的 body 中的内容：
 
 ```html
+<!-- 04-01 -->
 <h1>hello, world</h1>
-<Calendar xmlns='//ui'>custom component</Calendar>
+<Calendar xmlns='//xp'>custom</Calendar>
 <script>
   xp.ready(function () {
       console.log("DOM is ready.")

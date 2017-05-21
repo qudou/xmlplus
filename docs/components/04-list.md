@@ -2,6 +2,8 @@
 
 列表是极其常用的一种组件，是许多组件系统的必须包含的。列表可以做的很简单，只显示简洁的文本。列表也可以做的很复杂，用于展示非常丰富的内容。
 
+<img src="/img/list.png" class="img-responsive"/>
+
 ## 列表的组成
 
 列表离不开列表项以及包含列表项的容器。下面是最简单的列表组件，它包含一个列表项组件 Item 以及一个列表项容器组件 List。
@@ -135,7 +137,7 @@ Item: {
 List: {
     css: `#list{ list-style-type: none; margin: 0; padding: 0; width: 60%; }
           #list li { margin: 0 3px 3px 3px; padding: 0.4em; padding-left: 1.5em; font-size: 1.4em; height: 18px; }
-          #list li span { position: absolute; margin-left: -1.3em; }`,
+          #list li span:first-child { position: absolute; margin-left: -1.3em; }`,
     xml: "<ul id='list'/>",
     fun: function (sys, items, opts) {
         var elem = this.elem();
