@@ -1,7 +1,7 @@
 xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
-            css: "html,body { width: 100%; height: 100%; margin: 0; padding: 0; }",
+            css: "html,body { width: 100%; height: 100%; margin: 0; padding: 0; text-align: center; user-select: none; }",
             xml: "<PullRefresh id='index'>\
                      <h1>Twitter</h1>\
                      <h2>Loren Brichter</h2>\

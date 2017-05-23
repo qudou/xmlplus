@@ -202,11 +202,11 @@ Release: {
     map: { appendTo: "label" }
 },
 Spinner: {
-    css: `#loader { width: 1.5em; height: 1.5em; animation: spin 1s linear infinite; -webkit-animation: spin 1s linear infinite; }
-          @keyframes spin {0% {transform: rotate(0deg);} 100% {transform: rotate(360deg); } }
-          @-webkit-keyframes spin {0% {-webkit-transform: rotate(0deg);} 100% {-webkit-transform: rotate(360deg); } }`,
+    css: `#loader { width: 1.5em; height: 1.5em; animation: spin 1s linear infinite;... }
+          @keyframes $spin { 0% {transform: rotate(0deg);} 100% {transform: rotate(360deg); } }
+          @-webkit-keyframes $spin {0% {-webkit-transform: rotate(0deg);}... }`,
     xml: `<svg id='loader' width='48' height='48' viewBox='0 0 1024 1024'>
-            <path d='M512.151961 3.978614l-0.308015 0c-21.655206 0-39.162952 17.479093-39.162952 39.021735l0 238.350526c0 ...'/>
+            <path d='M512.151961 3.978614l-0.308015 0c-21.655206 0-39.162952...'/>
             ...
           </svg>`
 }
