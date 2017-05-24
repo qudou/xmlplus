@@ -2,7 +2,7 @@
 
 文本框是页面中最常用的输入组件，这一章就来看看各种文本框组件的设计与使用。
 
-<img src="/img/textbox.png" class="img-responsive"/>
+<img src="http://xmlplus.cn/img/textbox.png" class="img-responsive"/>
 
 ## 原生的文本框
 

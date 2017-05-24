@@ -2,7 +2,7 @@
 
 树形组件是一种具有层级结构的组件，广泛应用于各种场景。本章会实现一个简单的树形组件，尽管功能有限，但你可以通过扩展它来实现自己所需要的树形组件。
 
-<img src="/img/tree.png" class="img-responsive"/>
+<img src="http://xmlplus.cn/img/tree.png" class="img-responsive"/>
 
 ## 数据源
 
