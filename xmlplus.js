@@ -41,7 +41,7 @@ var $ = {
     startup: startup,
     create: function (path, options) {
         var widget = $.hasComponent(path);
-        if (!widget) $.error("component [" + path "] not exists");
+        if (!widget) $.error("component [" + path + "] not exists");
         return widget.fun(null, null, options);
     },
     guid: (function () {
@@ -182,6 +182,7 @@ var $ = {
         if ( isHTML[path] )
             return true;
         var s = ph.split(path);
+        s.dir = s.dir.substr(2);
         return Library[s.dir] && Library[s.dir][s.basename] || false;
     },
     clearLibrary: function (space) {
