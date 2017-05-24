@@ -2,9 +2,10 @@
 <html>
     <head>
         <script src="../../../../xmlplus.js"></script>
-        <script src="index.js"></script>
+        <script>
+			var result = xp.extend({key1: "hello"},{key2: "world"});
+			console.log(result); // {key1: "hello, key2: "world"};
+		</script>
     </head>
-    <body>
-        <i:Example xmlns:i="//xp"></i:Example>
-    </body>
+    <body></body>
 </html>

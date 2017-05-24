@@ -3,9 +3,9 @@
     <head>
         <script src="../../../../xmlplus.js"></script>
         <script>
-			console.log(xp.isEmptyObject({}));            // true
-			console.log(xp.isEmptyObject({key: "key"}));  // false
-			console.log(xp.isEmptyObject(String));        // false
+			console.log(xp.isPlainObject({}));   // true
+			console.log(xp.isPlainObject("3"));  // false
+			console.log(xp.isPlainObject([]));   // false
 		</script>
     </head>
     <body></body>
