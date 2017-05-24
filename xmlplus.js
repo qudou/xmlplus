@@ -39,6 +39,11 @@ var isReady, isSVG = {}, isHTML = {}, Paths = {}, Themes = {}, Source = {}, Libr
 
 var $ = {
     startup: startup,
+    create: function (path, options) {
+        var widget = $.hasComponent(path);
+        if (!widget) $.error("component [" + path "] not exists");
+        return widget.fun(null, null, options);
+    },
     guid: (function () {
         var counter = 0;
         function intToABC( num ) {
