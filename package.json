@@ -1,6 +1,6 @@
 {
   "name": "xmlplus",
-  "version": "1.5.11",
+  "version": "1.5.12",
   "dependencies": {
     "xpath": ">=0.0.9",
     "xmldom": "qudou/xmldom"
