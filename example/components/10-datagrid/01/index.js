@@ -73,8 +73,8 @@ xmlplus("xp", function (xp, $_, t) {
         Th: {
             css: "#active { color: #fff; } #active #arrow { opacity: 1; } #active #key { color: #fff; }\
                   #arrow { display: inline-block; vertical-align: middle; width: 0; height: 0; margin-left: 5px; opacity: 0.66; }\
-                  #asc { border-left: 4px solid transparent; border-right: 4px solid transparent; border-bottom: 4px solid #fff;}\
-                  #dsc { border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 4px solid #fff; }",
+                  #asc, #dsc { border-left: 4px solid transparent; border-right: 4px solid transparent; }\
+                  #asc { border-bottom: 4px solid #fff;} #dsc { border-top: 4px solid #fff; }",
             xml: "<th id='th'>\
                     <span id='key'/><span id='arrow'/>\
                   </th>",
