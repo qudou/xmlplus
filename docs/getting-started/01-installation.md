@@ -1,9 +1,16 @@
 # 安装
 
-如果你已经安装了 npm 客户端，可以通过 npm 安装 xmlplus。
+如果你已经安装了 npm 客户端，可以通过 npm 安装 xmlplus：
 
 ```bash
 $ npm install xmlplus
+```
+
+或者，你也可以通过 git 和 npm 使用如下的命令来安装：
+
+```bash
+$ git clone git clone https://github.com/qudou/xmlplus.git
+$ npm install
 ```
 
 下面是项目的基本组织结构：
