@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.5.13
+ * xmlplus.js v1.5.14
  * http://xmlplus.net
  * (c) 2009-2017 qudou
  * Released under the MIT license
@@ -1650,8 +1650,8 @@ function startup(xml, parent, param) {
     } else {
         delete $.ready;
         XPath = require("xpath");
-        DOMParser_ = require("xmldom").DOMParser;
-        XMLSerializer_ = require("xmldom").XMLSerializer;
+        DOMParser_ = require("exmldom").DOMParser;
+        XMLSerializer_ = require("exmldom").XMLSerializer;
         xdocument = $document = $.parseXML("<void/>");
         NodeElementAPI = $.extend(ServerElementAPI, EventModuleAPI, CommonElementAPI);
         module.exports = $.extend(xmlplus, $);
