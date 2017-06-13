@@ -1,6 +1,6 @@
 /*!
- * xmlplus.js v1.5.14
- * http://xmlplus.net
+ * xmlplus.js v1.5.15
+ * http://xmlplus.cn
  * (c) 2009-2017 qudou
  * Released under the MIT license
  */
