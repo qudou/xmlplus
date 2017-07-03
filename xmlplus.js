@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.5.15
+ * xmlplus.js v1.5.16
  * http://xmlplus.cn
  * (c) 2009-2017 qudou
  * Released under the MIT license
@@ -485,9 +485,9 @@ $.extend(hp, (function () {
         } else if ( !target.fun ) {
             result.fun = source.fun;
         } else {
-            result.fun = function () {
-                var foo = source.fun.apply(this, [].slice.call(arguments));
-                var bar = target.fun.apply(this, [].slice.call(arguments));
+            result.fun = function (sys, items, opts) {
+                var foo = source.fun.call(this, sys, items, opts);
+                var bar = target.fun.call(this, sys, items, opts);
                 return bar ? $.extend(foo, bar) : foo;
             };
         }
@@ -564,10 +564,10 @@ var Communication = function () {
         var key, buf;
         if ( type == undefined ) {
             for ( key in table )
-              unwatch.apply(this, [key]);
+              unwatch.call(this, key);
         } else if ( typeof type == "function" ) {
             for ( key in table )
-              unwatch.apply(this, [key, type]);
+              unwatch.call(this, key, type);
         } else if ( fn == undefined ) {
             buf = [].slice.call(table[type] || []);
             for ( key in buf )
@@ -650,7 +650,7 @@ var EventModuleAPI = (function () {
             item = eventTable[this.uid] || {};
         if ( type == undefined ) {
             for ( type in item )
-                off.apply(this, [type]);
+                off.call(this, type);
             return this;
         }
         if ( !item[type] ) return this;
@@ -807,20 +807,20 @@ var CommonElementAPI = {
         return this;
     },
     notify: function (type, data) {
-        return this.ctr.notify.apply(this, [type, data]);
+        return this.ctr.notify.call(this, type, data);
     },
     watch: function (type, fn, priority) {
         if ( typeof fn != "function" )
             $.error("invalid callback, expected a function");
-        return this.ctr.watch.apply(this, [type, fn, priority]);
+        return this.ctr.watch.call(this, type, fn, priority);
     },
     glance: function (type, fn, priority) {
         if ( typeof fn != "function" )
             $.error("invalid callback, expected a function");
-        return this.ctr.glance.apply(this, [type, fn, priority]);
+        return this.ctr.glance.call(this, type, fn, priority);
     },
     unwatch: function (type, fn) {
-        return this.ctr.unwatch.apply(this, [type, fn]);
+        return this.ctr.unwatch.call(this, type, fn);
     },
     append: function (target, options) {
         var parent = this.appendTo();
@@ -1168,7 +1168,7 @@ var ShareElementAPI = {
             item.api.remove();
         });
         delete this.env.share[k];
-        CommonElementAPI.remove.apply(this);
+        CommonElementAPI.remove.call(this);
     }
 };
 
@@ -1176,7 +1176,7 @@ var CopyElementAPI = {
     remove: function () {
         var k = this.dir + "/" + this.node.localName,
             s = this.env.share[k];
-        CommonElementAPI.remove.apply(this);
+        CommonElementAPI.remove.call(this);
         s.copys.splice(s.copys.indexOf(this), 1);
     }
 };
@@ -1531,7 +1531,7 @@ function parseEnvXML(env, parent, node) {
             for ( i = 0; i < node.childNodes.length; i++ )
                 iterate(node.childNodes[i], appendTo);
             env.smr.create(ins);
-            ins.value = ins.fun.apply(ins.api, [ins.fdr.sys, ins.fdr.items, ins.opt]);
+            ins.value = ins.fun.call(ins.api, ins.fdr.sys, ins.fdr.items, ins.opt);
             ins.map.nofragment && isInBrowser && parent.appendChild($document.body.lastChild);
         } else {
             console.warn($.serialize(node) + " not found");
@@ -1599,7 +1599,7 @@ function xmlplus(root, callback) {
         Themes[root][theme] = Themes[root][theme] || {};
         return makeTheme(root, theme);
     }
-    callback.apply(xmlplus, [xmlplus, createPackage, createTheme]);
+    callback.call(xmlplus, xmlplus, createPackage, createTheme);
     return xmlplus;
 }
 
