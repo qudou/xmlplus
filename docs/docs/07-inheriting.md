@@ -174,5 +174,5 @@ Button: {
 此参数项是这样得到的，首先，由于组件 Button 中不存在 `background` 样式，所以组件 Widget 中的 `background` 样式得以保留。其次，组件 Widget 和组件 Button 都包含 `border` 样式。此时，组件 Button 的 `border` 样式就会覆盖组件 Widget 的 `border` 样式。下面的语句给出了这种情形的直观的但非正式的描述：
 
 ```js
-extend({}, Button.opt, Widget.opt)
+Button.opt = extend({}, Button.opt, Widget.opt)
 ```
