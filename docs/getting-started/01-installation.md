@@ -30,4 +30,4 @@ xmlplus/
     └── api/
 ```
 
-在根目录 `xmlplus/` 下，xmlplus.js 是源文件，`patch/` 下的两个文件是适用于 IE9+ 的补丁文件。目录 `docs/` 和目录 `example/` 包含同名的子级目录。目录 `docs/` 包含框架的文档文件，`example/` 包含与文档相关的配套示例代码。
+在根目录 `xmlplus/` 下，`xmlplus.js` 是源文件，`patch/` 下的两个文件是适用于 IE9+ 的补丁文件。目录 `docs/` 和目录 `example/` 包含同名的子级目录。目录 `docs/` 包含框架的文档文件，`example/` 包含与文档相关的配套示例代码。
