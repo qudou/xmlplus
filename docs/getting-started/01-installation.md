@@ -12,7 +12,7 @@ $ npm install xmlplus
 $ git clone https://github.com/qudou/xmlplus.git && cd xmlplus && npm install
 ```
 
-下面是项目的基本组织结构：
+下面给出的是项目的基本组织结构：
 
 ```
 xmlplus/
