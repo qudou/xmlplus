@@ -233,8 +233,8 @@ DataGrid: {
 ```
 // 10-01
 Index: {
-    css: `#index { font-family: Helvetica Neue, Arial, sans-serif; font-size: 14px; color: #444; },
-          #search { margin: 8px 0; }`
+    css: `#index { font-family: Helvetica Neue, Arial, sans-serif; font-size: 14px; color: #444; }
+          #search { margin: 8px 0; }`,
     xml: `<div id='index' xmlns:i='datagrid'>
             Search <input id='search'/>
             <i:DataGrid id='datagrid'/>
