@@ -1534,7 +1534,7 @@ function parseEnvXML(env, parent, node) {
             ins.value = ins.fun.call(ins.api, ins.fdr.sys, ins.fdr.items, ins.opt);
             ins.map.nofragment && isInBrowser && parent.appendChild($document.body.lastChild);
         } else {
-            console.warn($.serialize(node) + " not found");
+            $.release || console.warn($.serialize(node) + " not found");
             ins = Manager[0].create(env, node, parent);
             for ( i = 0; i < node.childNodes.length; i++ )
                 iterate(node.childNodes[i], ins.ele);
