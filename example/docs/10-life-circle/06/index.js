@@ -2,14 +2,17 @@ xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
             xml: "<div id='index'>\
-                     <button id='foo'>append</button>\
+                     <button id='foo'>destory</button>\
+                     <h1 id='bar'>Hello, world</h1>\
                   </div>",
             fun: function (sys, items, opts) {
-                sys.foo.on( "click", function (e) {
-                    var xml = "<h1>Hello, world</h1>";
-                    var result = sys.index.append(xml);
-                    result.css("text-decoration", "underline");
+                var timer = setInterval(function() {
+                    console.log("Hello, world");
+                }, 1000);
+                sys.bar.on("willRemoved", function() {
+                    clearInterval(timer);
                 });
+                sys.foo.once("click", sys.bar.remove);
             }
         }
     });

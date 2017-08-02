@@ -146,12 +146,33 @@ Index: {
 
 组件对象被移除后，原来绑定在该对象上的所有的事件侦听器和消息侦听器一并被清除。虽然一个组件对象被移除了，但系统还是尽可能地保留了组件对象的部分部件，这样下回创建新的同类型组件对象时就可以复用这些缓存的部分，使得创建新对象的开销降到最低。
 
+另外，组件对象被移除之前会派发一个名为 `willRemoved` 的事件。派发此事件的主要目的是在组件对象移除之前清除函数项中可能出现的计时器，下面给出的示例演示了这一点：
+
+```js
+// 10-06
+Index: {
+    xml: "<div id='index'>\
+             <button id='foo'>destory</button>\
+             <h1 id='bar'>Hello, world</h1>\
+          </div>",
+    fun: function (sys, items, opts) {
+        var timer = setInterval(function() {
+            console.log("Hello, world");
+        }, 1000);
+        sys.bar.on("willRemoved", function() {
+            clearInterval(timer);
+        });
+        sys.foo.once("click", sys.bar.remove);
+    }
+}
+```
+
 ## 使用已动态实例化的组件
 
 通过系统函数 `append` 或者 `replace` 的返回值，可以获取已动态实例化的组件对象的引用，从而可以访问其相关接口。下面是一个简单的例子，它通过引用系统函数 `append` 的返回值设置了 h1 元素对象的下划线。
 
 ```js
-// 10-06
+// 10-07
 Index: {
     xml: "<div id='index'>\
              <button id='foo'>append</button>\
@@ -169,7 +190,7 @@ Index: {
 当然，如果相关的对象是命名过的，也可以通过名称直接访问。下面的示例中，我们通过目标对象的名称直接访问该对象，达到的效果与上面的一致。
 
 ```js
-// 10-07
+// 10-08
 Index: {
     xml: "<div id='index'>\
              <button id='foo'>append</button>\
