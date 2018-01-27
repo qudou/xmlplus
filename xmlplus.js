@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.5.18
+ * xmlplus.js v1.5.19
  * http://xmlplus.cn
  * (c) 2009-2017 qudou
  * Released under the MIT license
@@ -453,7 +453,12 @@ $.extend(hp, (function () {
         map.share = map.share ? map.share.split(' ') : [];
         var root = obj.dir.split('/')[0];
         obj.css = obj.css.replace(/%@/g, Paths[root]);
-        obj.xml = $.parseXML(obj.xml && obj.xml.replace(/%@/g, Paths[root]) || "<void/>");
+        try {
+            obj.xml = $.parseXML(obj.xml && obj.xml.replace(/%@/g, Paths[root]) || "<void/>");
+        } catch(error) {
+            isReady = -1;
+            throw error;
+        }
     }
     function imports(obj, name, space) {
         Source[space][name] = obj;
@@ -1647,8 +1652,10 @@ function startup(xml, parent, param) {
         if ( typeof define === "function" && define.amd )
             define( "xmlplus", [], new Function("return xmlplus;"));
         hp.ready(function () {
-            $document.body.hasAttribute("noparse") || hp.parseHTML($document.body);
-            isReady = true;
+            if ( isReady !== -1 ) {
+                $document.body.hasAttribute("noparse") || hp.parseHTML($document.body);
+                isReady = true;
+            }
         });
     } else {
         delete $.ready;
