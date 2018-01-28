@@ -453,12 +453,7 @@ $.extend(hp, (function () {
         map.share = map.share ? map.share.split(' ') : [];
         var root = obj.dir.split('/')[0];
         obj.css = obj.css.replace(/%@/g, Paths[root]);
-        try {
-            obj.xml = $.parseXML(obj.xml && obj.xml.replace(/%@/g, Paths[root]) || "<void/>");
-        } catch(error) {
-            isReady = -1;
-            throw error;
-        }
+        obj.xml = $.parseXML(obj.xml && obj.xml.replace(/%@/g, Paths[root]) || "<void/>");
     }
     function imports(obj, name, space) {
         Source[space][name] = obj;
@@ -1224,7 +1219,6 @@ function TextManager() {
     }
     function recycle(item) {
         delete Store[item.uid];
-        //isInBrowser || (item.ele.parentNode = null);
         table[item.typ].push(item);
     }
     function chenv(env, item) {
@@ -1607,7 +1601,12 @@ function xmlplus(root, callback) {
         Themes[root][theme] = Themes[root][theme] || {};
         return makeTheme(root, theme);
     }
-    callback.call(xmlplus, xmlplus, createPackage, createTheme);
+    try {
+        callback.call(xmlplus, xmlplus, createPackage, createTheme);
+    } catch(error) {
+        isReady = -1;
+        throw error;
+    }
     return xmlplus;
 }
 
