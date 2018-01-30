@@ -1,0 +1,19 @@
+{
+  "name": "xmlplus-cn",
+  "version": "1.0.0",
+  "description": "a website for xmlplus",
+  "main": "xmlplus.cn.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "qudou",
+  "license": "MIT",
+  "dependencies": {
+    "chokidar": "^1.7.0",
+    "highlight.js": "^9.11.0",
+    "html-minifier": "^3.5.0",
+    "marked": "^0.3.6",
+    "uid-safe": "^2.1.4",
+    "xmlweb": "^1.1.21"
+  }
+}
