@@ -192,7 +192,7 @@ $_("home").imports({
                     <p>Designed and built by <a href='http://blog.xmlplus.cn' target='_blank'>qudou</a>.</p>\
                     <p>本项目源码受 <a href='https://github.com/qudou/xmlplus/blob/master/LICENSE' target='_blank'>MIT</a> 开源协议保护，文档受 <a href='http://creativecommons.org/licenses/by/3.0/' target='_blank'>CC BY 3.0</a> 开源协议保护。</p>\
                     <ul id='links' class='muted'>\
-                      <li>当前版本：v1.5.22</li>\
+                      <li>当前版本：v1.5.23</li>\
                       <li>·</li><li><a href='https://github.com/qudou/xmlplus' target='_blank'>GitHub</a></li>\
                       <li>·</li><li><a href='https://github.com/qudou/xmlplus/issues' target='_blank'>Issues</a></li>\
                       <li>·</li><li><a href='https://github.com/qudou/xmlplus/releases' target='_blank'>历史版本</a></li>\

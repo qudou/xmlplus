@@ -17,10 +17,6 @@ xmlplus/
 ├── xmlplus.js
 ├── patch/
 ├── docs/
-│   ├── getting-started/
-│   ├── docs/
-│   ├── components/
-│   └── api/
 └── example/
     ├── getting-started/
     ├── docs/
