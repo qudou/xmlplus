@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.5.23
+ * xmlplus.js v1.5.24
  * http://xmlplus.cn
  * (c) 2009-2017 qudou
  * Released under the MIT license
@@ -66,7 +66,7 @@ var $ = {
     },
     type: (function () {
         var i, class2type = {},
-            types = "Boolean Number String Function Array Date RegExp Object Error".split(" ");
+            types = "Boolean Number String Function AsyncFunction Array Date RegExp Object Error".split(" ");
         for ( i = 0; i < types.length; i++ )
             class2type[ "[object " + types[i] + "]" ] = types[i].toLowerCase();
         return function( obj ) {
@@ -80,7 +80,8 @@ var $ = {
         return obj != null && obj == obj.window;
     },
     isFunction: function (obj) {
-        return $.type(obj) == "function";
+        var type = $.type(obj);
+        return type == "function" || type == "asyncfunction";
     },
     isNumeric: function (obj) {
         var type = $.type( obj );
@@ -633,9 +634,9 @@ var EventModuleAPI = (function () {
     }
     function once(type, selector, fn) {
         var realCallback;
-        if ( $.isFunction(fn) )
+        if ( typeof fn == "function" )
             realCallback = fn, fn = callback;
-        else if ( $.isFunction(selector) )
+        else if ( typeof selector == "function" )
             realCallback = selector, selector = callback;
         else 
             $.error("invalid handler, expected a function");
