@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.6.00
+ * xmlplus.js v1.6.01
  * http://xmlplus.cn
  * (c) 2009-2017 qudou
  * Released under the MIT license
@@ -1330,7 +1330,8 @@ function CompManager() {
 }
 
 function StyleManager() {
-    var parent = $document.body ? $document.getElementsByTagName("head")[0] : $document.createElement("void");
+    var table = {},
+        parent = $document.body ? $document.getElementsByTagName("head")[0] : $document.createElement("void");
     function cssText(ins) {
         var klass = ins.aid + ins.cid,
             text = ins.css.replace(WELL, "." + klass).replace(/\$/ig, klass);
