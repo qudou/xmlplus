@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.5.24
+ * xmlplus.js v1.6.00
  * http://xmlplus.cn
  * (c) 2009-2017 qudou
  * Released under the MIT license
@@ -27,7 +27,7 @@ var xdocument, $document, XPath, DOMParser_, XMLSerializer_, NodeElementAPI;
 var Manager = [HtmlManager(),CompManager(),,TextManager(),TextManager(),,,,TextManager(),,];
 var Formater = { "int": parseInt, "float": parseFloat, "bool": new Function("v","return v==true || v=='true';") };
 var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", defer: "", cfgs: {}, attrs: {}, format: {} }, fun: new Function };
-var isReady, isSVG = {}, isHTML = {}, Paths = {}, Themes = {}, Source = {}, Library = {}, Original = {}, Store = {}, Extends = [], Global = {};
+var isReady, isSVG = {}, isHTML = {}, Paths = {}, Source = {}, Library = {}, Original = {}, Store = {}, Extends = [], Global = {};
 
 (function () {
     var i = -1, k = -1,
@@ -463,7 +463,6 @@ $.extend(hp, (function () {
         Library[space][name] || console.warn(space + "/" + name + " already exists");
         obj.dir = space;
         obj.cid = $.guid();
-        obj.the = obj.css.match(/%[-a-z]+/ig) || [];
         initialize(obj);
     }
     function source(dir, patt) {
@@ -1289,7 +1288,7 @@ function CompManager() {
         o.opt = $.extend(true, {}, w.opt);
         o.cfg = $.extend(true, {}, w.cfg);
         o.ctr = o.map.msgscope ? Communication() : env.ctr;
-        o.dir = w.dir, o.css = w.css, o.ali = w.ali, o.fun = w.fun, o.cid = w.cid, o.the = w.the;
+        o.dir = w.dir, o.css = w.css, o.ali = w.ali, o.fun = w.fun, o.cid = w.cid;
         o.smr = env.smr, o.env = env, o.node = node, o.aid = env.aid, node.uid = o.uid, o.data = {};
         resetAttrs(env, node);
         resetConfigs(env, node);
@@ -1331,17 +1330,10 @@ function CompManager() {
 }
 
 function StyleManager() {
-    var table = {},
-        current = "default",
-        parent = $document.body ? $document.getElementsByTagName("head")[0] : $document.createElement("void");
+    var parent = $document.body ? $document.getElementsByTagName("head")[0] : $document.createElement("void");
     function cssText(ins) {
-        var value, theme = Themes[ins.dir.split('/')[0]][current],
-            klass = ins.aid + ins.cid,
+        var klass = ins.aid + ins.cid,
             text = ins.css.replace(WELL, "." + klass).replace(/\$/ig, klass);
-        theme && ins.the && ins.the.forEach(function( key ) {
-            value = theme[key.replace(/%/g, "")];
-            value && (text = text.replace(key, value));
-        });
         return $document.createTextNode(text);
     }
     function newStyle(ins) {
@@ -1378,17 +1370,6 @@ function StyleManager() {
             delete table[key];
         }
     }
-    function theme(value) {
-        if ( value == undefined )
-            return current;
-        if ( typeof value != "string" ) 
-            $.error("invalid theme, excepted a string");
-        current = value;
-        for ( var k in table )
-            if ( Themes[table[k].ins.dir.split('/')[0]][current] )
-                table[k].style.replaceChild(cssText(table[k].ins), table[k].style.lastChild);
-        return this;
-    }
     function style() {
         var i, temp = [], children = parent.childNodes;
         for ( i = 0; i < children.length; i++ )
@@ -1396,7 +1377,7 @@ function StyleManager() {
                 temp.push(children[i].textContent);
         return temp.join("");
     }
-    return { create: create, remove: remove, theme: theme, style: style };
+    return { create: create, remove: remove, style: style };
 }
 
 function Finder( env ) {
@@ -1548,16 +1529,6 @@ function parseEnvXML(env, parent, node) {
     return iterate(node, parent);
 }
 
-function makeTheme(root, theme) {
-    function imports( target ) {
-        if ( !$.isPlainObject(target) )
-            $.error("invalid target, expected a plainObject");
-        Themes[root][theme] = $.extend(Themes[root][theme], target) ;
-        return this;
-    }
-    return { imports: imports };
-}
-
 function makePackage(root, space) {
     if ( !Library[space] )
         Source[space] = {}, Library[space] = {}, Original[space] = {};
@@ -1574,7 +1545,7 @@ function makePackage(root, space) {
                 hp.imports(components[name], iname, space);
             }
         }
-        [].slice.call(Extends).forEach(function ( item ) {
+        [].slice.call(Extends).forEach(function (item) {
             var target = hp.source(item.space, item.src.map.extend.from);
             if ( target ) {
                 Extends.splice(Extends.indexOf(item), 1);
@@ -1591,19 +1562,14 @@ function xmlplus(root, callback) {
         $.error("invalid root, expected a string");
     if ( !$.isFunction(callback) )
         $.error("invalid callback, expected a function");
-    Themes[root] = Themes[root] || {};
     Paths[root] = ph.split([].slice.call($document.scripts || [{src:"./i"}]).pop().src).dir;
     function createPackage(space) {
         if ( $.type(space) != "string" && space != null )
             $.error("invalid namespace, expected a null value or a string");
         return makePackage(root, space ? (root + "/" + space) : root);
     }
-    function createTheme(theme) {
-        Themes[root][theme] = Themes[root][theme] || {};
-        return makeTheme(root, theme);
-    }
     try {
-        callback.call(xmlplus, xmlplus, createPackage, createTheme);
+        callback.call(xmlplus, xmlplus, createPackage);
     } catch(error) {
         isReady = -1;
         throw error;
@@ -1637,7 +1603,7 @@ function startup(xml, parent, param) {
     fragment = isInBrowser ? $document.createDocumentFragment() : parent;
     instance = parseEnvXML(env, fragment, env.xml.lastChild);
     isInBrowser && parent.appendChild(fragment);
-    return $.extend(hp.create(instance).api, {theme: env.smr.theme, style: env.smr.style});
+    return $.extend(hp.create(instance).api, {style: env.smr.style});
 }
 
 (function () {

@@ -8,6 +8,7 @@
 
 ```js
 // 02-01
+const xmlplus = require("xmlplus");
 xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
