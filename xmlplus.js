@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.6.01
+ * xmlplus.js v1.6.02
  * http://xmlplus.cn
  * (c) 2009-2017 qudou
  * Released under the MIT license
@@ -584,8 +584,9 @@ var Communication = function () {
     function notify(type, data) {
         if ( !table[type] ) return;
         data = data == null ? [] : ($.isArray(data) ? data : [data]);
-        for ( var i = 0; i < table[type].length; i++ )
-            table[type][i].fn.apply(this.api, [{type: type, target: this.api, currentTarget: table[type][i].source.api}].concat(data));
+        var i = 0, buf = [].slice.call(table[type]);
+        for ( ; i < buf.length; i++ )
+            buf[i].fn.apply(this.api, [{type: type, target: this.api, currentTarget: buf[i].source.api}].concat(data));
         return this;
     }
     function remove(item) {
