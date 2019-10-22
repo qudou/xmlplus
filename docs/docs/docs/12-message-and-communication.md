@@ -221,6 +221,29 @@ Foo: {
 }
 ```
 
+需要特殊说明的一种情形是，当自定义组件作为视图项的中的嵌套父级时，嵌套父级的组件中限定了消息的作用域，那么嵌套子级将收不到嵌套父级中的任何消息。下面的示例演示了这一点。
+
+```js
+// 12-11
+Index: {
+    xml: "<Foo id='index'>\
+             <span id='bar'>bar</span>\
+          </Foo>",
+    fun: function (sys, items, opts) {
+        sys.bar.watch("msg", function (e) {
+            console.log("I can't receive message.");
+        });
+    }
+},
+Foo: {
+    xml: "<span id='foo'>foo</span>",
+    map: { msgscope: true },
+    fun: function (sys, items, opts) {
+        sys.foo.notify("msg");
+    }
+}
+```
+
 ## 消息通信与事件通信的异同
 
 事件通信基于 W3C 制定的 DOM 事件标准，组件对象之间的事件通信实际上是浏览器上 DOM 元素之间的事件通信。而消息通信则是纯粹组件对象之间的通信，与 DOM 元素无关。

@@ -5,7 +5,7 @@ xmlplus("xp", (xp, $_, t) => {
 $_().imports({
     Index: {
         cfg: { "static": {root: __dirname + "/static" } },
-        xml: "<i:HTTP listen='8086' xmlns:i='//xmlweb'>\
+        xml: "<i:HTTP listen='8081' xmlns:i='//xmlweb'>\
                 <Rewrite id='rewrite'/>\
                 <i:Static id='static'/>\
                 <Home id='home'/>\
@@ -146,13 +146,13 @@ $_("home").imports({
                 <meta name='description' content='xmlplus - 简洁、直观、强悍的开发框架，让开发更迅速、简单。'/>\
                 <meta name='keywords' content='HTML, CSS, JS, JavaScript, framework, xmlplus, front-end, frontend, web development'/>\
                 <title id='title'>xmlplus，a javascript framework</title>\
-                <link rel='stylesheet' href='http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css'/>\
+                <link rel='stylesheet' href='https://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css'/>\
                 <link rel='stylesheet' href='https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css'/>\
                 <link rel='stylesheet' href='/css/docs.css'/>\
                 <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->\
                 <!--[if lt IE 9]>\
-                  <script src='http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.js'></script>\
-                  <script src='http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js'></script>\
+                  <script src='https://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.js'></script>\
+                  <script src='https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js'></script>\
                 <![endif]-->\
                 <style id='style'/>\
             </head>",
@@ -200,12 +200,12 @@ $_("home").imports({
                       <li>·</li><li><a href='http://www.beian.miit.gov.cn' target='_blank'>桂ICP备16003038号-3</a></li>\
                     </ul>\
                   </div>\
-                  <script src='http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js'/>\
-                  <script src='http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js'/>\
+                  <script src='https://cdn.bootcss.com/jquery/1.11.1/jquery.min.js'/>\
+                  <script src='https://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js'/>\
                   <script src='https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js'/>\
                   <script src='/js/docs.min.js'/>\
                   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->\
-                  <script src='http://v3.bootcss.com/assets/js/ie10-viewport-bug-workaround.js'/>\
+                  <script src='https://v3.bootcss.com/assets/js/ie10-viewport-bug-workaround.js'/>\
                   <script>var cnzz_protocol = ((\"https:\" == document.location.protocol) ? \" https://\" : \" http://\");document.write(unescape(\"%3Cspan id='cnzz_stat_icon_1261374925'%3E%3C/span%3E%3Cscript src='\" + cnzz_protocol + \"s95.cnzz.com/z_stat.php%3Fid%3D1261374925%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E\"));</script>\
                   <script>docsearch({apiKey: '5f2d951cb79805f6c0f6d080b1d3fad6', indexName: 'xmlplus', inputSelector: '#algolia-doc-search', debug: false});</script>\
                 </footer>"
