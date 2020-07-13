@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.6.02
+ * xmlplus.js v1.6.12
  * http://xmlplus.cn
  * (c) 2009-2017 qudou
  * Released under the MIT license
@@ -186,6 +186,10 @@ var $ = {
         s.dir = s.dir.substr(2);
         return Library[s.dir] && Library[s.dir][s.basename] || false;
     },
+    messages: function (obj) {
+        var item = Store[obj.guid()];
+        return item && item.ctr.messages() || [];
+    },
     clearLibrary: function (space) {
         if ( typeof space != "string" )
             $.error("invalid space, expected a string");
@@ -334,7 +338,7 @@ var hp = {
             for ( k = 0; k < keys.length; k++ )
                 api[keys[k]] = hp.callback.bind({fn: object[keys[k]], data: data, api: api});
             return api;
-        }
+        };
     }()),
     create: function (item) {
         item.api || (item.api = item.back = hp.build(item, item.typ > 1 ? TextElementAPI : NodeElementAPI));
@@ -545,7 +549,7 @@ var Communication = function () {
             priority = $.isNumeric(priority) ? priority : -Infinity,
             target = { source: this, fn: fn, priority: priority };
         var i = 0, len = list.length;
-        for ( ; i < len; i++ ) 
+        for ( ; i < len; i++ )
             if ( priority > list[i].priority ) {
                 list.splice(i, 0, target);
                 break;
@@ -598,7 +602,10 @@ var Communication = function () {
             table[type] = array;
         }
     }
-    return { watch: watch, glance: glance, unwatch: unwatch, notify: notify, remove: remove };
+    function messages() {
+        return Object.keys(table);
+    }
+    return { watch: watch, glance: glance, unwatch: unwatch, notify: notify, remove: remove, messages: messages };
 };
 
 var EventModuleAPI = (function () {
