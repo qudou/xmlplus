@@ -376,6 +376,29 @@ xp.clearLibrary("//xp");        // 清除根空间 //xp 中的所有内容，包
 xp.clearLibrary("//xp/Widget"); // 清除组件 //xp/Widget，但不影响其他的组件与命名空间
 ```
 
+## messages
+
+```js
+messages(object)
+```
+
+- `object` : `SystemObject` 系统对象
+- `Returns` : `Array` 字符串数组
+
+根据给定的系统对象，返回该对象所在消息作用域内的所有已被侦听的消息字符串。请参考下面的示例。
+
+```js
+// 01-21
+Example: {
+    xml: "<div id='example'/>",
+    fun: function (sys, items, opts) {
+        this.watch("foo", ()=> console.log("foo"));
+        this.watch("bar", ()=> console.log("bar"));
+        console.log(xp.messages(this)); // ["foo", "bar"]
+    }
+}
+```
+
 ## getElementById
 
 ```js
