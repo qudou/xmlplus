@@ -1,6 +1,6 @@
 {
   "name": "xmlplus",
-  "version": "1.6.14",
+  "version": "1.6.16",
   "dependencies": {
     "xpath": "^0.0.24",
     "exmldom": "^0.1.21"
@@ -12,7 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/qudou/xmlplus.git"
   },
-  "homepage": "https://xmlplus.net",
+  "homepage": "https://xmlplus.cn",
   "keywords": [
     "xmlplus"
   ],
