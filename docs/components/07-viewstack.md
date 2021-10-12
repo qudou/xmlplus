@@ -2,7 +2,7 @@
 
 在浏览器端，对路由的理解一般是根据不同的 URL 完成页面的切换。在服务器端，则是根据不同的 URL 请求回馈相关的页面。在本章，我们广义的组件路由的定义：根据接收到的不同命令，组件对象呈现出不同的子级页面。在这里将介绍与路由相关的一个组件，即视图栈 ViewStack。
 
-<img src="http://xmlplus.cn/img/viewstack.png" class="img-responsive"/>
+<img src="https://xmlplus.cn/img/viewstack.png" class="img-responsive"/>
 
 ## 视图栈初步
 

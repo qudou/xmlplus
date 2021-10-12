@@ -2,7 +2,7 @@
 
 这一章将设计一个选项卡组件，选项卡组件在手持设备上用的比较多，下面是一个示意图：
 
-<img src="http://www.xmlplus.cn/img/tabbar.png" class="img-responsive"/>
+<img src="https://www.xmlplus.cn/img/tabbar.png" class="img-responsive"/>
 
 ## 选项卡组成
 
