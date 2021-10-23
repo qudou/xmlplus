@@ -2,7 +2,7 @@
 
 网页上使用的图标分可为三种：文件图标、字体图标和 SVG 图标。对于文件图标，下面仅以 PNG 格式来说明。
 
-<img src="https://xmlplus.cn/img/icon.png" class="img-responsive"/>
+<img src="https://xmlplus.cn/img/components/icon.png" class="img-responsive"/>
 
 ## PNG 图标
 

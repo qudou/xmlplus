@@ -2,7 +2,7 @@
 
 分隔框（DividedBox）是一种布局类组件，可以分为两种，其中一种叫水平分隔框（HDividedBox），另一种叫垂直分隔框（VDividedBox）。水平分隔框会将其子级分为两列，而垂直分隔框则会将其子级分为两行。列与列之间以及行与行之间一般都会有一条可以拖动的用以改变子级组件大小的分隔条。下面仅以垂直分隔框为例来介绍此类组件是如何设计以及实现的。
 
-<img src="https://xmlplus.cn/img/dividedbox.png" class="img-responsive"/>
+<img src="https://xmlplus.cn/img/components/dividedbox.png" class="img-responsive"/>
 
 ## 成品组件用例
 

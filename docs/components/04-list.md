@@ -2,7 +2,7 @@
 
 列表是极其常用的一种组件，是许多组件系统的必须包含的。列表可以做的很简单，只显示简洁的文本。列表也可以做的很复杂，用于展示非常丰富的内容。
 
-<img src="https://xmlplus.cn/img/list.png" class="img-responsive"/>
+<img src="https://xmlplus.cn/img/components/list.png" class="img-responsive"/>
 
 ## 列表的组成
 

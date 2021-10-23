@@ -2,7 +2,7 @@
 
 这一章我们要实现是一个网格组件，该组件除了最基本的数据展示功能外，还提供排序以及数据过滤功能。
 
-<img src="https://xmlplus.cn/img/datagrid.png" class="img-responsive"/>
+<img src="https://xmlplus.cn/img/components/datagrid.png" class="img-responsive"/>
 
 ## 数据源
 

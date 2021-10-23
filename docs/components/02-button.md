@@ -2,7 +2,7 @@
 
 除了图标组件以外，按钮也许是最简单的组件了，这章就来看看如何定义按钮组件。
 
-<img src="https://xmlplus.cn/img/button.png" class="img-responsive"/>
+<img src="https://xmlplus.cn/img/components/button.png" class="img-responsive"/>
 
 ## 使用原生按钮组件
 
