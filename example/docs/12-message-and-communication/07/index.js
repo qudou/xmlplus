@@ -1,12 +1,13 @@
 xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
-            xml: "<span id='foo'>foo</span>",
+            xml: "<span id='index'>foo</span>",
             fun: function (sys, items, opts) {
-                sys.foo.glance("msg", function(e) {
+                sys.index.watch("msg", function(e) {
+                    sys.index.unwatch("msg");
                     console.log(this.text());
                 });
-                sys.foo.notify("msg").notify("msg");
+                sys.index.notify("msg").notify("msg");
             }
         }
     });

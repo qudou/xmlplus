@@ -1,7 +1,7 @@
 /*!
- * xmlplus.js v1.6.18
+ * xmlplus.js v1.6.19
  * https://xmlplus.cn
- * (c) 2009-2017 qudou
+ * (c) 2017-2021 qudou
  * Released under the MIT license
  */
  (function (isInBrowser, undefined) {
@@ -589,8 +589,11 @@ var Communication = function () {
         if ( !table[type] ) return;
         data = data == null ? [] : ($.isArray(data) ? data : [data]);
         var i = 0, buf = [].slice.call(table[type]);
-        for ( ; i < buf.length; i++ )
-            buf[i].fn.apply(this.api, [{type: type, target: this.api, currentTarget: buf[i].source.api}].concat(data));
+        for ( ; i < buf.length; i++ ) {
+            var obj = [{type: type, target: this.api, currentTarget: buf[i].source.api}].concat(data);
+            if (buf[i].fn.apply(this.api, obj) === false)
+                return this;
+        }
         return this;
     }
     function remove(item) {
