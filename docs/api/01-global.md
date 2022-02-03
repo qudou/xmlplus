@@ -52,7 +52,7 @@ xmlplus("xp", function (xp, $_, t) {
         }
     });
 });
-xmlplus.create("//xp/Example")example.sayHello(); // null null hello
+xmlplus.create("//xp/Example").sayHello(); // null null hello
 ```
 
 注意，用该函数创建的组件对象不会被加入组件树中，也就是说函数项中 `sys` 以及 `items` 均为空。用该函数创建的组件对象比用系统函数 `append`、`before` 以及 `replace` 创建的组件对象效率更高，然而功能却有限。

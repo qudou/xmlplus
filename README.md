@@ -14,7 +14,7 @@ The following is the basic organizational structure of the project:
 
 ```bash
 xmlplus/
-├── xmlplus.js
+├── xmlplus.js 
 ├── patch/
 ├── docs/
 └── example/
