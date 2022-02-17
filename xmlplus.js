@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.6.19
+ * xmlplus.js v1.6.20
  * https://xmlplus.cn
  * (c) 2017-2021 qudou
  * Released under the MIT license
@@ -27,7 +27,7 @@ var xdocument, $document, XPath, DOMParser_, XMLSerializer_, NodeElementAPI;
 var Manager = [HtmlManager(),CompManager(),,TextManager(),TextManager(),,,,TextManager(),,];
 var Formater = { "int": parseInt, "float": parseFloat, "bool": new Function("v","return v==true || v=='true';") };
 var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", defer: "", cfgs: {}, attrs: {}, format: {} }, fun: new Function };
-var isReady, isSVG = {}, isHTML = {}, Paths = {}, Source = {}, Library = {}, Original = {}, Store = {}, Extends = [], Global = {};
+var isReady, isSVG = {}, isHTML = {}, Paths = {}, Source = {}, Library = {}, Original = {}, Store = {}, Extends = [], Global = {}, Binds = {};
 
 (function () {
     var i = -1, k = -1,
@@ -419,6 +419,230 @@ var hp = {
             }
         };
     })()
+};
+
+var bd = {
+    setValue: function (target, value) {
+        let e = target.elem(),
+            n = e.nodeName,
+            t = e.getAttribute("type");
+        if (n == "INPUT") {
+            if (t == "checkbox") 
+                e.checked = value;
+            else if (t == "radio")
+                e.checked = (e.value == value);
+            else e.value = value;
+        } else if (n == "PROGRESS" || n == "SELECT" || n == "TEXTAREA")
+            e.value = value;
+        else target.text(value);
+    },
+    getValue: function (e) {
+        var n = e.nodeName;
+        if (n == "INPUT")
+            return e.getAttribute("type") == "checkbox" ? e.checked : e.value;
+        if (n == "PROGRESS" || n == "SELECT" || n == "TEXTAREA")
+            return e.value;
+        return e.textContent;
+    },
+    onbind: function (e) {
+        var o = Binds[e.target.guid()];
+        if (xp.isPlainObject(o)) {
+            var i = e.target.elem(),
+                n = i.nodeName;
+            if (n == "INPUT")
+                o.data[o.key] = i.getAttribute("type") == "checkbox" ? i.checked : i.value;
+            else if (n == "PROGRESS" || n == "SELECT" || n == "TEXTAREA") {
+                o.data[o.key] = i.value;
+            }
+        }
+    },
+    bindObject: function (that, context, key) {
+        let target_ = {}, objects = {};
+        let proxy = new bd.ObjectProxy(target_, objects);
+        function setter(target) {
+            unbind();
+            xp.each(Object.getOwnPropertyNames(target), (i,key) => {
+                let value = target[key];
+                objects[key] ||= [];
+                target_[key] = value;
+                let views = that.fdr.sys[key];
+                if (!views) xp.error(`No target to bind object: ${JSON.stringify(target)}`);
+                if (xp.isSystemObject(views))
+                    views = [views];
+                views = views.map(v => {return Store[v.guid()]});
+                if (xp.isArray(value)) {
+                    views.forEach(v => objects[key].push(bd.bindList(v, proxy, key)));
+                } else if (xp.isPlainObject(value)) {
+                    views.forEach(v => objects[key].push(bd.bindObject(v, proxy, key)));
+                } else {
+                    views.forEach(v => objects[key].push(bd.bindLiteral(v, proxy, key)));
+                }
+                proxy[key] = target[key];
+            });
+        }
+        function delter() {
+            for (let k in proxy)
+                delete proxy[k];
+            xp.each(Object.getOwnPropertyNames(objects), (i,key) => {
+                delete objects[key];
+            });
+        }
+        function unbind() {
+            xp.each(Object.getOwnPropertyNames(objects), (i,key) => {
+                objects[key].forEach(i => i.unbind());
+                delete target_[key];
+                delete objects[key];
+            });
+        }
+        return {get: ()=>{return proxy}, set: setter, del: delter, unbind: unbind};
+    },
+    bindList: function (that, context, key) {
+        let render = !that.fdr ? that.node.nodeName : `${that.api.namespace()}/${that.api.localName()}`;
+        let proxy = bd.ArrayProxy(that.api.hide(), render);
+        function setter(v) {
+            unbind();
+            v.forEach(i => proxy.push(i));
+        }
+        function delter() {
+            unbind();
+            that.api.remove();
+        }
+        function unbind() {
+            while(proxy.length)
+                delete proxy[0];
+        }
+        return {get: ()=>{return proxy}, set: setter, del: delter, unbind: unbind};
+    },
+    bindLiteral: function (that, context, key) {
+        let targets = getTargets(that);
+        if (targets.length == 0)
+            xp.error(`No target to bind the key: '${key}'`);
+        targets.forEach(i => Binds[i.node.uid] = {data: context, key: key});
+        function getTargets(that) {
+            if (!that.fdr) return [that];
+            let targets = that.fdr.sys[key];
+            if (!targets) return [];
+            if (xp.isSystemObject(targets))
+                targets = [targets];
+            let result = [];
+            targets.forEach(i => {
+                let tmp = Store[i.guid()]
+                result = result.concat(tmp.fdr ? getTargets(tmp) : [tmp]);
+            });
+            return result;
+        }
+        function getter() {
+            let e = targets[0].elem();
+            if (e.nodeName !== "INPUT" || e.getAttribute("type") !== "radio")
+                return bd.getValue(e);
+            for (let i = 0; i < targets.length; i++) {
+                e = targets[i].elem();
+                if (e.checked) return e.value;
+            }
+        }
+        function setter(value) {
+            targets.forEach(i => bd.setValue(i.api, value));
+        }
+        function delter() {
+            unbind();
+            that.api.remove();
+        }
+        function unbind() {
+            targets.forEach(item => {
+                delete Binds[item.node.uid];
+            });
+            targets.splice(0);
+        }
+        return {get: getter, set: setter, del: delter, unbind: unbind};
+    },
+    ObjectProxy: function (target, objects) {
+        return new Proxy(target, {
+            get(target, propKey, receiver) {
+                if (objects[propKey] !== undefined)
+                    return objects[propKey][0].get();
+                return Reflect.get(target, propKey, receiver);
+            },
+            set(target, propKey, value, receiver) {
+                if (objects[propKey] !== undefined)
+                    objects[propKey].forEach(i=>i.set(value));
+                return true;
+            },
+            deleteProperty(target, propKey) {
+                if (objects[propKey] !== undefined)
+                    objects[propKey].forEach(i=>i.del());
+                return Reflect.deleteProperty(target, propKey);
+            }
+        });
+    },
+    ArrayProxy: function (slice, render) {
+        let List = new Function;
+        List.prototype = {length: 0, push: push, pop: pop};
+        let [views, list, empty] = [[], new List, []];
+        let proxy = new Proxy(list, {get: getter, set: setter, deleteProperty: delter});
+        function push(value) {
+            let view = slice.before(render);
+            views.push(view);
+            empty.push.apply(list, [view.bind(value)])
+            return true;
+        }
+        function pop() {
+            if (!list.length)
+                return undefined;
+            let i = list.length - 1;
+            let item = bd.export(list[i].model);
+            delete proxy[i];
+            return item;
+        }
+        function getter(target, propKey, receiver) {
+            if (xp.isNumeric(propKey))
+                return list[propKey].model;
+            return Reflect.get(target, propKey, receiver);
+        }
+        function setter(target, propKey, value, receiver) {
+            if (!views[propKey])
+                xp.error(`Prop name ${propKey} does not exist.`);
+            let view = views[propKey].before(render);
+            delete proxy[propKey];
+            views.splice(propKey, 0, view);
+            empty.splice.apply(list, [propKey, 0, view.bind(value)]);
+            return true;
+        }
+        function delter(target, propKey) {
+            views[propKey].remove();
+            views.splice(propKey,1);
+            empty.splice.apply(list, [propKey,1]);
+            return true;
+        }
+        return proxy;
+    },
+    export: (function () {
+        function fromObject(target) {
+            var obj = {};
+            for(let k in target) {
+                if(target[k].push)
+                    obj[k] = fromArray(target[k]);
+                else if (typeof target[k] == "object")
+                    obj[k] = fromObject(target[k])
+                else obj[k] = target[k]
+            }
+            return obj;
+        }
+        function fromArray(target) {
+            var obj = [];
+            xp.each(target, (i,item)=>{
+                if(item.push)
+                    obj.push(fromArray(item))
+                else if (typeof item == "object")
+                    obj.push(fromObject(item))
+                else obj.push(item)
+            });
+            return obj;
+        }
+        return function (target) {
+            if (target.push) return fromArray(target);
+            return typeof target == "object" ? fromObject(target) : target;
+        };
+    }())
 };
 
 $.extend(hp, (function () {
@@ -1025,6 +1249,49 @@ var CommonElementAPI = {
         if ( prev && prev.nodeType == DOCUMENT_TYPE_NODE )
             elem = elem.ownerDocument;
         return $.serialize(elem);
+    },
+    bind: function (value) {
+        let [view, model] = [this, null];
+        let proxy = new Proxy({}, {get: getter, set: setter, deleteProperty: delter})
+        function getter(target, propKey, receiver) {
+            if (model == null)
+                return Reflect.get(target, propKey, receiver);
+            if (propKey == "model")
+                return model.get();
+            if (propKey == "export")
+                return () => bd.export(proxy.model);
+            if (propKey == "unbind")
+                return unbind;
+        }
+        function setter(target, propKey, value, receiver) {
+            if (!proxy || propKey !== "model")
+                return Reflect.set(target, propKey, value, receiver);
+            model && model.unbind();
+            if (xp.isArray(value)) {
+                model = bd.bindList(view, {}, propKey);
+            } else if (xp.isPlainObject(value)) {
+                if (!view.fdr)
+                    xp.error("A PlainObject is not allow to bind a htmltag!");
+                model = bd.bindObject(view, {}, propKey);
+            } else {
+                model = bd.bindLiteral(view, {}, propKey);
+            }
+            model.set(value)
+            return true;
+        }
+        function unbind() {
+            model.unbind();
+            model = null;
+        }
+        function delter(target, propKey) {
+            if (model && propKey == "model") {
+                model.del();
+                proxy = model = null;
+            }
+            return Reflect.deleteProperty(target, propKey);
+        }
+        proxy.model = value;
+        return proxy;
     }
 };
 
@@ -1615,7 +1882,8 @@ function startup(xml, parent, param) {
     fragment = isInBrowser ? $document.createDocumentFragment() : parent;
     instance = parseEnvXML(env, fragment, env.xml.lastChild);
     isInBrowser && parent.appendChild(fragment);
-    return $.extend(hp.create(instance).api, {style: env.smr.style});
+    instance = $.extend(hp.create(instance).api, {style: env.smr.style});
+    return instance.on("input", bd.onbind);
 }
 
 (function () {
