@@ -422,28 +422,6 @@ var hp = {
 };
 
 var bd = {
-    setValue: function (target, value) {
-        let e = target.elem(),
-            n = e.nodeName,
-            t = e.getAttribute("type");
-        if (n == "INPUT") {
-            if (t == "checkbox") 
-                e.checked = value;
-            else if (t == "radio")
-                e.checked = (e.value == value);
-            else e.value = value;
-        } else if (n == "PROGRESS" || n == "SELECT" || n == "TEXTAREA")
-            e.value = value;
-        else target.text(value);
-    },
-    getValue: function (e) {
-        var n = e.nodeName;
-        if (n == "INPUT")
-            return e.getAttribute("type") == "checkbox" ? e.checked : e.value;
-        if (n == "PROGRESS" || n == "SELECT" || n == "TEXTAREA")
-            return e.value;
-        return e.textContent;
-    },
     onbind: function (e) {
         var o = Binds[e.target.guid()];
         if (xp.isPlainObject(o)) {
@@ -533,15 +511,34 @@ var bd = {
         }
         function getter() {
             let e = targets[0].elem();
-            if (e.nodeName !== "INPUT" || e.getAttribute("type") !== "radio")
-                return bd.getValue(e);
+            if (e.nodeName !== "INPUT" || e.getAttribute("type") !== "radio") {
+                let n = e.nodeName;
+                if (n == "INPUT")
+                    return e.getAttribute("type") == "checkbox" ? e.checked : e.value;
+                if (n == "PROGRESS" || n == "SELECT" || n == "TEXTAREA")
+                    return e.value;
+                return e.textContent;
+            }
             for (let i = 0; i < targets.length; i++) {
                 e = targets[i].elem();
                 if (e.checked) return e.value;
             }
         }
         function setter(value) {
-            targets.forEach(i => bd.setValue(i.api, value));
+            targets.forEach(target => {
+                let e = target.api.elem(),
+                    n = e.nodeName,
+                    t = e.getAttribute("type");
+                if (n == "INPUT") {
+                    if (t == "checkbox") 
+                        e.checked = value;
+                    else if (t == "radio")
+                        e.checked = (e.value == value);
+                    else e.value = value;
+                } else if (n == "PROGRESS" || n == "SELECT" || n == "TEXTAREA")
+                    e.value = value;
+                else target.api.text(value);
+            });
         }
         function delter() {
             unbind();
@@ -574,13 +571,13 @@ var bd = {
             }
         });
     },
-    ArrayProxy: function (slice, render) {
+    ArrayProxy: function (holder, render) {
         let List = new Function;
         List.prototype = {length: 0, push: push, pop: pop};
         let [views, list, empty] = [[], new List, []];
         let proxy = new Proxy(list, {get: getter, set: setter, deleteProperty: delter});
         function push(value) {
-            let view = slice.before(render);
+            let view = holder.before(render);
             views.push(view);
             empty.push.apply(list, [view.bind(value)])
             return true;
@@ -628,17 +625,17 @@ var bd = {
             return obj;
         }
         function fromArray(target) {
-            var obj = [];
-            xp.each(target, (i,item)=>{
-                if(item.push)
-                    obj.push(fromArray(item))
-                else if (typeof item == "object")
-                    obj.push(fromObject(item))
-                else obj.push(item)
-            });
-            return obj;
+            let i, arr = [];
+            for (i = 0; i< target.length; i++) {
+                if(target[i].push)
+                    arr.push(fromArray(target[i]))
+                else if (typeof target[i] == "object")
+                    arr.push(fromObject(target[i]))
+                else arr.push(target[i])
+            }
+            return arr;
         }
-        return function (target) {
+        return target => {
             if (target.push) return fromArray(target);
             return typeof target == "object" ? fromObject(target) : target;
         };
