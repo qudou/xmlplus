@@ -423,15 +423,19 @@ var hp = {
 
 var bd = {
     onbind: function (e) {
-        var o = Binds[e.target.guid()];
+        let o = Binds[e.target.guid()];
         if (xp.isPlainObject(o)) {
-            var i = e.target.elem(),
+            let i = e.target.elem(),
                 n = i.nodeName;
+            let bind = o.view.env.map.bind ||= {};
+            let hook = bind[o.key] || {};
+            let value;
             if (n == "INPUT")
-                o.data[o.key] = i.getAttribute("type") == "checkbox" ? i.checked : i.value;
+                value = i.getAttribute("type") == "checkbox" ? i.checked : i.value;
             else if (n == "PROGRESS" || n == "SELECT" || n == "TEXTAREA") {
-                o.data[o.key] = i.value;
+                value = i.value;
             }
+            o.data[o.key] = $.isFunction(hook.get) ? hook.get(value) : value;
         }
     },
     bindObject: function (that, context, key) {
@@ -444,19 +448,24 @@ var bd = {
                 objects[key] ||= [];
                 target_[key] = value;
                 let views = that.fdr.sys[key];
-                if (!views) xp.error(`No target to bind object: ${JSON.stringify(target)}`);
+                if (!views) $.error(`No target to bind for: ${target}`);
                 if (xp.isSystemObject(views))
                     views = [views];
                 views = views.map(v => {return Store[v.guid()]});
-                if (xp.isArray(value)) {
+                if ($.isArray(value)) {
                     views.forEach(v => objects[key].push(bd.bindList(v, proxy, key)));
-                } else if (xp.isPlainObject(value)) {
+                } else if ($.isPlainObject(value)) {
                     views.forEach(v => objects[key].push(bd.bindObject(v, proxy, key)));
-                } else {
+                } else if (isLiteral(value)) {
                     views.forEach(v => objects[key].push(bd.bindLiteral(v, proxy, key)));
+                } else {
+                    $.error(`Type error: ${value}`);
                 }
                 proxy[key] = target[key];
             });
+        }
+        function isLiteral(value) {
+            return $.isNumeric(value) || $.type(value) == "string" || $.type(value) == "boolean";
         }
         function delter() {
             for (let k in proxy)
@@ -495,7 +504,7 @@ var bd = {
         let targets = getTargets(that);
         if (targets.length == 0)
             xp.error(`No target to bind the key: '${key}'`);
-        targets.forEach(i => Binds[i.node.uid] = {data: context, key: key});
+        targets.forEach(i => Binds[i.node.uid] = {view: that, data: context, key: key});
         function getTargets(that) {
             if (!that.fdr) return [that];
             let targets = that.fdr.sys[key];
@@ -510,21 +519,30 @@ var bd = {
             return result;
         }
         function getter() {
-            let e = targets[0].elem();
+            let value, e = targets[0].elem();
             if (e.nodeName !== "INPUT" || e.getAttribute("type") !== "radio") {
                 let n = e.nodeName;
                 if (n == "INPUT")
-                    return e.getAttribute("type") == "checkbox" ? e.checked : e.value;
-                if (n == "PROGRESS" || n == "SELECT" || n == "TEXTAREA")
-                    return e.value;
-                return e.textContent;
-            }
-            for (let i = 0; i < targets.length; i++) {
+                    value = e.getAttribute("type") == "checkbox" ? e.checked : e.value;
+                else if (n == "PROGRESS" || n == "SELECT" || n == "TEXTAREA")
+                    value = e.value;
+                else value = e.textContent;
+            } else for (let i = 0; i < targets.length; i++) {
                 e = targets[i].elem();
-                if (e.checked) return e.value;
+                if (e.checked) {
+                    value = e.value;
+                    break;
+                }
             }
+            let bind = that.env.map.bind ||= {};
+            let hook = bind[key] || {};
+            return $.isFunction(hook.get) ? hook.get(value) : value;
         }
         function setter(value) {
+            let bind = that.env.map.bind ||= {};
+            let hook = bind[key] || {};
+            if ($.isFunction(hook.set)) 
+                value = hook.set(value);
             targets.forEach(target => {
                 let e = target.api.elem(),
                     n = e.nodeName,
@@ -626,7 +644,7 @@ var bd = {
         }
         function fromArray(target) {
             let i, arr = [];
-            for (i = 0; i< target.length; i++) {
+            for (i = 0; i < target.length; i++) {
                 if(target[i].push)
                     arr.push(fromArray(target[i]))
                 else if (typeof target[i] == "object")
