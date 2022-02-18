@@ -27,8 +27,10 @@ var xdocument, $document, XPath, DOMParser_, XMLSerializer_, NodeElementAPI;
 var Manager = [HtmlManager(),CompManager(),,TextManager(),TextManager(),,,,TextManager(),,];
 var Formater = { "int": parseInt, "float": parseFloat, "bool": new Function("v","return v==true || v=='true';") };
 var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", defer: "", cfgs: {}, attrs: {}, format: {} }, fun: new Function };
-var isReady, isSVG = {}, isHTML = {}, Paths = {}, Source = {}, Library = {}, Original = {}, Store = {}, Extends = [], Global = {}, Binds = {};
+var isReady, Paths = {}, Store = {}, Global = {}, Binds = {};
 
+// isHTML contains isSVG
+var isSVG = {}, isHTML = {};
 (function () {
     var i = -1, k = -1,
         s = "animate animateMotion animateTransform circle clipPath cursor defs desc discard ellipse feBlend feColorMatrix feComponentTransfer feComposite feConvolveMatrix feDiffuseLighting feDisplacementMap feDistantLight feDropShadow feFlood feFuncA feFuncB feFuncG feFuncR feGaussianBlur feImage feMerge feMergeNode feMorphology feOffset fePointLight feSpecularLighting feSpotLight feTile feTurbulence filter foreignObject g hatch hatchpath image line linearGradient marker mask mesh meshpatch meshrow metadata mpath path pattern polygon polyline radialGradient rect set solidcolor stop svg switch symbol text textPath tspan unknown use view".split(" "),
@@ -36,6 +38,21 @@ var isReady, isSVG = {}, isHTML = {}, Paths = {}, Source = {}, Library = {}, Ori
     while (h[++k]) isHTML[h[k]] = 1;
     while (s[++i]) isSVG[s[i]] = isHTML[s[i]] = 1;
 }());
+
+// The Original contains the set of components imported by the imports function.
+// It contains original, unprocessed components.
+// It contains two levels: the first is the component space and the second is the component name.
+// eg. Original["//xp"][Input] = {};
+var Original = {};
+
+// The Source is used to help implement the inheritance of components, and then it is no longer used.
+var Source = {};
+
+// The Library contains the set of components imported by the imports function.
+// Unlike original, the components are initialized by the system
+// Like original, it contains two levels.
+// eg. Library["//xp"][Input] = {};
+var Library = {};
 
 var $ = {
     startup: startup,
@@ -1822,6 +1839,10 @@ function parseEnvXML(env, parent, node) {
     }
     return iterate(node, parent);
 }
+
+// In order to implement the inheritance of components,
+// this global array is used to store the inherited components temporarily
+var Extends = [];
 
 function makePackage(root, space) {
     if ( !Library[space] )
