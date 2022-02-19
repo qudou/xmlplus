@@ -63,7 +63,7 @@ xp.each({a:1,b:2,c:3}, function (key, value) {
 - `Number`：数值
 - `Boolean`：布尔型
 - `RegExp`：正则表达式
-- `Object`：即 Javascrip 中的 Object
+- `Object`：即 Javascript 中的 Object
 - `Integer`：整型数
 - `PlainObject`：由 `{}` 或者 `new Object` 创建
 - `Collection`：指代集合对象

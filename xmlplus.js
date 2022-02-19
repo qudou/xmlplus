@@ -126,6 +126,8 @@ var $ = {
         return objs;
     },
     extend: function () {
+        // This function is modified from jQuery.
+        // https://jquery.com/
         var options, name, src, copy, copyIsArray, clone,
             target = arguments[ 0 ] || {},
             i = 1,
@@ -1805,6 +1807,7 @@ function resetOptions(env, ins) {
     }
 }
 
+// Here the component is parsed recursively.
 function parseEnvXML(env, parent, node) {
     function iterate( node, parent ) {
         if ( node.nodeType > 1 ) {
@@ -1892,6 +1895,7 @@ function xmlplus(root, callback) {
     return xmlplus;
 }
 
+// The entry function, which will be assigned to xmlplus.
 function startup(xml, parent, param) {
     var instance, fragment,
         env = $.extend(true, {xml: hp.parseToXML(xml), cid: $.guid(), share: {}, dir: ""}, Template);
