@@ -11,7 +11,7 @@ value()
 该函数用于返回组件对象的值对象。值对象可以是 `String`、`null` 以及 `undefined` 等任何类型。在下面示例中，组件 Target 的函数项的返回值即所谓的值对象，此处的值对象与 `items.example` 相等。
 
 ```js
-// 07-01
+// 08-01
 Example: {
     xml: "<Target id='example'/>",
     fun: function (sys, items, opts) {
@@ -37,7 +37,7 @@ localName()
 该函数用于返回组件对象的组件名。注意，只有 HTML 元素对象和自定义组件对象才有组件名，也就是只有这两种对象才包含该函数接口。
 
 ```js
-// 07-02
+// 08-02
 Example: {
     xml: "<div id='example'>\
             <Target id='target'/>\
@@ -61,7 +61,7 @@ namespace()
 该函数返回组件的命名空间，命名空间以绝对路径形式给出。下面示例中，组件 Example 和 Target 均位于命名空间 `//xp` 中。
 
 ```js
-// 07-03
+// 08-03
 Example: {
     xml: "<Target id='example'/>",
     fun: function (sys, items, opts) {
@@ -82,7 +82,7 @@ guid()
 该函数返回组件对象的标识符。每一组件对象都有一个唯一的标识符，该标识符由全局函数 [guid](/api#全局-guid) 生成。
 
 ```js
-// 07-04
+// 08-04
 Example: {
     xml: "<div id='example'/>",
     fun: function (sys, items, opts) {
@@ -102,7 +102,7 @@ toString()
 用于获得组件对象名或者标识符，仅当组件对象相应的 XML 元素不包含 `id` 属性时才返回唯一标识符，此时返回的标识符与系统函数 `guid` 返回的内容一致。
 
 ```js
-// 07-05
+// 08-05
 Example: {
     xml: "<div id='example'><span/></div>",
     fun: function (sys, items, opts) {
@@ -124,7 +124,7 @@ serialize([serializeXML])
 用于序列化视图项或者视图项所对应的 HTML DOM 文档树。注意，下面示例中的注释内容是去除了空格以后的结果。
 
 ```js
-// 07-06
+// 08-06
 Example: {
     xml: "<div id='example'>\
             <Target id='target'/>\
@@ -161,7 +161,7 @@ data(key,value)
 该函数在组件对象上存储一个键值对。
 
 ```js
-// 07-07
+// 08-07
 Example: {
     xml: "<div id='example'/>",
     fun: function (sys, items, opts) {
@@ -183,7 +183,7 @@ removeData(key)
 该函数根据提供的关键字移除组件对象所绑定的数据。
 
 ```js
-// 07-08
+// 08-08
 Example: {
     xml: "<div id='example'/>",
     fun: function (sys, items, opts) {

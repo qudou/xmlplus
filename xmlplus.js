@@ -503,7 +503,8 @@ var bd = {
         return {get: ()=>{return proxy}, set: setter, del: delter, unbind: unbind};
     },
     bindList: function (that, context, key) {
-        let render = !that.fdr ? that.node.nodeName : `${that.api.namespace()}/${that.api.localName()}`;
+        let render = that.node.cloneNode(false);
+        render.removeAttribute("id");
         let proxy = bd.ArrayProxy(that.api.hide(), render);
         function setter(v) {
             unbind();
@@ -614,7 +615,7 @@ var bd = {
         let [views, list, empty] = [[], new List, []];
         let proxy = new Proxy(list, {get: getter, set: setter, deleteProperty: delter});
         function push(value) {
-            let view = holder.before(render);
+            let view = holder.before(render.cloneNode(false));
             views.push(view);
             empty.push.apply(list, [view.bind(value)])
             return true;
@@ -1285,6 +1286,7 @@ var CommonElementAPI = {
         return $.serialize(elem);
     },
     bind: function (value) {
+        // 绑定后应该不能重新再绑定
         let [view, model] = [this, null];
         let proxy = new Proxy({}, {get: getter, set: setter, deleteProperty: delter})
         function getter(target, propKey, receiver) {
