@@ -448,16 +448,43 @@ var bd = {
                 n = i.nodeName;
             let bind = o.view.env.map.bind ||= {};
             let hook = bind[o.key] || {};
-            let value;
-            if (n == "INPUT")
-                value = i.getAttribute("type") == "checkbox" ? i.checked : i.value;
-            else if (n == "PROGRESS" || n == "SELECT" || n == "TEXTAREA") {
-                value = i.value;
-            }
+            let get = bd.Getters[n] || bd.Getters[`${n}-${i.getAttribute("type")}`] || bd.Getters["OTHERS"];;
+            let value = get(i, [e.target]);
             o.data[o.key] = $.isFunction(hook.get) ? hook.get(value) : value;
         }
     },
-    bindObject: function (that, context, key) {
+    export: (function () {
+        function fromObject(target) {
+            var obj = {};
+            for(let k in target) {
+                if(target[k].push)
+                    obj[k] = fromArray(target[k]);
+                else if (typeof target[k] == "object")
+                    obj[k] = fromObject(target[k])
+                else obj[k] = target[k]
+            }
+            return obj;
+        }
+        function fromArray(target) {
+            let i, arr = [];
+            for (i = 0; i < target.length; i++) {
+                if(target[i].push)
+                    arr.push(fromArray(target[i]))
+                else if (typeof target[i] == "object")
+                    arr.push(fromObject(target[i]))
+                else arr.push(target[i])
+            }
+            return arr;
+        }
+        return target => {
+            if (target.push) return fromArray(target);
+            return typeof target == "object" ? fromObject(target) : target;
+        };
+    }()),
+    isLiteral: function (value) {
+        return $.isNumeric(value) || $.type(value) == "string" || $.type(value) == "boolean";
+    },
+    bindObject: function (that) {
         let target_ = {}, objects = {};
         let proxy = new bd.ObjectProxy(target_, objects);
         function setter(target) {
@@ -467,24 +494,21 @@ var bd = {
                 objects[key] ||= [];
                 target_[key] = value;
                 let views = that.fdr.sys[key];
-                if (!views) $.error(`No target to bind for: ${target}`);
+                if (!views) $.error(`no target to bind for: ${key}`);
                 if (xp.isSystemObject(views))
                     views = [views];
                 views = views.map(v => {return Store[v.guid()]});
                 if ($.isArray(value)) {
-                    views.forEach(v => objects[key].push(bd.bindList(v, proxy, key)));
+                    views.forEach(v => objects[key].push(bd.bindList(v)));
                 } else if ($.isPlainObject(value)) {
-                    views.forEach(v => objects[key].push(bd.bindObject(v, proxy, key)));
-                } else if (isLiteral(value)) {
+                    views.forEach(v => objects[key].push(bd.bindObject(v)));
+                } else if (bd.isLiteral(value)) {
                     views.forEach(v => objects[key].push(bd.bindLiteral(v, proxy, key)));
                 } else {
                     $.error(`Type error: ${value}`);
                 }
                 proxy[key] = target[key];
             });
-        }
-        function isLiteral(value) {
-            return $.isNumeric(value) || $.type(value) == "string" || $.type(value) == "boolean";
         }
         function delter() {
             for (let k in proxy)
@@ -502,7 +526,7 @@ var bd = {
         }
         return {get: ()=>{return proxy}, set: setter, del: delter, unbind: unbind};
     },
-    bindList: function (that, context, key) {
+    bindList: function (that) {
         let render = that.node.cloneNode(false);
         render.removeAttribute("id");
         let proxy = bd.ArrayProxy(that.api.hide(), render);
@@ -520,11 +544,11 @@ var bd = {
         }
         return {get: ()=>{return proxy}, set: setter, del: delter, unbind: unbind};
     },
-    bindLiteral: function (that, context, key) {
+    bindLiteral: function (that, proxy, key) {
         let targets = getTargets(that);
         if (targets.length == 0)
-            xp.error(`No target to bind the key: '${key}'`);
-        targets.forEach(i => Binds[i.node.uid] = {view: that, data: context, key: key});
+            xp.error(`no target to bind the key: '${sKey}'`);
+        targets.forEach(i => Binds[i.node.uid] = {view: that, data: proxy, key: key});
         function getTargets(that) {
             if (!that.fdr) return [that];
             let targets = that.fdr.sys[key];
@@ -539,21 +563,9 @@ var bd = {
             return result;
         }
         function getter() {
-            let value, e = targets[0].elem();
-            if (e.nodeName !== "INPUT" || e.getAttribute("type") !== "radio") {
-                let n = e.nodeName;
-                if (n == "INPUT")
-                    value = e.getAttribute("type") == "checkbox" ? e.checked : e.value;
-                else if (n == "PROGRESS" || n == "SELECT" || n == "TEXTAREA")
-                    value = e.value;
-                else value = e.textContent;
-            } else for (let i = 0; i < targets.length; i++) {
-                e = targets[i].elem();
-                if (e.checked) {
-                    value = e.value;
-                    break;
-                }
-            }
+            let e = targets[0].elem();
+            let get = bd.Getters[e.nodeName] || bd.Getters[`${e.nodeName}-${e.getAttribute("type")}`] || bd.Getters["OTHERS"];
+            let value = get(e, targets);
             let bind = that.env.map.bind ||= {};
             let hook = bind[key] || {};
             return $.isFunction(hook.get) ? hook.get(value) : value;
@@ -564,18 +576,9 @@ var bd = {
             if ($.isFunction(hook.set)) 
                 value = hook.set(value);
             targets.forEach(target => {
-                let e = target.api.elem(),
-                    n = e.nodeName,
-                    t = e.getAttribute("type");
-                if (n == "INPUT") {
-                    if (t == "checkbox") 
-                        e.checked = value;
-                    else if (t == "radio")
-                        e.checked = (e.value == value);
-                    else e.value = value;
-                } else if (n == "PROGRESS" || n == "SELECT" || n == "TEXTAREA")
-                    e.value = value;
-                else target.api.text(value);
+                let e = target.api.elem();
+                let set = bd.Setters[e.nodeName] || bd.Setters[`${e.nodeName}-${e.getAttribute("type")}`] || bd.Setters["OTHERS"];
+                set(e, value, target);
             });
         }
         function delter() {
@@ -633,9 +636,9 @@ var bd = {
                 return list[propKey].model;
             return Reflect.get(target, propKey, receiver);
         }
-        function setter(target, propKey, value, receiver) {
+        function setter(target, propKey, value) {
             if (!views[propKey])
-                xp.error(`Prop name ${propKey} does not exist.`);
+                xp.error(`prop name ${propKey} does not exist.`);
             let view = views[propKey].before(render);
             delete proxy[propKey];
             views.splice(propKey, 0, view);
@@ -650,33 +653,41 @@ var bd = {
         }
         return proxy;
     },
-    export: (function () {
-        function fromObject(target) {
-            var obj = {};
-            for(let k in target) {
-                if(target[k].push)
-                    obj[k] = fromArray(target[k]);
-                else if (typeof target[k] == "object")
-                    obj[k] = fromObject(target[k])
-                else obj[k] = target[k]
-            }
-            return obj;
+    Getters: (function () {
+        function textbox(firstElem) {
+            return firstElem.value;
         }
-        function fromArray(target) {
-            let i, arr = [];
-            for (i = 0; i < target.length; i++) {
-                if(target[i].push)
-                    arr.push(fromArray(target[i]))
-                else if (typeof target[i] == "object")
-                    arr.push(fromObject(target[i]))
-                else arr.push(target[i])
-            }
-            return arr;
+        function checkbox(firstElem) {
+            return firstElem.checked;
         }
-        return target => {
-            if (target.push) return fromArray(target);
-            return typeof target == "object" ? fromObject(target) : target;
-        };
+        function radio(firstElem, targets) {
+            let i, e;
+            for (i = 0; i < targets.length; i++) {
+                e = targets[i].elem();
+                if (e.checked) return e.value;
+            }
+        }
+        function others(firstElem) {
+            return firstElem.textContent;
+        }
+        return {"INPUT-radio": radio, "INPUT-checkbox": checkbox, "INPUT-range": textbox, "PROGRESS": textbox, 
+                "INPUT-text": textbox, "TEXTAREA": textbox, "SELECT": textbox, "OTHERS": others};
+    }()),
+    Setters: (function () {
+        function textbox(elem, value) {
+            elem.value = value;
+        }
+        function checkbox(elem, value) {
+            elem.checked = value;
+        }
+        function radio(elem, value) {
+            elem.checked = (elem.value == value);
+        }
+        function others(elem, value, target) {
+            return target.api.text(value);
+        }
+        return {"INPUT-radio": radio, "INPUT-checkbox": checkbox, "INPUT-range": textbox, "PROGRESS": textbox, 
+                "INPUT-text": textbox,"TEXTAREA": textbox, "SELECT": textbox, "OTHERS": others};
     }())
 };
 
@@ -1286,9 +1297,8 @@ var CommonElementAPI = {
         return $.serialize(elem);
     },
     bind: function (value) {
-        // 绑定后应该不能重新再绑定
         let [view, model] = [this, null];
-        let proxy = new Proxy({}, {get: getter, set: setter, deleteProperty: delter})
+        let proxy = new Proxy({}, {get: getter, set: setter, deleteProperty: delter});
         function getter(target, propKey, receiver) {
             if (model == null)
                 return Reflect.get(target, propKey, receiver);
@@ -1299,21 +1309,19 @@ var CommonElementAPI = {
             if (propKey == "unbind")
                 return unbind;
         }
-        function setter(target, propKey, value, receiver) {
+        function setter(target, propKey, value) {
             if (!proxy || propKey !== "model")
-                return Reflect.set(target, propKey, value, receiver);
+                return Reflect.set(target, propKey, value);
             model && model.unbind();
             if (xp.isArray(value)) {
-                model = bd.bindList(view, {}, propKey);
+                model = bd.bindList(view);
             } else if (xp.isPlainObject(value)) {
                 if (!view.fdr)
-                    xp.error("A PlainObject is not allow to bind a htmltag!");
-                model = bd.bindObject(view, {}, propKey);
-            } else {
-                model = bd.bindLiteral(view, {}, propKey);
-            }
-            model.set(value)
-            return true;
+                    xp.error("a PlainObject is not allow to bind a htmltag!");
+                model = bd.bindObject(view);
+            } else if (bd.isLiteral(value))
+                model = bd.bindLiteral(view, proxy, propKey);
+            return model.set(value), true;
         }
         function unbind() {
             model.unbind();
