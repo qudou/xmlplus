@@ -499,7 +499,7 @@ var bd = {
                     views = [views];
                 views = views.map(v => {return Store[v.guid()]});
                 if ($.isArray(value)) {
-                    views.forEach(v => objects[key].push(bd.bindList(v)));
+                    views.forEach(v => objects[key].push(bd.bindArray(v)));
                 } else if ($.isPlainObject(value)) {
                     views.forEach(v => objects[key].push(bd.bindObject(v)));
                 } else if (bd.isLiteral(value)) {
@@ -526,7 +526,7 @@ var bd = {
         }
         return {get: ()=>{return proxy}, set: setter, del: delter, unbind: unbind};
     },
-    bindList: function (that) {
+    bindArray: function (that) {
         let render = that.node.cloneNode(false);
         render.removeAttribute("id");
         let proxy = bd.ArrayProxy(that.api.hide(), render);
@@ -1314,7 +1314,7 @@ var CommonElementAPI = {
                 return Reflect.set(target, propKey, value);
             model && model.unbind();
             if (xp.isArray(value)) {
-                model = bd.bindList(view);
+                model = bd.bindArray(view);
             } else if (xp.isPlainObject(value)) {
                 if (!view.fdr)
                     xp.error("a PlainObject is not allow to bind a htmltag!");
