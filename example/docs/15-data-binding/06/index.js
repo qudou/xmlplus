@@ -2,16 +2,14 @@ xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
             xml: "<div id='index'>\
+                    <input type='text'/>\
+                    <input type='text'/>\
                     <input type='radio' name='n' value='USA'/>\
                     <input type='radio' name='n' value='China'/>\
-                    <select id='select'>\
-                        <option>USA</option>\
-                        <option>China</option>\
-                    </select>\
                   </div>",
-            ali: {country: "//input | //select", },
+            ali: {text: "//input[@type='text']", radio: "//input[@type='radio']", },
             fun: function (sys, items, opts) {
-                this.bind({country: "China"});
+                this.bind({text: "hello, world", radio: "China"});
             }
         }
     });

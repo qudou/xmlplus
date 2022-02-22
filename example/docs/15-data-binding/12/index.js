@@ -1,11 +1,9 @@
-xmlplus("xp", function (xp, $_, t) {
+xmlplus("xp", function (xp, $_) {
     $_().imports({
         Index: {
-            xml: "<div id='index'>\
-                    <input id='text' type='text'/>\
-                  </div>",
+            xml: "<input id='index' type='text'/>",
             fun: function (sys, items, opts) {
-                window.ret = sys.text.bind([1,2,3,4]);
+                window.ret = sys.index.bind("hello, world");
             }
         }
     });

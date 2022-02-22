@@ -545,13 +545,14 @@ var bd = {
         return {get: ()=>{return proxy}, set: setter, del: delter, unbind: unbind};
     },
     bindLiteral: function (that, proxy, key) {
+        let hook = (that.env.map.bind ||= {})[key] || {};
         let targets = getTargets(that);
         if (targets.length == 0)
-            xp.error(`no target to bind the key: '${sKey}'`);
+            xp.error(`no target to bind the key: '${key}'`);
         targets.forEach(i => Binds[i.node.uid] = {view: that, data: proxy, key: key});
         function getTargets(that) {
             if (!that.fdr) return [that];
-            let targets = that.fdr.sys[key];
+            let targets = that.fdr.sys[hook.skey || key];
             if (!targets) return [];
             if (xp.isSystemObject(targets))
                 targets = [targets];
@@ -566,13 +567,9 @@ var bd = {
             let e = targets[0].elem();
             let get = bd.Getters[e.nodeName] || bd.Getters[`${e.nodeName}-${e.getAttribute("type")}`] || bd.Getters["OTHERS"];
             let value = get(e, targets);
-            let bind = that.env.map.bind ||= {};
-            let hook = bind[key] || {};
             return $.isFunction(hook.get) ? hook.get(value) : value;
         }
         function setter(value) {
-            let bind = that.env.map.bind ||= {};
-            let hook = bind[key] || {};
             if ($.isFunction(hook.set)) 
                 value = hook.set(value);
             targets.forEach(target => {

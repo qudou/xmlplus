@@ -30,19 +30,39 @@ Index: {
         sys.index.bind("hello, world");
     }
 },
-Input {
+Input: {
     xml: "<input id='index' type='text'/>"
 }
 ```
 
 此例中，系统对象 index 绑定了字面量 `"hello, world"`。对于这种情况，被绑定的组件对象的任意子级必需有个 HTML 元素对象与被绑定的组件对象同名。否则，系统会因为找不着目标对象而报错。
 
+上面示例中，对于 `Input` 组件，我们可以对其内部的 `input` 元素对象命名为 `index`。但假定上述的 `Input` 组件是第三方提供，其内部的 `input` 元素对象的名称是 `foo`，那我们又该如果描述绑定的目标对象呢？请看下面的示例：
+
+```js
+// 15-03
+Index: {
+    xml: "<Input id='index' type='text'/>",
+    map: {bind: {model: {skey: "foo"}}},
+    fun: function (sys, items, opts) {
+        sys.index.bind("hello, world");
+    }
+},
+Input: {
+    xml: "<input id='foo' type='text'/>"
+}
+```
+
+在这里，我们在映射项 `map` 中对要绑定的目标数据指定了检索目标名 `foo`，这样系统就会按此目标名去检索要绑定的对象。
+
+注意，由于字面量是单一的数据，所以系统会默认给他分配一个名为 `model` 的键名。
+
 二、绑定的数据类型是普通对象
 
 类型为普通对象的数据只能与自定义对象相绑定，下面是一个简单的示例：
 
 ```js
-// 15-03
+// 15-04
 Index: {
     xml: "<input id='index' type='text'/>",
     fun: function (sys, items, opts) {
@@ -54,7 +74,7 @@ Index: {
 该示例中，绑定数据包含一个键为 `index`，值为 `"hello, world"` 的键值对。所以，若想成功绑定，被绑定的组件对象中必需有个称作 `index` 的命名对象。请注意，这里的被绑定对象是 `this`，注意与前一个示例的不同。该示例中的键值对绑定的是个体对象，当然也可以是集体对象，请看下面的示例：
 
 ```js
-// 15-04
+// 15-05
 Index: {
     xml: "<div id='index'>\
             <input id='text1' type='text'/>\
@@ -72,7 +92,7 @@ Index: {
 下面我们来个更复杂的例子，绑定的数据对象包含两个键值对，每个键值对各绑定两个组件对象。
 
 ```js
-// 15-05
+// 15-06
 Index: {
     xml: "<div id='index'>\
             <input type='text'/>\
@@ -90,7 +110,7 @@ Index: {
 下面再给出一个联动表单的示例。这里将单选按钮列表与菜单列表绑定到同一个数据对象，它们中的任何一方改变，都会导致另一方的选中项发生变更。
 
 ```js
-// 15-06
+// 15-07
 Index: {
     xml: "<div id='index'>\
             <input type='radio' name='n' value='USA'/>\
@@ -112,7 +132,7 @@ Index: {
 这种情况下，作为被绑定的组件对象成为数据的渲染器。当执行绑定后，系统会为数组中的每一个子项生成一个与渲染器类型相同的组件对象，并将数据赋值给该对象。请看下面的示例：
 
 ```js
-// 15-07
+// 15-08
 Index: {
     xml: "<div id='index'>\
             <input id='input' type='text'/>\
@@ -128,7 +148,7 @@ Index: {
 数组中的元素除了可以为字面量，还可以是普通对象或者数组，这将形成递归绑定。请参考下面的示例：
 
 ```js
-// 15-08
+// 15-09
 Index: {
     xml: "<div id='index'>\
             <Input id='text' type='text'/>\
@@ -149,7 +169,7 @@ Input {
 上面讲的是如何将组件对象与数据进行绑定，现在我们来看下如何将它们解绑。请看下面的示例：
 
 ```js
-// 15-09
+// 15-10
 Index: {
     xml: "<div id='index'>\
             <span/>\
@@ -170,7 +190,7 @@ Index: {
 数据预处理函数允许你在被绑定对象取值与赋值之前对数据进行预处理。如下面的示例所示：
 
 ```js
-// 15-10
+// 15-11
 Index: {
     xml: "<input id='index' type='text'/>",
     map: { bind: { model: {get: v=>{return v.replace(/#/,'')}, set: v=>{return '#'+v}}} },
@@ -182,14 +202,12 @@ Index: {
 
 此例在映射项中对被绑定对象 `text` 配置数据预处理函数。其中取值函数 `get`，对于取到值会先替换掉首字符 `'#'` 再返回。而赋值函数 set，则在赋值之前会给数据值添加首字符 `'#'` 后才对被绑定对象赋值。
 
-注意，由于字面量是单一的数据，所以系统会默认给他分配一个名为 `model` 的键名。
-
 ## 操作绑定后的数据
 
 通过绑定结果的 `model` 对象进行相应操作，我们可以对被绑定对象进行间接处理。请看下面的示例：
 
 ```js
-// 15-11
+// 15-12
 Index: {
     xml: "<input id='index' type='text'/>",
     fun: function (sys, items, opts) {
@@ -230,7 +248,7 @@ sys.text.bind("hello, welcome")
 上面操作的是字面量，现在来看下怎么对绑定数据类型为数组的返回代理执行操作。请看下面的示例：
 
 ```js
-// 15-12
+// 15-13
 Index: {
     xml: "<div id='index'>\
             <input id='text' type='text'/>\

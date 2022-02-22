@@ -5,7 +5,7 @@ xmlplus("xp", function (xp, $_, t) {
                     <input id='text' type='text'/>\
                   </div>",
             fun: function (sys, items, opts) {
-                sys.text.bind([1,2,3,4]);
+                window.ret = sys.text.bind([1,2,3,4]);
             }
         }
     });

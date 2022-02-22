@@ -1,10 +1,14 @@
-xmlplus("xp", function (xp, $_) {
+xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
-            xml: "<input id='index' type='text'/>",
-            map: { bind: { model: {get: v=>{return v.replace(/#/,'')}, set: v=>{return '#'+v}}} },
+            xml: "<div id='index'>\
+                    <span/>\
+                    <input type='text'/>\
+                  </div>",
+            ali: {text: "//span | //input"},
             fun: function (sys, items, opts) {
-                window.ret = sys.index.bind("hello, world");
+                var ret = this.bind({text: "hello, world"});
+                setTimeout(ret.unbind, 10*1000);
             }
         }
     });

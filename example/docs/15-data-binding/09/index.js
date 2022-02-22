@@ -2,14 +2,14 @@ xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
             xml: "<div id='index'>\
-                    <span/>\
-                    <input type='text'/>\
+                    <Input id='text' type='text'/>\
                   </div>",
-            ali: {text: "//span | //input"},
             fun: function (sys, items, opts) {
-                var ret = this.bind({text: "hello, world"});
-                setTimeout(ret.unbind, 10*1000);
+                sys.text.bind([{foo: 1},{foo: 2}]);
             }
+        },
+        Input: {
+            xml: "<input id='foo' type='text'/>"
         }
     });
 });

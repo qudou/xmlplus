@@ -1,10 +1,14 @@
 xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Index: {
-            xml: "<input id='text' type='text'/>",
+            xml: "<Input id='index' type='text'/>",
+            map: {bind: {model: {skey: "foo"}}},
             fun: function (sys, items, opts) {
-                this.bind({text: "hello, world"});
+                sys.index.bind("hello, world");
             }
+        },
+        Input: {
+            xml: "<input id='foo' type='text'/>"
         }
     });
 });
