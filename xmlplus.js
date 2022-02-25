@@ -27,7 +27,7 @@ var xdocument, $document, XPath, DOMParser_, XMLSerializer_, NodeElementAPI;
 var Manager = [HtmlManager(),CompManager(),,TextManager(),TextManager(),,,,TextManager(),,];
 var Formater = { "int": parseInt, "float": parseFloat, "bool": new Function("v","return v==true || v=='true';") };
 var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", defer: "", cfgs: {}, attrs: {}, format: {} }, fun: new Function };
-var isReady, Paths = {}, Store = {}, Global = {}, Binds = {};
+var isReady, Paths = {}, Binds = {};
 
 // isHTML contains isSVG
 var isSVG = {}, isHTML = {};
@@ -53,6 +53,13 @@ var Source = {};
 // Like original, it contains two levels.
 // eg. Library["//xp"][Input] = {};
 var Library = {};
+
+// The Store establishes the mapping from component instance uid to component instance.
+var Store = {};
+
+// The Global stores the application objects created by the '$.startup' function. 
+// You can access the objects through the function '$.getElementById'.
+var Global = {};
 
 var $ = {
     startup: startup,
