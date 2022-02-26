@@ -1739,7 +1739,8 @@ function Finder(env) {
         var i, k, id, item,
             list = env.xml.querySelector ? env.xml.querySelectorAll("*[id]") : XPath.select("//*[@id]", env.xml);
         for ( i in items ) {
-            delete sys[i]; delete items[i];
+            delete sys[i];
+            delete items[i];
         }
         for ( i in env.ali ) {
             sys[i] = sys(env.ali[i]);
