@@ -538,15 +538,17 @@ var bd = {
         render.removeAttribute("id");
         let proxy = bd.ArrayProxy(that.api.hide(), render);
         function setter(v) {
-            unbind();
-            v.forEach(i => proxy.push(i));
+            for (let i in v)
+                proxy[i] = v[i];
+            while (proxy.length > v.length)
+                proxy.pop();
         }
         function delter() {
             unbind();
             that.api.remove();
         }
         function unbind() {
-            while(proxy.length)
+            while (proxy.length)
                 delete proxy[0];
         }
         return {get: ()=>{return proxy}, set: setter, del: delter, unbind: unbind};
@@ -641,6 +643,8 @@ var bd = {
             return Reflect.get(target, propKey, receiver);
         }
         function setter(target, propKey, value) {
+            if (propKey == list.length)
+                return push(value);
             if (!views[propKey])
                 xp.error(`prop name ${propKey} does not exist.`);
             list[propKey].unbind();
