@@ -1,7 +1,7 @@
 /*!
- * xmlplus.js v1.7.0
+ * xmlplus.js v1.7.1
  * https://xmlplus.cn
- * (c) 2017-2021 qudou
+ * (c) 2017-2022 qudou
  * Released under the MIT license
  */
  (function (isInBrowser, undefined) {
@@ -643,10 +643,8 @@ var bd = {
         function setter(target, propKey, value) {
             if (!views[propKey])
                 xp.error(`prop name ${propKey} does not exist.`);
-            let view = views[propKey].before(render);
-            delete proxy[propKey];
-            views.splice(propKey, 0, view);
-            empty.splice.apply(list, [propKey, 0, view.bind(value)]);
+            list[propKey].unbind();
+            empty.splice.apply(list, [propKey, 1, views[propKey].bind(value)]);
             return true;
         }
         function delter(target, propKey) {
@@ -1107,8 +1105,8 @@ var CommonElementAPI = {
     unwatch: function (type, fn) {
         return this.ctr.unwatch.call(this, type, fn);
     },
-    append: function (target, options) {
-        var parent = this.appendTo();
+    append: function (target, options, parent) {
+        parent = parent || this.appendTo();
         if ( $.isSystemObject(target) ) {
             if ( target.contains(this.api) )
                 $.error("attempt to append a target which contains current");
@@ -1137,10 +1135,10 @@ var CommonElementAPI = {
         target.nodeType == ELEMENT_NODE && target.hasAttribute("id") && this.env.fdr.refresh();
         return hp.create(Store[this.node.lastChild.uid]).api;
     },
-    before: function (target, options) {
+    before: function (target, options, elem) {
         if ( this.node == this.env.xml.lastChild )
             $.error("insert before document node is not allow");
-        var elem = this.elem();
+        elem = elem || this.elem();
         if ( $.isSystemObject(target) ) {
             if ( target.contains(this.api) )
                 $.error("attempt to insert a target which contains current");
@@ -1707,7 +1705,7 @@ function StyleManager() {
     return { create: create, remove: remove, style: style };
 }
 
-function Finder( env ) {
+function Finder(env) {
     function assert(expr, context) {
         if ( typeof expr != "string" )
             $.error("invalid expression, expected a css selector");
@@ -1821,7 +1819,7 @@ function resetOptions(env, ins) {
     }
 }
 
-// Here the component is parsed recursively.
+// Here, the component is parsed recursively.
 function parseEnvXML(env, parent, node) {
     function iterate( node, parent ) {
         if ( node.nodeType > 1 ) {
@@ -1829,22 +1827,20 @@ function parseEnvXML(env, parent, node) {
                 return Manager[node.nodeType].create(env, node, parent);
             $.error("create failed, invalid node");
         }
-        var i, ins, father, node = node.loaded ? node : setDeferNode(env, node);
+        var i, ins, node = node.loaded ? node : setDeferNode(env, node);
         if ( isHTML[node.nodeName] ) {
             ins = Manager[0].create(env, node, parent);
             for ( i = 0; i < node.childNodes.length; i++ )
                 iterate(node.childNodes[i], ins.ele);
             env.smr.create(ins);
         } else if ( (ins = Manager[1].create(env, node, parent)) ) {
-            father = ins.map.nofragment && isInBrowser ? $document.body : parent;
-            parseEnvXML(ins, father, ins.xml.lastChild);
+            parseEnvXML(ins, parent, ins.xml.lastChild);
             ins.fdr.refresh();
             var appendTo = ins.appendTo();
             for ( i = 0; i < node.childNodes.length; i++ )
                 iterate(node.childNodes[i], appendTo);
             env.smr.create(ins);
             ins.value = ins.fun.call(ins.api, ins.fdr.sys, ins.fdr.items, ins.opt);
-            ins.map.nofragment && isInBrowser && parent.appendChild($document.body.lastChild);
         } else {
             $.release || console.warn($.serialize(node) + " not found");
             ins = Manager[0].create(env, node, parent);
