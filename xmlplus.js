@@ -355,19 +355,17 @@ var hp = {
         var ret = this.fn.apply(this.data, [].slice.call(arguments));
         return ret == this.data ? this.api : ret;
     },
-    build: function ( data, object ) {
-        var api = {};
-        var proxy = new Proxy(object, {
-            get(target, propKey, receiver) {
-                if (object[propKey] === undefined)
-                    return Reflect.get(target, propKey, receiver);
-                if (!api[propKey])
-                    api[propKey] = hp.callback.bind({fn: object[propKey], data: data, api: proxy});
-                return api[propKey];
-            },
-        });
-        return proxy;
-    },
+    build: (function () {
+        var table = [], objects = [];
+        return function ( data, object ) {
+            var api = {},
+                k = objects.indexOf(object),
+                keys = table[k] || (objects.push(object) && table[table.push(Object.keys(object))-1]);
+            for ( k = 0; k < keys.length; k++ )
+                api[keys[k]] = hp.callback.bind({fn: object[keys[k]], data: data, api: api});
+            return api;
+        };
+    }()),
     create: function (item) {
         item.api || (item.api = item.back = hp.build(item, item.typ > 1 ? TextElementAPI : NodeElementAPI));
         return item;
