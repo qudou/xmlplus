@@ -355,17 +355,19 @@ var hp = {
         var ret = this.fn.apply(this.data, [].slice.call(arguments));
         return ret == this.data ? this.api : ret;
     },
-    build: (function () {
-        var table = [], objects = [];
-        return function ( data, object ) {
-            var api = {},
-                k = objects.indexOf(object),
-                keys = table[k] || (objects.push(object) && table[table.push(Object.keys(object))-1]);
-            for ( k = 0; k < keys.length; k++ )
-                api[keys[k]] = hp.callback.bind({fn: object[keys[k]], data: data, api: api});
-            return api;
-        };
-    }()),
+    build: function ( data, object ) {
+        var api = {};
+        var proxy = new Proxy(object, {
+            get(target, propKey, receiver) {
+                if (object[propKey] === undefined)
+                    return Reflect.get(target, propKey, receiver);
+                if (!api[propKey])
+                    api[propKey] = hp.callback.bind({fn: object[propKey], data: data, api: proxy});
+                return api[propKey];
+            },
+        });
+        return proxy;
+    },
     create: function (item) {
         item.api || (item.api = item.back = hp.build(item, item.typ > 1 ? TextElementAPI : NodeElementAPI));
         return item;
@@ -399,15 +401,19 @@ var hp = {
         var i = XPath.select(expr, xml);
         return [].slice.call(i).indexOf(node) != -1
     },
-    xpathQuery: function (expr, xml) {
-        var nodes = [],
-            evaluator = new XPathEvaluator,
-            result = evaluator.evaluate(expr, xml, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-        if ( result )
-            for ( var i = 0, len = result.snapshotLength; i < len; i++)
-                nodes.push(result.snapshotItem(i));
-        return nodes;
-    },
+    xpathQuery: (function() {
+        var exprs = {};
+        return function (expr, xml) {
+            var nodes = [];
+            if (!exprs[expr])
+                exprs[expr] = (new XPathEvaluator).createExpression(expr);
+            var result = exprs[expr].evaluate(xml, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+            if ( result )
+                for ( var i = 0, len = result.snapshotLength; i < len; i++)
+                    nodes.push(result.snapshotItem(i));
+            return nodes;
+        }
+    }()),
     parseHTML: function parse(node) {
         if ( node.nodeType != ELEMENT_NODE ) return;
         if ( isHTML[node.nodeName.toLowerCase()] ) {
@@ -1560,7 +1566,8 @@ function HtmlManager() {
     function create(env, node, parent) {
         var k = node.nodeName,
             o = (table[k] || (table[k] = [])).pop() || HtmlElement(node, parent);
-        node.defer || resetAttrs(env, node);
+        if (!node.defer)
+            resetAttrs(env, node, aliasMatch(env, node));
         o.ele = hp.createElement(node, parent);
         o.api = node.defer ? hp.build(o, DeferElementAPI) : o.back;
         o.ctr = env.ctr, o.env = env, o.node = node, node.uid = o.uid, o.data = {}, o.ele.xmlTarget = o;
@@ -1618,9 +1625,10 @@ function CompManager() {
         o.ctr = o.map.msgscope ? Communication() : env.ctr;
         o.dir = w.dir, o.css = w.css, o.ali = w.ali, o.fun = w.fun, o.cid = w.cid;
         o.smr = env.smr, o.env = env, o.node = node, o.aid = env.aid, node.uid = o.uid, o.data = {};
-        resetAttrs(env, node);
-        resetConfigs(env, node);
-        resetOptions(env, o);
+        var exprs = aliasMatch(env, node);
+        resetAttrs(env, node, exprs);
+        resetConfigs(env, node, exprs);
+        resetOptions(env, o, exprs);
         o.share = $.extend({}, env.share);
         o.map.share.forEach(function( item ) {
             var p = ph.fullPath(o.dir, item),
@@ -1737,7 +1745,7 @@ function Finder(env) {
     }
     function refresh() {
         var i, k, id, item,
-            list = env.xml.querySelector ? env.xml.querySelectorAll("*[id]") : XPath.select("//*[@id]", env.xml);
+            list = XPath.select("//*[@id]", env.xml);
         for ( i in items ) {
             delete sys[i];
             delete items[i];
@@ -1763,7 +1771,7 @@ function setDeferNode(env, node) {
     for ( k in env.ali ) {
         temp = env.map.defer.indexOf(k);
         if ( temp != -1 && hp.nodeIsMatch(env.xml, env.ali[k], newNode) ) { 
-            index = temp; 
+            index = temp;
             break;
         }
     }
@@ -1777,11 +1785,19 @@ function setDeferNode(env, node) {
     return newNode;
 }
 
-function resetAttrs(env, node) {
-    var k, attrs = {}, id = node.getAttribute("id");
+function aliasMatch(env, node) {
+    var k, exprs = {};
     for ( k in env.ali )
         if ( hp.nodeIsMatch(env.xml, env.ali[k], node) )
-            $.extend(attrs, env.map.attrs[k]);
+            exprs[k] = 1;
+    return exprs;
+}
+
+function resetAttrs(env, node, exprs) {
+    var k, attrs = {},
+        id = node.getAttribute("id");
+    for ( k in exprs )
+        $.extend(attrs, env.map.attrs[k]);
     if ( id && env.map.attrs[id] )
         attrs = $.extend(attrs, env.map.attrs[id]);
     for ( k in attrs ) {
@@ -1790,11 +1806,11 @@ function resetAttrs(env, node) {
     }
 }
 
-function resetConfigs(env, node) {
-    var k, cfgs = {}, id = node.getAttribute("id");
-    for ( k in env.ali )
-        if ( hp.nodeIsMatch(env.xml, env.ali[k], node) )
-            $.extend(cfgs, env.map.cfgs[k]);
+function resetConfigs(env, node, exprs) {
+    var k, cfgs = {},
+        id = node.getAttribute("id");
+    for ( k in exprs )
+        $.extend(cfgs, env.map.cfgs[k]);
     if ( id && env.map.cfgs[id] )
         cfgs = $.extend(cfgs, env.map.cfgs[id]);
     for ( k in cfgs ) {
@@ -1804,11 +1820,11 @@ function resetConfigs(env, node) {
     }
 }
 
-function resetOptions(env, ins) {
-    var i, k, o, list, id = ins.node.getAttribute("id");
-    for ( k in env.ali )
-        if ( hp.nodeIsMatch(env.xml, env.ali[k], ins.node) )
-            $.extend(ins.opt, env.cfg[k]);
+function resetOptions(env, ins, exprs) {
+    var i, k, o, list,
+        id = ins.node.getAttribute("id");
+    for ( k in exprs )
+        $.extend(ins.opt, env.cfg[k]);
     if ( id && env.cfg[id] )
         $.extend(ins.opt, env.cfg[id]);
     for ( i = 0; i < ins.node.attributes.length; i++ ) {
@@ -1832,7 +1848,8 @@ function parseEnvXML(env, parent, node) {
                 return Manager[node.nodeType].create(env, node, parent);
             $.error("create failed, invalid node");
         }
-        var i, ins, node = node.loaded ? node : setDeferNode(env, node);
+        var i, ins,
+            node = node.loaded ? node : setDeferNode(env, node);
         if ( isHTML[node.nodeName] ) {
             ins = Manager[0].create(env, node, parent);
             for ( i = 0; i < node.childNodes.length; i++ )
