@@ -50,12 +50,34 @@ Index: {
 
 该示例中，我们在 index 组件下追加了 100 个 h2 节点，在调用 `append` 函数时给第三个参数提供了文档碎片实例 `fragment`。这样当函数执行时并不将目标对象直接添加到 DOM 节点上，而是添加到 `fragment` 上。待所有节点添加完成后，所有的目标节点才被一次性添加到 DOM 节点上。
 
+除了 `append` 系统函数外，系统函数 `before`，也可以进行类似操作，只是稍微麻烦一点，请参考下面示例：
+
+```js
+// 16-03
+Index: {
+    xml: "<div id='index'>\
+            <button id='btn'>before</button>\
+          </div>",
+    fun: function (sys, items, opts) {
+        sys.btn.once("click", function () {
+            var fragment = document.createDocumentFragment();
+            fragment.appendChild(document.createElement("div"));
+            var lastChild = fragment.lastChild;
+            for (var i = 0; i < 100; i++)
+                sys.btn.before("<h2>foo</h2>", null, lastChild);
+            fragment.removeChild(lastChild);
+            sys.index.elem().insertBefore(fragment, sys.btn.elem());
+        });
+    }
+}
+```
+
 ## 应用延迟实例化特性
 
 如果你的应用足够复杂，不妨考虑将部分组件对象延迟实例化。这在大型应用中，它能明显地提升应用的用户体验。
 
 ```js
-// 16-03
+// 16-04
 Index: {
     xml: "<div id='index'>\
              <span id='foo'>foo</span>\
@@ -77,7 +99,7 @@ Index: {
 下面通过一个简单的示例来说明如何通过复用已创建的组件对象来提升应用的性能。下面给出的是两个组件，其中组件 Item 是 HTML 元素 `li` 的简单封装。列表组件 `List` 接收一个数组作为数据源并创建列表子项。
 
 ```js
-// 16-04
+// 16-05
 List: {
     xml: "<ul id='list'/>",
     fun: function (sys, items, opts) {
@@ -99,7 +121,7 @@ Item: {
 注意，函数 `setValue` 中的两个 `for` 语句。其中第一个 `for` 语句会尝试复用已创建的组件对象，只有当未存在已创建对象时才新建一个。第二个 `for` 语句则隐藏剩余未利用的组件对象，而不是将其移除。下面是一个应用示例。
 
 ```js
-// 16-05
+// 16-06
 Index: {
     xml: "<List id='list'/>",
     fun: function (sys, items, opts) {
