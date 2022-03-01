@@ -23,7 +23,11 @@ var WELL = /#(?=([^}])+?{)/ig;
 var svgns = "http://www.w3.org/2000/svg";
 var htmlns = "http://www.w3.org/1999/xhtml";
 var xlinkns = "http://www.w3.org/1999/xlink";
-var xdocument, $document, XPath, DOMParser_, XMLSerializer_, NodeElementAPI;
+
+// xdocument is for virtual DOM, and $document is for real DOM.
+var xdocument, $document;
+
+var XPath, DOMParser_, XMLSerializer_, NodeElementAPI;
 var Manager = [HtmlManager(),CompManager(),,TextManager(),TextManager(),,,,TextManager(),,];
 var Formater = { "int": parseInt, "float": parseFloat, "bool": new Function("v","return v==true || v=='true';") };
 var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", defer: "", cfgs: {}, attrs: {}, format: {} }, fun: new Function };
@@ -279,8 +283,7 @@ var ph = (function () {
         var i = path.lastIndexOf('/');
         return { dir: path.substring(0, i), basename: path.substr(i+1).toLowerCase() };
     }
-    // [/dir/foo, ..] => dir
-    // [/dir, ./bar] => dir/bar
+    // [/dir/foo, ..] => dir, [/dir, ./bar] => dir/bar
     function fullPath(dir, patt) {
         var key = dir + patt;
         if ( table[key] )
@@ -472,7 +475,7 @@ var hp = {
 var bd = {
     onbind: function (e) {
         let o = Binds[e.target.guid()];
-        if (xp.isPlainObject(o)) {
+        if ($.isPlainObject(o)) {
             let i = e.target.elem(),
                 n = i.nodeName;
             let bind = o.view.env.map.bind ||= {};
@@ -518,13 +521,13 @@ var bd = {
         let proxy = new bd.ObjectProxy(target_, objects);
         function setter(target) {
             unbind();
-            xp.each(Object.getOwnPropertyNames(target), (i,key) => {
+            $.each(Object.getOwnPropertyNames(target), (i,key) => {
                 let value = target[key];
                 objects[key] ||= [];
                 target_[key] = value;
                 let views = that.fdr.sys[key];
                 if (!views) $.error(`no target to bind for: ${key}`);
-                if (xp.isSystemObject(views))
+                if ($.isSystemObject(views))
                     views = [views];
                 views = views.map(v => {return Store[v.guid()]});
                 if ($.isArray(value)) {
@@ -542,12 +545,12 @@ var bd = {
         function delter() {
             for (let k in proxy)
                 delete proxy[k];
-            xp.each(Object.getOwnPropertyNames(objects), (i,key) => {
+            $.each(Object.getOwnPropertyNames(objects), (i,key) => {
                 delete objects[key];
             });
         }
         function unbind() {
-            xp.each(Object.getOwnPropertyNames(objects), (i,key) => {
+            $.each(Object.getOwnPropertyNames(objects), (i,key) => {
                 objects[key].forEach(i => i.unbind());
                 delete target_[key];
                 delete objects[key];
@@ -579,13 +582,13 @@ var bd = {
         let hook = (that.env.map.bind ||= {})[key] || {};
         let targets = getTargets(that);
         if (targets.length == 0)
-            xp.error(`no target to bind the key: '${key}'`);
+            $.error(`no target to bind the key: '${key}'`);
         targets.forEach(i => Binds[i.node.uid] = {view: that, data: proxy, key: key});
         function getTargets(that) {
             if (!that.fdr) return [that];
             let targets = that.fdr.sys[hook.skey || key];
             if (!targets) return [];
-            if (xp.isSystemObject(targets))
+            if ($.isSystemObject(targets))
                 targets = [targets];
             let result = [];
             targets.forEach(i => {
@@ -660,7 +663,7 @@ var bd = {
             return item;
         }
         function getter(target, propKey, receiver) {
-            if (xp.isNumeric(propKey))
+            if ($.isNumeric(propKey))
                 return list[propKey].model;
             return Reflect.get(target, propKey, receiver);
         }
@@ -668,7 +671,7 @@ var bd = {
             if (propKey == list.length)
                 return push(value);
             if (!views[propKey])
-                xp.error(`prop name ${propKey} does not exist.`);
+                $.error(`prop name ${propKey} does not exist.`);
             list[propKey].unbind();
             empty.splice.apply(list, [propKey, 1, views[propKey].bind(value)]);
             return true;
@@ -1341,11 +1344,11 @@ var CommonElementAPI = {
             if (!proxy || propKey !== "model")
                 return Reflect.set(target, propKey, value);
             model && model.unbind();
-            if (xp.isArray(value)) {
+            if ($.isArray(value)) {
                 model = bd.bindArray(view);
-            } else if (xp.isPlainObject(value)) {
+            } else if ($.isPlainObject(value)) {
                 if (!view.fdr)
-                    xp.error("a PlainObject is not allow to bind a htmltag!");
+                    $.error("a PlainObject is not allow to bind a htmltag!");
                 model = bd.bindObject(view);
             } else if (bd.isLiteral(value))
                 model = bd.bindLiteral(view, proxy, propKey);
@@ -1956,7 +1959,9 @@ function startup(xml, parent, param) {
     } else if ( parent === undefined ) {
         parent = $document.body || $document.cloneNode();
     } else if ( typeof parent == "string" ) {
-        parent =  $document.getElementById(parent) || $.error("parent element " + parent + " not found");
+        parent =  $document.getElementById(parent);
+        if (!parent)
+            $.error("parent element " + parent + " not found");
     }
     env.fdr = Finder(env);
     env.smr = StyleManager();
@@ -1994,6 +1999,7 @@ function startup(xml, parent, param) {
         });
     } else {
         delete $.ready;
+        delete CommonElementAPI.bind;
         XPath = require("xpath");
         DOMParser_ = require("exmldom").DOMParser;
         XMLSerializer_ = require("exmldom").XMLSerializer;
