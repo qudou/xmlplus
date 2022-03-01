@@ -71,7 +71,7 @@
 命名空间是组件的容器，任何一个组件必然属于某一个特定的命名空间。命名空间可以是空的，它不包含任何的组件。下面的代码定义了一个命名空间 `//xp`，该命名空间为根命名空间，它不包含任何组件。
 
 ```js
-xmlplus("xp", function (xp, $_, t) {
+xmlplus("xp", function (xp, $_) {
    // 一个空的命名空间，不包含任何组件
 });
 ```
@@ -79,7 +79,7 @@ xmlplus("xp", function (xp, $_, t) {
 一个命名空间的完整引用必需从根命名空间开始，并且以双斜杆开头。下面的代码定义了另一个根命名空间 `//xp`，它包含组件 Input 和组件 Calendar。这两个组件由函数 `$_().imports` 导入，其中不带参数的函数调用 `$_()`，用于表示函数 `imports` 导入的组件属于根命名空间 `//xp`。
 
 ```js
-xmlplus("xp", function (xp, $_, t) {
+xmlplus("xp", function (xp, $_) {
     $_().imports({
         Input: {},
         Calendar: {}
@@ -90,7 +90,7 @@ xmlplus("xp", function (xp, $_, t) {
 下面的代码定义了一个根命名空间 `//mx`，它包含组件 Input 和组件 Calendar。另外还定义了一个 `//mx` 的子命名空间 `//mx/ui/layout`，它包含了组件 Tab 和组件 ViewStack。这两个组件由函数 `$_("ui/layout").imports` 导入，其中带参数的函数调用 `$_("ui/layout")` 用于表示命名空间 `//mx/ui/layout`。
 
 ```js
-xmlplus("mx", function (xp, $_, t) {
+xmlplus("mx", function (xp, $_) {
     $_().imports({
         Input: {},
         Calendar: {}
@@ -107,29 +107,29 @@ xmlplus("mx", function (xp, $_, t) {
 在应用中，允许存在多个不同的根命名空间。如下面所示，该示例中定义了两个根命名空间，分别是 `//alice` 和 `//bob`。
 
 ```js
-xmlplus("alice", function (xp, $_, t) {
+xmlplus("alice", function (xp, $_) {
     // 组件定义区
 });
-xmlplus("bob", function (xp, $_, t) {
+xmlplus("bob", function (xp, $_) {
     // 组件定义区
 });
 ```
 
 ## 路径
 
-前面说过一个命名空间的完整引用必需从根命名空间开始，并且以双斜杆开头。这种方式的组件引用方式叫做绝对路径引用。除此以外，还有另一种组件的引用方式，叫做为相对路径引用。下面对这两者分别进行论述。
+前面说过一个命名空间的完整引用必需从根命名空间开始，并且以双斜杆开头。这种组件的引用方式叫做绝对路径引用。除此以外，还有另一种组件的引用方式，叫做为相对路径引用。下面对这两者分别进行论述。
 
 ### 绝对路径
 
 如前所述，绝对路径必需以双斜杆 `//` 开头，其后跟着的是根命名空间名称。请看下面的示例。
 
 ```js
-xmlplus("mx", function (xp, $_, t) {
+xmlplus("mx", function (xp, $_) {
     $_().imports({
         Calendar: {}
     });
 });
-xmlplus("xp", function (xp, $_, t) {
+xmlplus("xp", function (xp, $_) {
     $_().imports({
         Index: {
             xml: "<i:Calendar xmlns:i='//mx'/>"
@@ -142,12 +142,12 @@ xmlplus("xp", function (xp, $_, t) {
 
 ### 相对路径
 
-与绝对路径不同，相对路径不再从根命名空间开始，而是以组件当前所在路径作为基地址。与相对路径相关的通配符有三个。一个是斜杆 `/`，它代表根命名空间。另一个是单句点 `.`，它代表当前组件所在的路径。还有一个是双句点 `..`，它代表当前组件所在路径的上一级路径。下面分别介绍。
+与绝对路径不同，相对路径不再从根命名空间开始，而是以组件当前所在路径作为开始。与相对路径相关的通配符有三个。一个是斜杆 `/`，它代表根命名空间。另一个是单句点 `.`，它代表当前组件所在的路径。还有一个是双句点 `..`，它代表当前组件所在路径的上一级路径。下面分别介绍。
 
 下面示例中，组件 Calendar 位于命名空间 `//xp/form` 中，组件 Index 位于命名空间 `//xp` 中。现在将 `//xp` 代之以 `/`，从而在组件 Index 的视图项中可以通过路径 `/form` 来引用组件 Calendar。
 
 ```js
-xmlplus("xp", function (xp, $_, t) {
+xmlplus("xp", function (xp, $_) {
     $_("form").imports({
         Calendar: {}
     });
@@ -162,7 +162,7 @@ xmlplus("xp", function (xp, $_, t) {
 下面示例中，组件 Index 和组件 Calendar 属于同级组件，它们都属于根命名空间 `//xp`。现在将 `//xp` 代之以 `.`，从而在组件 Index 的视图项中可以通过路径 `.` 来引用同级组件 Calendar。
 
 ```js
-xmlplus("xp", function (xp, $_, t) {
+xmlplus("xp", function (xp, $_) {
     $_().imports({
         Index: {
             xml: "<i:Calendar xmlns:i='.'/>" // 或者<Calendar/>也可以
@@ -177,7 +177,7 @@ xmlplus("xp", function (xp, $_, t) {
 现在对前一个示例做些修改，把组件 Index 移到命名空间 `//xp/form` 中。那么，相对组件 Index 而言，组件 Calendar 位于其上一层级。于是可以将 `//xp` 代之以 `..`，从而在组件 Index 的视图项中可以通过路径 `..` 来引用组件 Calendar。
 
 ```js
-xmlplus("xp", function (xp, $_, t) {
+xmlplus("xp", function (xp, $_) {
     $_().imports({
         Calendar: {}
     });
@@ -189,7 +189,7 @@ xmlplus("xp", function (xp, $_, t) {
 });
 ```
 
-最后需要说明的是，对于同根命名空间组件的引用，应尽可能使用相对路径的方式。这有两个好处：一来可以简化引用空间来源的书写；另外，当要更改根空间名称时，只需改动一个地方即可。
+最后需要说明的是，对于同根命名空间组件的引用，应尽可能使用相对路径的方式。这有两个好处：一来可以简化引用路径；另外，当要更改根空间名称时，只需改动一个地方即可。
 
 ## 组件的实例化
 
@@ -272,7 +272,7 @@ xmlplus.startup("//xp/Calendar", "parent", {date: "2016/01/01"});
 
 ```js
 // 01-01
-xmlplus("xp", function (xp, $_, t) {
+xmlplus("xp", function (xp, $_) {
     $_().imports({
         Index: {
             css: "#text { color: red; }",
