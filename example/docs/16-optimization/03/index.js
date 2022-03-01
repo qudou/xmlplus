@@ -1,10 +1,13 @@
-xmlplus("xp", function (xp, $_, t) {
+xmlplus("xp", function (xp, $_) {
     $_().imports({
         Index: {
-            xml: "<h1 id='index'>hello,world</h1>",
-            map: { nofragment: true },
+            xml: "<div id='index'>\
+                    <span id='foo'>foo</span>\
+                    <button id='bar'>bar</button>\
+                  </div>",
+            map: { defer: "foo" },
             fun: function (sys, items, opts) {
-                console.log(sys.index.width());
+                sys.bar.once("click", sys.foo.show);
             }
         }
     });

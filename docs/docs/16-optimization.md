@@ -29,37 +29,33 @@ document.createDocumentFragment()
 
 之后所有的新建 HTML 元素都会被添加到该对象上。等这些工作都完成后，文档碎片对象才被追加到目标 HTML 元素上。
 
-使用文档碎片特性可以明显地提升应用的性能，因为只需一次屏幕的刷新，就可以完成页面的显示。然而，必要时可以针对某些组件来禁用该功能，请看下面的示例。
+使用文档碎片特性可以明显地提升应用的性能，因为只需一次屏幕的刷新，就可以完成页面的显示。然而，当动态添加组件对象时，系统默认不使用文档碎片，但我们可以手动使用该功能，请看下面的示例。
 
 ```js
 // 16-02
 Index: {
-    xml: "<h1 id='index'>hello,world</h1>",
+    xml: "<div id='index'>\
+            <button id='btn'>append</button>\
+          </div>",
     fun: function (sys, items, opts) {
-        console.log(sys.index.width());
+        sys.btn.once("click", function () {
+            var fragment = document.createDocumentFragment();
+            for (var i = 0; i < 100; i++)
+                sys.index.append("<h2>foo</h2>", null, fragment);
+            sys.index.elem().appendChild(fragment);
+        });
     }
 }
 ```
 
-该示例中，函数 `sys.index.width` 的返回值为 `0`。这是由于该语句执行时，组件对象相应的 HTML DOM 元素还未被加入根为 document 的文档树。如果希望函数 `width` 返回实际的值，可以在映射项中加入值为 `true` 的 `nofragment` 的配置以禁用文档碎片功能。请看下面的示例。
-
-```js
-// 16-03
-Index: {
-    xml: "<h1 id='index'>hello,world</h1>",
-    map: { nofragment: true },
-    fun: function (sys, items, opts) {
-        console.log(sys.index.width());
-    }
-}
-```
+该示例中，我们在 index 组件下追加了 100 个 h2 节点，在调用 `append` 函数时给第三个参数提供了文档碎片实例 `fragment`。这样当函数执行时并不将目标对象直接添加到 DOM 节点上，而是添加到 `fragment` 上。待所有节点添加完成后，所有的目标节点才被一次性添加到 DOM 节点上。
 
 ## 应用延迟实例化特性
 
 如果你的应用足够复杂，不妨考虑将部分组件对象延迟实例化。这在大型应用中，它能明显地提升应用的用户体验。
 
 ```js
-// 16-04
+// 16-03
 Index: {
     xml: "<div id='index'>\
              <span id='foo'>foo</span>\
@@ -81,7 +77,7 @@ Index: {
 下面通过一个简单的示例来说明如何通过复用已创建的组件对象来提升应用的性能。下面给出的是两个组件，其中组件 Item 是 HTML 元素 `li` 的简单封装。列表组件 `List` 接收一个数组作为数据源并创建列表子项。
 
 ```js
-// 16-05
+// 16-04
 List: {
     xml: "<ul id='list'/>",
     fun: function (sys, items, opts) {

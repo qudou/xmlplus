@@ -1,9 +1,16 @@
-xmlplus("xp", function (xp, $_, t) {
+xmlplus("xp", function (xp, $_) {
     $_().imports({
         Index: {
-            xml: "<h1 id='index'>hello,world</h1>",
+            xml: "<div id='index'>\
+                      <button id='btn'>append</button>\
+                  </div>",
             fun: function (sys, items, opts) {
-                console.log(sys.index.width());
+                sys.btn.once("click", function () {
+                    var fragment = document.createDocumentFragment();
+                    for (var i = 0; i < 100; i++)
+                        sys.index.append("<h2>foo</h2>", null, fragment);
+                    sys.index.elem().appendChild(fragment);
+                });
             }
         }
     });
