@@ -4,7 +4,7 @@
  * (c) 2017-2022 qudou
  * Released under the MIT license
  */
- (function (isInBrowser, undefined) {
+ (function (inBrowser, undefined) {
 "use strict";
   var ELEMENT_NODE                = 1;
 //var ATTRIBUTE_NODE              = 2;
@@ -228,9 +228,9 @@ var $ = {
         return this;
     },
     getElementById: function (id, isGuid) {
-        if ( isGuid ) 
+        if ( isGuid )
             return Store[id] && Store[id].api;
-        return isInBrowser ? (Global[id] || $document.getElementById(id)) : null;
+        return inBrowser ? (Global[id] || $document.getElementById(id)) : null;
     }
 };
 
@@ -382,7 +382,7 @@ var hp = {
             });
             return proxy;
         }
-        return isInBrowser && !('Proxy' in window) ? exportAll() : onDemand;
+        return inBrowser && !('Proxy' in window) ? exportAll() : onDemand;
     }()),
     create: function (item) {
         item.api || (item.api = item.back = hp.build(item, item.typ > 1 ? TextElementAPI : NodeElementAPI));
@@ -445,7 +445,7 @@ var hp = {
             node.parentNode.replaceChild(node.parentNode.lastChild, node);
         }
     },
-    ready: isInBrowser && (function () {
+    ready: inBrowser && (function () {
         var fn = [], d = document,
             ie = !!(window.attachEvent && !window.opera),
             wk = /webkit\/(\d+)/i.test(navigator.userAgent) && (RegExp.$1 < 525),
@@ -1961,22 +1961,22 @@ function startup(xml, parent, param) {
     env.fdr = Finder(env);
     env.smr = StyleManager();
     env.ctr = Communication();
-    env.aid = isInBrowser ? $.guid() : "";
+    env.aid = inBrowser ? $.guid() : "";
     env.api = hp.build(env, NodeElementAPI);
     if ( $.isPlainObject(param) ) {
         env.xml.getAttribute("id") || env.xml.setAttribute("id", $.guid());
         env.cfg[env.xml.getAttribute("id")] = param;
     }
     env.xml = env.xml.parentNode || xdocument.cloneNode().appendChild(env.xml).parentNode;
-    fragment = isInBrowser ? $document.createDocumentFragment() : parent;
+    fragment = inBrowser ? $document.createDocumentFragment() : parent;
     instance = parseEnvXML(env, fragment, env.xml.lastChild);
-    isInBrowser && parent.appendChild(fragment);
+    inBrowser && parent.appendChild(fragment);
     instance = $.extend(hp.create(instance).api, {style: env.smr.style});
     return instance.on("input", bd.onbind);
 }
 
 (function () {
-    if ( isInBrowser ) {
+    if ( inBrowser ) {
         XPath = window.xpath || { select: hp.xpathQuery };
         DOMParser_ = DOMParser;
         XMLSerializer_ = XMLSerializer;
