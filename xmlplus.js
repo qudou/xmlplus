@@ -279,6 +279,8 @@ var ph = (function () {
         var i = path.lastIndexOf('/');
         return { dir: path.substring(0, i), basename: path.substr(i+1).toLowerCase() };
     }
+    // [/dir/foo, ..] => dir
+    // [/dir, ./bar] => dir/bar
     function fullPath(dir, patt) {
         var key = dir + patt;
         if ( table[key] )
@@ -355,19 +357,33 @@ var hp = {
         var ret = this.fn.apply(this.data, [].slice.call(arguments));
         return ret == this.data ? this.api : ret;
     },
-    build: function ( data, object ) {
-        var api = {};
-        var proxy = new Proxy(object, {
-            get(target, propKey, receiver) {
-                if (object[propKey] === undefined)
-                    return Reflect.get(target, propKey, receiver);
-                if (!api.hasOwnProperty(propKey))
-                    api[propKey] = hp.callback.bind({fn: object[propKey], data: data, api: proxy});
-                return api[propKey];
-            },
-        });
-        return proxy;
-    },
+    build: (function() {
+        function exportAll() {
+            var table = [], objects = [];
+            return function ( data, object ) {
+                var api = {},
+                    k = objects.indexOf(object),
+                    keys = table[k] || (objects.push(object) && table[table.push(Object.keys(object))-1]);
+                for ( k = 0; k < keys.length; k++ )
+                    api[keys[k]] = hp.callback.bind({fn: object[keys[k]], data: data, api: api});
+                return api;
+            };
+        }
+        function onDemand(data, object) {
+            var api = {};
+            var proxy = new Proxy(object, {
+                get(target, propKey, receiver) {
+                    if (object[propKey] === undefined)
+                        return Reflect.get(target, propKey, receiver);
+                    if (!api.hasOwnProperty(propKey))
+                        api[propKey] = hp.callback.bind({fn: object[propKey], data: data, api: proxy});
+                    return api[propKey];
+                },
+            });
+            return proxy;
+        }
+        return isInBrowser && !('Proxy' in window) ? exportAll() : onDemand;
+    }()),
     create: function (item) {
         item.api || (item.api = item.back = hp.build(item, item.typ > 1 ? TextElementAPI : NodeElementAPI));
         return item;
@@ -1574,7 +1590,8 @@ function HtmlManager() {
         return Store[o.uid] = o;
     }
     function recycle(item) {
-        var i = 0, o, c = XPath.select("./*", item.node); 
+        var i = 0, o,
+            c = XPath.select("./*", item.node); 
         for ( ; i < c.length; i++ ) {
             o = Store[c[i].uid];
             Manager[o.typ].recycle(o);
