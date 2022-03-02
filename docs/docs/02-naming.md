@@ -114,15 +114,15 @@ sys.cat.css("border", "1px solid black");
 在示例中，读者一定还注意到了函数项部分包含的形参 `items`。`items` 与 `sys` 包含了同样多的个体对象与集体对象，并且名称完全相同。比如 `sys` 中包含了一个对象 dog，`items`也包含一个对象 dog，前者我们称之为系统对象，后者我们称之为与系统对象相关联的值对象，简称值对象。这两者的关系如下。
 
 ```js
-sys.target.value() === items.target
+sys.target.val() === items.target
 ```
 
-也就是说系统对象函数 `value` 的返回值等于与系统对象相关联的值对象。
+也就是说系统对象函数 `val` 的返回值等于与系统对象相关联的值对象。
 
 系统对象所包含的接口函数，叫做系统对象接口。虽然系统对象与值对象是一对一的，但它们包含的接口却不尽相同。前面的组件对象 `sys.dog`和 `sys.cat` 所调用的 [text](/api#DOM.text) 函数即属于系统对象接口的一种。下面给出了系统对象包含的其它部分接口函数名：
 
 ```
-on | off | trigger | append | before | remove | value…… 
+on | off | trigger | append | before | remove | val…… 
 ```
 
 这些接口函数由框架系统提供，它们是系统级别的，任何被实例化的对象都会有。系统对象接口提供了诸如组件对象之间通信或者组件对象的添加、移除之类的功能。它们的使用方式后续章节会陆续讲述。

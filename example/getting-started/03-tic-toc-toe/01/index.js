@@ -21,7 +21,7 @@ xmlplus("xp", function (xp, $_, t) {
                 let curr, locked;
                 this.watch("game-start", e => {
                     locked = false;
-                    sys.board.children().call("text", '');
+                    sys.board.kids().call("text", '');
                 });
                 sys.board.on("click", "//Square", function() {
                     if (locked || this.text() != '') return;

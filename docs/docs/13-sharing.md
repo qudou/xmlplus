@@ -89,7 +89,7 @@ Index: {
          var foo = sys.index.append("Audio");
          var bar = sys.index.append("Audio");
          console.log(foo == bar);                 // false
-         console.log(foo.value() == bar.value()); // true
+         console.log(foo.val() == bar.val()); // true
     }
 }
 ```

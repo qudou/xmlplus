@@ -44,7 +44,7 @@ Board: {
         });
         this.watch("game-start", e => {
             locked = false;
-            sys.board.children().call("text", '');
+            sys.board.kids().call("text", '');
         });
         this.watch("winner", e => locked = true);
     }

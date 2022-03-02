@@ -6,9 +6,9 @@ xmlplus("xp", function (xp, $_, t) {
                      <h1 id='cat'>cat</h1>\
                  </div>",
            fun: function (sys, items, opts) {
-               var children = sys.example.children();
-               var objects = children.values();
-               console.log(children, objects);        // 前者包含的是系统对象集，后者包含的是值对象集
+               var kids = sys.example.kids();
+               var objects = kids.values();
+               console.log(kids, objects);        // 前者包含的是系统对象集，后者包含的是值对象集
            }
         }
     });

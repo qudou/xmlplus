@@ -16,7 +16,7 @@ xmlplus("xp", function (xp, $_, t) {
                 });
                 sys.modify.on("click", function() {
                     var item = sys.list.first();
-                    item && (item.value().data = {color: "blue", shape: "rectangle"});
+                    item && (item.val().data = {color: "blue", shape: "rectangle"});
                 });
             }
         },

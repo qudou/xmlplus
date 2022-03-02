@@ -140,11 +140,11 @@ Tabbar: {
     fun: function (sys, items, opts) {
         var sel = this.first();
         this.on("touchend", "./*[@id]", function (e) {
-            sel.value().selected = false;
-            (sel = this).value().selected = true;
+            sel.val().selected = false;
+            (sel = this).val().selected = true;
             this.trigger("switch", this.toString());
         });
-        if (sel) sel.value().selected = true;
+        if (sel) sel.val().selected = true;
     }
 }
 ```

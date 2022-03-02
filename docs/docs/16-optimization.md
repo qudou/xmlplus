@@ -104,7 +104,7 @@ List: {
     xml: "<ul id='list'/>",
     fun: function (sys, items, opts) {
         function setValue(array) {
-            var list = sys.list.children();
+            var list = sys.list.kids();
             for ( var i = 0; i < array.length; i++ )
                 (list[i] || sys.list.append("Item")).show().text(array[i]);
             for ( var k = i; k < list.length; k++ )

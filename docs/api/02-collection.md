@@ -20,8 +20,8 @@ Example: {
              <h1 id='cat'>cat</h1>\
          </div>",
    fun: function (sys, items, opts) {
-       var children = sys.example.children();             // children 返回的对象为集合对象
-       children.call("css", "border", "1px solid black");
+       var kids = sys.example.kids();             // kids 返回的对象为集合对象
+       kids.call("css", "border", "1px solid black");
    }
 }
 ```
@@ -55,8 +55,8 @@ Example: {
              <h1 id='cat'>cat</h1>\
          </div>",
    fun: function (sys, items, opts) {
-       var children = sys.example.children(); // 函数 children 返回系统对象集
-       var objects = children.hash();         // 函数 hash 返回包含键值对集合的普通对象
+       var kids = sys.example.kids();         // 函数 kids 返回系统对象集
+       var objects = kids.hash();             // 函数 hash 返回包含键值对集合的普通对象
        for ( var key in objects ) {
            console.log(key);                  // 会依次打印出 dog、cat
        }
@@ -78,7 +78,7 @@ values()
 function values() {
     var result = new Collection;
     for (var i = 0; i < this.length; i++)
-        result.push(this[i].value());
+        result.push(this[i].val());
     return result;
 }
 ```
@@ -93,9 +93,9 @@ Example: {
              <h1 id='cat'>cat</h1>\
          </div>",
    fun: function (sys, items, opts) {
-       var children = sys.example.children();
-       var objects = children.values();
-       console.log(children, objects);        // 前者包含的是系统对象集，后者包含的是值对象集
+       var kids = sys.example.kids();
+       var objects = kids.values();
+       console.log(kids, objects);        // 前者包含的是系统对象集，后者包含的是值对象集
    }
 }
 ```

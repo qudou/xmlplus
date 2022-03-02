@@ -216,16 +216,16 @@ Example: {
 }
 ```
 
-## children
+## kids
 
 ```js
-children([nodeType])
+kids([nodeType])
 ```
 
 - `nodeType` : `Integer` XML 的节点类型
 - `Returns` : `Collection` 儿子系统对象集
 
-该函数根据给定的 XML 节点类型，获取当前组件对象所有儿子对象。默认节点类型为元素。如果给定节点类型为 0，则获取所有类型的儿子对象。更多内容请参考 [children](/docs#检索_专用检索接口_children)。
+该函数根据给定的 XML 节点类型，获取当前组件对象所有儿子对象。默认节点类型为元素。如果给定节点类型为 0，则获取所有类型的儿子对象。更多内容请参考 [kids](/docs#检索_专用检索接口_kids)。
 
 ```js
 // 04-09
@@ -235,7 +235,7 @@ Example: {
              <button id='bar'>bar</button>\
          </div>",
    fun: function (sys, items, opts) {
-       console.log(sys.example.children().length); // 2
+       console.log(sys.example.kids().length); // 2
    }
 }
 ```

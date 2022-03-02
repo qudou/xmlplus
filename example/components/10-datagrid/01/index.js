@@ -53,8 +53,8 @@ xmlplus("xp", function (xp, $_, t) {
                   </thead>",
             fun: function (sys, items, opts) {
                 return function (data) {
-                    sys.tr.children().call("remove");
-                    data.forEach(item => sys.tr.append("Th").value()(item));
+                    sys.tr.kids().call("remove");
+                    data.forEach(item => sys.tr.append("Th").val()(item));
                 }
             }
         },
@@ -62,7 +62,7 @@ xmlplus("xp", function (xp, $_, t) {
             xml: "<tbody id='tbody'/>",
             fun: function (sys, items, opts) {
                 return function (gridColumns, gridData) {
-                    sys.tbody.children().call("remove");
+                    sys.tbody.kids().call("remove");
                     gridData.forEach(data => {
                         tr = sys.tbody.append("tr");
                         gridColumns.forEach(key => tr.append("td").text(data[key]));
@@ -97,7 +97,7 @@ xmlplus("xp", function (xp, $_, t) {
             xml: "<tr id='tr'/>",
             fun: function (sys, items, opts) {
                 return function (obj) {
-                    sys.tr.children().call("remove");
+                    sys.tr.kids().call("remove");
                     for (var key in obj) 
                         sys.tr.append("td").text(obj[key]);
                 };

@@ -20,7 +20,7 @@ xmlplus("xp", function (xp, $_, t) {
                     <input/>.<input/>.<input/>.<input/>\
                   </div>",
             fun: function (sys, items, opts) {
-                var inputs = sys.box.children();
+                var inputs = sys.box.kids();
                 sys.box.on("keypress", "input", function(e) {
                     var next, ch = String.fromCharCode(e.which);
                     if (!/[0-9]/.test(ch))

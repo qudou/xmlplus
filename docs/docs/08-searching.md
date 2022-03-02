@@ -12,7 +12,7 @@
 - [last](/api#检索_last)：获取当前组件对象子级的最后一个系统对象
 - [next](/api#检索_next)：获取当前组件对象的下一个系统对象
 - [prev](/api#检索_prev)：获取当前组件对象的前一个系统对象
-- [children](/api#检索_children)：获取当前组件对象的所有儿子对象
+- [kids](/api#kids)：获取当前组件对象的所有儿子对象
 
 按照检索能力来划分，上述接口可以分为通用检索接口和专用检索接口两类，前者仅包含上述的前两个接口，其余则为专用检索接口，下面分别讲述。
 
@@ -188,9 +188,9 @@ Index: {
 
 从示例中可以看出，对于最顶层的节点，如果调用函数 `next` 或者函数 `prev` 获取到的会是空值。另外，这两个函数也包含一个可选的参数 `nodeType`，其用法与函数 `first` 和 `last` 的类似。
 
-### children
+### kids
 
-系统函数 `children` 用于获取当前对象的所有儿子对象。在不提供参数的情况下，该函数返回的是 HTML 元素对象和自定义组件对象。下面是其用法示例。
+系统函数 `kids` 用于获取当前对象的所有儿子对象。在不提供参数的情况下，该函数返回的是 HTML 元素对象和自定义组件对象。下面是其用法示例。
 
 ```js
 // 08-08
@@ -200,12 +200,12 @@ Index: {
              <button id='bar'>bar</button>\
          </div>",
    fun: function (sys, items, opts) {
-       console.log(sys.index.children().length); // 2
+       console.log(sys.index.kids().length); // 2
    }
 }
 ```
 
-上面的系统函数 `children` 获取到了所有的组件对象 button，其用法等价于语句 `sys("*", sys.index)`。函数 `children` 有一个可选的参数 `nodeType`，其用法与函数 `first` 和 `last` 的用法类似。不同的是，此函数的 `nodeType` 参数可以取 `0` 值。当 `nodeType` 参数取 `0` 值时，此函数返回所有的儿子对象。请看下面的示例。
+上面的系统函数 `kids` 获取到了所有的组件对象 button，其用法等价于语句 `sys("*", sys.index)`。函数 `kids` 有一个可选的参数 `nodeType`，其用法与函数 `first` 和 `last` 的用法类似。不同的是，此函数的 `nodeType` 参数可以取 `0` 值。当 `nodeType` 参数取 `0` 值时，此函数返回所有的儿子对象。请看下面的示例。
 
 ```js
 // 08-09
@@ -215,9 +215,9 @@ Index: {
              <button id='bar'>bar</button>\
          </div>",
    fun: function (sys, items, opts) {
-       console.log(sys.index.children(0).length); // 5
+       console.log(sys.index.kids(0).length); // 5
    }
 }
 ```
 
-该示例打印出的结果是 `5`，这是由于当给 `children` 函数指定实参为 `0` 后，检索的结果把空白文本也包含在内了。
+该示例打印出的结果是 `5`，这是由于当给 `kids` 函数指定实参为 `0` 后，检索的结果把空白文本也包含在内了。

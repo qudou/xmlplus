@@ -604,7 +604,7 @@ var bd = {
             return $.isFunction(hook.get) ? hook.get(value) : value;
         }
         function setter(value) {
-            if ($.isFunction(hook.set)) 
+            if ($.isFunction(hook.set))
                 value = hook.set(value);
             targets.forEach(target => {
                 let e = target.api.elem();
@@ -1040,7 +1040,7 @@ var CommonElementAPI = {
         if ( elem.childNodes.length == 1 && elem.lastChild.nodeType ) {
             this.node.data = elem.lastChild.data = value + "";
         } else {
-            this.api.children(0).call("remove");
+            this.api.kids(0).call("remove");
             this.api.append(xdocument.createTextNode(value + ""));
         }
         return this;
@@ -1292,7 +1292,7 @@ var CommonElementAPI = {
             next = next.nextSibling;
         }
     },
-    children: function (nodeType) {
+    kids: function (nodeType) {
         if ( nodeType == undefined )
             nodeType = ELEMENT_NODE;
         var result = new Collection,
@@ -1304,7 +1304,7 @@ var CommonElementAPI = {
         }
         return result;
     },
-    value: function () {
+    val: function () {
         return this.value;
     },
     localName: function () {
@@ -1728,10 +1728,10 @@ function StyleManager() {
         }
     }
     function style() {
-        var i, temp = [], children = parent.childNodes;
-        for ( i = 0; i < children.length; i++ )
-            if ( children[i].nodeType == 1 )
-                temp.push(children[i].textContent);
+        var i, temp = [], kids = parent.childNodes;
+        for ( i = 0; i < kids.length; i++ )
+            if ( kids[i].nodeType == 1 )
+                temp.push(kids[i].textContent);
         return temp.join("");
     }
     return { create: create, remove: remove, style: style };
@@ -1774,7 +1774,7 @@ function Finder(env) {
             sys[i] = sys(env.ali[i]);
             items[i] = new Collection;
             for ( k = 0; k < sys[i].length; k++ )
-                items[i].push(sys[i][k].value());
+                items[i].push(sys[i][k].val());
             sys[i].call("addClass", env.aid + env.cid + i);
         }
         for ( i = 0; i < list.length; i++ ) {

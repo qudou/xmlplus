@@ -1,9 +1,9 @@
 # 其它
 
-## value
+## val
 
 ```js
-value()
+val()
 ```
 
 - `Returns` : `ValueObject` 值对象
@@ -15,7 +15,7 @@ value()
 Example: {
     xml: "<Target id='example'/>",
     fun: function (sys, items, opts) {
-        var value = sys.example.value();
+        var value = sys.example.val();
         console.log(value.text, value == items.example); // hello,world true
     }
 },

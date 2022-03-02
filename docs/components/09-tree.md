@@ -85,9 +85,9 @@ Item: {
             open ? (sys.children.show() && load()) : sys.children.hide();
         });
         function load() {
-            if ( sys.children.children().length == 0 )
+            if ( sys.children.kids().length == 0 )
               for ( var item of data.children )
-                sys.add.before("Item").value()(item);
+                sys.add.before("Item").val()(item);
         }
         return function (value) {
             data = value;
@@ -130,7 +130,7 @@ Item: {
         sys.item.on("click", "//*[@id='add']", function () {
             var stuff = {name: 'new stuff'};
             data.children.push(stuff);
-            sys.add.before("Item").value()(stuff);
+            sys.add.before("Item").val()(stuff);
         });
         // 其余代码同前
     }
@@ -161,7 +161,7 @@ Item: {
         sys.item.on("click", "//*[@id='add']", function () {
             var stuff = {name: 'new stuff'};
             data.children.push(stuff);
-            sys.add.before("Item").value()(stuff);
+            sys.add.before("Item").val()(stuff);
         });
         sys.expand.on("click", function () {
             open = !open;
@@ -169,9 +169,9 @@ Item: {
             open ? (sys.children.show() && load()) : sys.children.hide();
         });
         function load() {
-            if ( sys.children.children().length == 1 )
+            if ( sys.children.kids().length == 1 )
               for ( var item of data.children )
-                sys.add.before("Item").value()(item);
+                sys.add.before("Item").val()(item);
         }
         return function (value) {
             data = value;

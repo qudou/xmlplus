@@ -41,7 +41,7 @@ xmlplus("xp", function (xp, $_, t) {
                 sys.item.on("click", "//*[@id='add']", function () {
                     var stuff = {name: 'new stuff'};
                     data.children.push(stuff);
-                    sys.add.before("Item").value()(stuff);
+                    sys.add.before("Item").val()(stuff);
                 });
                 sys.expand.on("click", function () {
                     open = !open;
@@ -49,9 +49,9 @@ xmlplus("xp", function (xp, $_, t) {
                     open ? (sys.children.show() && load()) : sys.children.hide();
                 });
                 function load() {
-                    if ( sys.children.children().length == 1 )
+                    if ( sys.children.kids().length == 1 )
                       for ( var item of data.children )
-                        sys.add.before("Item").value()(item);
+                        sys.add.before("Item").val()(item);
                 }
                 return function (value) {
                     data = value;

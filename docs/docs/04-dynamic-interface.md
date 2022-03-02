@@ -151,7 +151,7 @@ Index: {
     fun: function (sys, items, opts) {
         items.ipbox.value = "192,168,0,1";
         console.log(items.ipbox.value);
-        console.log(sys.ipbox.value() == items.ipbox);
+        console.log(sys.ipbox.val() == items.ipbox);
     }
 }
 ```
@@ -159,7 +159,7 @@ Index: {
 对于接口 value 的使用，前一章已经讲过了，这里主要注意函数项的最后一行。运行示例，控制台打印出的值是 `true`，这说明系统函数 `sys.ipbox.value` 的返回值与 `items.ipbox` 是相等的。下面是 `value` 接口的一种可能的使用方式：
 
 ```js
-sys.ipbox.css("color","blue").value().value = "192,168,0,1";
+sys.ipbox.css("color","blue").val().value = "192,168,0,1";
 ```
 
 上面代码中，系统函数 `css` 返回的是 `sys.ipbox` 的引用。系统函数 `value` 属于 `sys.ipbox` 的一个接口。`value` 函数不用提供任何的输入参数，它返回的是对等的 `items.ipbox` 的引用。在某些场合，这可以简化代码的书写。

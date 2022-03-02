@@ -6,7 +6,7 @@ xmlplus("xp", function (xp, $_, t) {
                      <button id='bar'>bar</button>\
                  </div>",
            fun: function (sys, items, opts) {
-               console.log(sys.index.children(0).length); // 5
+               console.log(sys.index.kids(0).length); // 5
            }
         }
     });

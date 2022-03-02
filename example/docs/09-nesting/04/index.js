@@ -13,7 +13,7 @@ xmlplus("xp", function (xp, $_, t) {
                   </div>",
             map: { appendTo: "alice" },
             fun: function (sys, items, opts) {
-                this.children().forEach(function(item) {
+                this.kids().forEach(function(item) {
                     console.log(item.text());
                 });
             }

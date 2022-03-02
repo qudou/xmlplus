@@ -3,7 +3,7 @@ xmlplus("xp", function (xp, $_, t) {
         Example: {
             xml: "<Target id='example'/>",
             fun: function (sys, items, opts) {
-                var value = sys.example.value();
+                var value = sys.example.val();
                 console.log(value.text, value == items.example); // hello,world true
             }
         },

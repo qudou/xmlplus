@@ -57,8 +57,8 @@ Thead: {
           </thead>`,
     fun: function (sys, items, opts) {
         return function (value) {
-            sys.tr.children().call("remove");
-            data.forEach(item => sys.tr.append("Th").value().val(item));
+            sys.tr.kids().call("remove");
+            data.forEach(item => sys.tr.append("Th").val().val(item));
         };
     }
 }
@@ -103,7 +103,7 @@ Tbody: {
     xml: `<tbody id='tbody'/>`,
     fun: function (sys, items, opts) {
         return function (gridColumns, gridData) {
-            sys.tbody.children().call("remove");
+            sys.tbody.kids().call("remove");
             gridData.forEach(data => 
                 tr = sys.tbody.append("tr");
                 gridColumns.forEach(key => tr.append("td").text(data[key]));

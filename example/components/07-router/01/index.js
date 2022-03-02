@@ -9,12 +9,12 @@ xmlplus("xp", function (xp, $_, t) {
         ViewStack: { 
             xml: "<div id='viewstack'/>",
             fun: function (sys, items, opts) {
-                var args, children = this.children(),
-                    table = children.call("hide").hash(),
-                    ptr = table[opts.index] || children[0];
+                var args, kids = this.kids(),
+                    table = kids.call("hide").hash(),
+                    ptr = table[opts.index] || kids[0];
                 if (ptr) ptr = ptr.trigger("show").show();
                 this.on("switch", function ( e, to ) {
-                    table = this.children().hash();
+                    table = this.kids().hash();
                     if ( !table[to] || table[to] == ptr ) return;
                     e.stopPropagation();
                     args = [].slice.call(arguments).slice(2);

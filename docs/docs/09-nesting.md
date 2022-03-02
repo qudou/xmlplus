@@ -116,14 +116,14 @@ Wrapper: {
           </div>",
     map: { appendTo: "alice" },
     fun: function (sys, items, opts) {
-        this.children().forEach(function(item) {
+        this.kids().forEach(function(item) {
             console.log(item.text());
         });
     }
 }
 ```
 
-自定义组件的函数项的 `this` 来源于组件实例化时系统的注入，它是当前组件实例化后的引用。所以可以通过系统函数 `children` 来获取并使用嵌套子级的元素。
+自定义组件的函数项的 `this` 来源于组件实例化时系统的注入，它是当前组件实例化后的引用。所以可以通过系统函数 `kids` 来获取并使用嵌套子级的元素。
 
 ## 应用
 
