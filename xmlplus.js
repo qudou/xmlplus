@@ -2010,7 +2010,6 @@ function startup(xml, parent, param) {
         });
     } else {
         delete $.ready;
-        delete CommonElementAPI.bind;
         XPath = require("xpath");
         DOMParser_ = require("exmldom").DOMParser;
         XMLSerializer_ = require("exmldom").XMLSerializer;
