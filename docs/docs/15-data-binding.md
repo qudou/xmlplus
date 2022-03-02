@@ -187,7 +187,7 @@ Index: {
 
 ## 取值与赋值函数
 
-系统对于被绑定的 html 元素对象，有默认的取值与赋值操作。当然，你可以自定义取值与赋值函数以覆盖默认行为。请看下面的示例所示：
+系统对于被绑定的 HTML 元素对象，有默认的取值与赋值操作。当然，你可以自定义取值与赋值函数以覆盖默认行为。请看下面的示例所示：
 
 ```js
 // 15-11
@@ -195,7 +195,7 @@ Index: {
     xml: "<input id='index' type='text'/>",
     map: { bind: { model: {get: e=>{return e.value.replace(/#/,'')}, set: (e,v)=>{e.value='#'+v}}} },
     fun: function (sys, items, opts) {
-        window.ret = sys.text.bind("hello, world");
+        window.ret = sys.index.bind("hello, world");
     }
 }
 ```
