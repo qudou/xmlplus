@@ -480,9 +480,8 @@ var bd = {
                 n = i.nodeName;
             let bind = o.view.env.map.bind ||= {};
             let hook = bind[o.key] || {};
-            let get = bd.Getters[n] || bd.Getters[`${n}-${i.getAttribute("type")}`] || bd.Getters["OTHERS"];;
-            let value = get(i, [e.target]);
-            o.data[o.key] = $.isFunction(hook.get) ? hook.get(value) : value;
+            let get = hook.get || bd.Getters[n] || bd.Getters[`${n}-${i.getAttribute("type")}`] || bd.Getters["OTHERS"];;
+            o.data[o.key] = get(i, [e.target]);
         }
     },
     export: (function () {
@@ -518,6 +517,7 @@ var bd = {
     },
     bindObject: function (that) {
         let target_ = {}, objects = {};
+        let bind = that.map.bind || {};
         let proxy = new bd.ObjectProxy(target_, objects);
         function setter(target) {
             unbind();
@@ -525,8 +525,11 @@ var bd = {
                 let value = target[key];
                 objects[key] ||= [];
                 target_[key] = value;
-                let views = that.fdr.sys[key];
-                if (!views) $.error(`no target to bind for: ${key}`);
+                let views = that.fdr.sys[bind[key] && bind[key].skey || key];
+                if (!views) {
+                    objects[key].push(bd.BindNormal());
+                    return proxy[key] = target[key];
+                }
                 if ($.isSystemObject(views))
                     views = [views];
                 views = views.map(v => {return Store[v.guid()]});
@@ -582,7 +585,7 @@ var bd = {
         let hook = (that.env.map.bind ||= {})[key] || {};
         let targets = getTargets(that);
         if (targets.length == 0)
-            $.error(`no target to bind the key: '${key}'`);
+            return bd.BindNormal();
         targets.forEach(i => Binds[i.node.uid] = {view: that, data: proxy, key: key});
         function getTargets(that) {
             if (!that.fdr) return [that];
@@ -599,16 +602,13 @@ var bd = {
         }
         function getter() {
             let e = targets[0].elem();
-            let get = bd.Getters[e.nodeName] || bd.Getters[`${e.nodeName}-${e.getAttribute("type")}`] || bd.Getters["OTHERS"];
-            let value = get(e, targets);
-            return $.isFunction(hook.get) ? hook.get(value) : value;
+            let get = hook.get || bd.Getters[e.nodeName] || bd.Getters[`${e.nodeName}-${e.getAttribute("type")}`] || bd.Getters["OTHERS"];
+            return get(e, targets);
         }
         function setter(value) {
-            if ($.isFunction(hook.set))
-                value = hook.set(value);
             targets.forEach(target => {
                 let e = target.api.elem();
-                let set = bd.Setters[e.nodeName] || bd.Setters[`${e.nodeName}-${e.getAttribute("type")}`] || bd.Setters["OTHERS"];
+                let set = hook.set || bd.Setters[e.nodeName] || bd.Setters[`${e.nodeName}-${e.getAttribute("type")}`] || bd.Setters["OTHERS"];
                 set(e, value, target);
             });
         }
@@ -623,6 +623,17 @@ var bd = {
             targets.splice(0);
         }
         return {get: getter, set: setter, del: delter, unbind: unbind};
+    },
+    BindNormal: function () {
+        let tmpValue;
+        function getter() {
+            return tmpValue;
+        }
+        function setter(value) {
+            tmpValue = value;
+        }
+        function dump() {}
+        return {get: getter, set: setter, del: dump, unbind: dump};
     },
     ObjectProxy: function (target, objects) {
         return new Proxy(target, {
