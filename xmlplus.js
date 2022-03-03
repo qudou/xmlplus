@@ -474,14 +474,14 @@ var hp = {
 
 var bd = {
     onbind: function (e) {
-        let o = Binds[e.target.guid()];
-        if ($.isPlainObject(o)) {
+        let uid = e.target.guid()
+        let bind = Binds[uid];
+        if ($.isPlainObject(bind)) {
             let i = e.target.elem(),
                 n = i.nodeName;
-            let bind = o.view.env.map.bind ||= {};
-            let hook = bind[o.key] || {};
-            let get = hook.get || bd.Getters[n] || bd.Getters[`${n}-${i.getAttribute("type")}`] || bd.Getters["OTHERS"];;
-            o.data[o.key] = get(i, [e.target]);
+            let get = Store[uid].env.value[bind.hook.get]
+                    || bd.Getters[n] || bd.Getters[`${n}-${i.getAttribute("type")}`] || bd.Getters["OTHERS"];;
+            bind.data[bind.key] = get(i, [e.target]);
         }
     },
     export: (function () {
@@ -586,7 +586,7 @@ var bd = {
         let targets = getTargets(that);
         if (targets.length == 0)
             return bd.BindNormal();
-        targets.forEach(i => Binds[i.node.uid] = {view: that, data: proxy, key: key});
+        targets.forEach(i => Binds[i.node.uid] = {hook: hook, data: proxy, key: key});
         function getTargets(that) {
             if (!that.fdr) return [that];
             let targets = that.fdr.sys[hook.skey || key];
@@ -600,15 +600,18 @@ var bd = {
             });
             return result;
         }
+        function getOperator(target, e) {
+            return bd[target][e.nodeName] || bd[target][`${e.nodeName}-${e.getAttribute("type")}`] || bd[target]["OTHERS"];
+        }
         function getter() {
             let e = targets[0].elem();
-            let get = hook.get || bd.Getters[e.nodeName] || bd.Getters[`${e.nodeName}-${e.getAttribute("type")}`] || bd.Getters["OTHERS"];
+            let get = targets[0].env.value[hook.get] || getOperator("Getters", e);
             return get(e, targets);
         }
         function setter(value) {
             targets.forEach(target => {
-                let e = target.api.elem();
-                let set = hook.set || bd.Setters[e.nodeName] || bd.Setters[`${e.nodeName}-${e.getAttribute("type")}`] || bd.Setters["OTHERS"];
+                let e = target.elem();
+                let set = target.env.value[hook.set] || getOperator("Setters", e);
                 set(e, value, target);
             });
         }

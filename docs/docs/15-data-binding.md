@@ -193,14 +193,23 @@ Index: {
 // 15-11
 Index: {
     xml: "<input id='index' type='text'/>",
-    map: { bind: { model: {get: e=>{return e.value.replace(/#/,'')}, set: (e,v)=>{e.value='#'+v}}} },
+    map: { bind: { model: {get: "getter", set: "setter"} } },
     fun: function (sys, items, opts) {
-        window.ret = sys.index.bind("hello, world");
+        setTimeout(function () {
+            sys.index.bind("hello, world");
+        }, 0);
+        function getter(e) {
+            return e.value.replace(/#/,'');
+        }
+        function setter(e,v) {
+            e.value = '#' + v;
+        }
+        return { getter: getter, setter: setter };
     }
 }
 ```
 
-此例在映射项中对被绑定对象 `text` 配置自定义的取值与赋值操作函数。其中取值函数 `get`，对于取到值会先替换掉首字符 `'#'` 再返回。而赋值函数 set，则在赋值之前会给数据值添加首字符 `'#'` 后才对被绑定对象赋值。
+此例在映射项中对被绑定对象 `index` 配置自定义的取值与赋值操作函数。其中取值函数 `get`，对于取到值会先替换掉首字符 `'#'` 再返回。而赋值函数 set，则在赋值之前会给数据值添加首字符 `'#'` 后才对被绑定对象赋值。这两个函数定义在函数项内并返回。如果我们直接在函数项内执行数据绑定，系统会找因不到自定义的操作函数而执行默认行为。所以，上述示例中使用定时器以延迟数据绑定操作。
 
 ## 操作绑定后的数据
 
