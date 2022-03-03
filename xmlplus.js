@@ -516,29 +516,31 @@ var bd = {
         return $.isNumeric(value) || $.type(value) == "string" || $.type(value) == "boolean";
     },
     bindObject: function (that) {
-        let target_ = {}, objects = {};
+        let objects = {}, binds = {};
         let bind = that.map.bind || {};
-        let proxy = new bd.ObjectProxy(target_, objects);
+        let proxy = new bd.ObjectProxy(objects, binds);
         function setter(target) {
-            unbind();
-            $.each(Object.getOwnPropertyNames(target), (i,key) => {
+            let props = Object.getOwnPropertyNames(target);
+            if (!$.isEmptyObject(objects))
+                return $.each(props, (i,key) => proxy[key] = target[key]);
+            $.each(props, (i,key) => {
                 let value = target[key];
-                objects[key] ||= [];
-                target_[key] = value;
+                binds[key] ||= [];
+                objects[key] = value;
                 let views = that.fdr.sys[bind[key] && bind[key].skey || key];
                 if (!views) {
-                    objects[key].push(bd.BindNormal());
+                    binds[key].push(bd.BindNormal());
                     return proxy[key] = target[key];
                 }
                 if ($.isSystemObject(views))
                     views = [views];
                 views = views.map(v => {return Store[v.guid()]});
                 if ($.isArray(value)) {
-                    views.forEach(v => objects[key].push(bd.bindArray(v)));
+                    views.forEach(v => binds[key].push(bd.bindArray(v)));
                 } else if ($.isPlainObject(value)) {
-                    views.forEach(v => objects[key].push(bd.bindObject(v)));
+                    views.forEach(v => binds[key].push(bd.bindObject(v)));
                 } else if (bd.isLiteral(value)) {
-                    views.forEach(v => objects[key].push(bd.bindLiteral(v, proxy, key)));
+                    views.forEach(v => binds[key].push(bd.bindLiteral(v, proxy, key)));
                 } else {
                     $.error(`Type error: ${value}`);
                 }
@@ -548,15 +550,15 @@ var bd = {
         function delter() {
             for (let k in proxy)
                 delete proxy[k];
-            $.each(Object.getOwnPropertyNames(objects), (i,key) => {
-                delete objects[key];
+            $.each(Object.getOwnPropertyNames(binds), (i,key) => {
+                delete binds[key];
             });
         }
         function unbind() {
-            $.each(Object.getOwnPropertyNames(objects), (i,key) => {
-                objects[key].forEach(i => i.unbind());
-                delete target_[key];
+            $.each(Object.getOwnPropertyNames(binds), (i,key) => {
+                binds[key].forEach(i => i.unbind());
                 delete objects[key];
+                delete binds[key];
             });
         }
         return {get: ()=>{return proxy}, set: setter, del: delter, unbind: unbind};
@@ -686,8 +688,7 @@ var bd = {
                 return push(value);
             if (!views[propKey])
                 $.error(`prop name ${propKey} does not exist.`);
-            list[propKey].unbind();
-            empty.splice.apply(list, [propKey, 1, views[propKey].bind(value)]);
+            list[propKey].model = value;
             return true;
         }
         function delter(target, propKey) {
@@ -1357,8 +1358,9 @@ var CommonElementAPI = {
         function setter(target, propKey, value) {
             if (!proxy || propKey !== "model")
                 return Reflect.set(target, propKey, value);
-            model && model.unbind();
-            if ($.isArray(value)) {
+            if (model) {
+                // nothing to do.
+            } else if ($.isArray(value)) {
                 model = bd.bindArray(view);
             } else if ($.isPlainObject(value)) {
                 if (!view.fdr)
@@ -1366,7 +1368,8 @@ var CommonElementAPI = {
                 model = bd.bindObject(view);
             } else if (bd.isLiteral(value))
                 model = bd.bindLiteral(view, proxy, propKey);
-            return model.set(value), true;
+            model.set(value);
+            return true;
         }
         function unbind() {
             model.unbind();
