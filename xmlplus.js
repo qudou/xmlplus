@@ -1123,16 +1123,6 @@ var CommonElementAPI = {
         } while (elem);
         return false;
     },
-    data: function (key, value) {
-        if ( value === undefined )
-            return this.data[key];
-        this.data[key] = value;
-        return this;
-    },
-    removeData: function (key) {
-        delete this.data[key];
-        return this;
-    },
     notify: function (type, data) {
         return this.ctr.notify.call(this, type, data);
     },
@@ -1606,7 +1596,7 @@ function HtmlManager() {
             resetAttrs(env, node, aliasMatch(env, node));
         o.ele = hp.createElement(node, parent);
         o.api = node.defer ? hp.build(o, DeferElementAPI) : o.back;
-        o.ctr = env.ctr, o.env = env, o.node = node, node.uid = o.uid, o.data = {}, o.ele.xmlTarget = o;
+        o.ctr = env.ctr, o.env = env, o.node = node, node.uid = o.uid, o.ele.xmlTarget = o;
         return Store[o.uid] = o;
     }
     function recycle(item) {
@@ -1661,7 +1651,7 @@ function CompManager() {
         o.cfg = $.extend(true, {}, w.cfg);
         o.ctr = o.map.msgscope ? Communication() : env.ctr;
         o.dir = w.dir, o.css = w.css, o.ali = w.ali, o.fun = w.fun, o.cid = w.cid;
-        o.smr = env.smr, o.env = env, o.node = node, o.aid = env.aid, node.uid = o.uid, o.data = {};
+        o.smr = env.smr, o.env = env, o.node = node, o.aid = env.aid, node.uid = o.uid;
         var exprs = aliasMatch(env, node);
         resetAttrs(env, node, exprs);
         resetConfigs(env, node, exprs);
