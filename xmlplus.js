@@ -31,7 +31,7 @@ var XPath, DOMParser_, XMLSerializer_, NodeElementAPI;
 var Manager = [HtmlManager(),CompManager(),,TextManager(),TextManager(),,,,TextManager(),,];
 var Formater = { "int": parseInt, "float": parseFloat, "bool": new Function("v","return v==true || v=='true';") };
 var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", defer: "", cfgs: {}, attrs: {}, format: {} }, fun: new Function };
-var isReady, Paths = {}, Binds = {};
+var isReady;
 
 // isHTML contains isSVG
 var isSVG = {}, isHTML = {};
@@ -448,6 +448,10 @@ var hp = {
     })()
 };
 
+// It is used to establish the mapping between the bound object and the data proxy.
+// Binds[guid] = {hook: hook, proxy: proxy, key: key}
+var Binds = {};
+
 var bd = {
     onbind: function (e) {
         let uid = e.target.guid()
@@ -457,7 +461,7 @@ var bd = {
                 n = i.nodeName;
             let get = Store[uid].env.value[bind.hook.get]
                     || bd.Getters[n] || bd.Getters[`${n}-${i.getAttribute("type")}`] || bd.Getters["OTHERS"];;
-            bind.data[bind.key] = get(i, [e.target]);
+            bind.proxy[bind.key] = get(i, [e.target]);
         }
     },
     export: (function () {
@@ -564,7 +568,7 @@ var bd = {
         let targets = getTargets(that);
         if (targets.length == 0)
             return bd.BindNormal();
-        targets.forEach(i => Binds[i.node.uid] = {hook: hook, data: proxy, key: key});
+        targets.forEach(i => Binds[i.node.uid] = {hook: hook, proxy: proxy, key: key});
         function getTargets(that) {
             if (!that.fdr) return [that];
             let targets = that.fdr.sys[hook.skey || key];
@@ -749,8 +753,7 @@ $.extend(hp, (function () {
         map.defer = map.defer ? map.defer.split(' ') : [];
         map.share = map.share ? map.share.split(' ') : [];
         var root = obj.dir.split('/')[0];
-        obj.css = obj.css.replace(/%@/g, Paths[root]);
-        obj.xml = $.parseXML(obj.xml && obj.xml.replace(/%@/g, Paths[root]) || "<void/>");
+        obj.xml = $.parseXML(obj.xml || "<void/>");
     }
     function imports(obj, name, space) {
         Source[space][name] = obj;
@@ -1883,9 +1886,11 @@ function parseEnvXML(env, parent, node) {
 var Extends = [];
 
 function makePackage(root, space) {
-    if ( !Library[space] )
-        Source[space] = {}, Library[space] = {};
-    function imports( components ) {
+    if ( !Library[space] ) {
+        Source[space] = {};
+        Library[space] = {};
+    }
+    function imports(components) {
         if ( !$.isPlainObject(components) )
             $.error("invalid components, expected a plainObject");
         for ( var name in components ) {
@@ -1914,7 +1919,6 @@ function xmlplus(root, callback) {
         $.error("invalid root, expected a string");
     if ( !$.isFunction(callback) )
         $.error("invalid callback, expected a function");
-    Paths[root] = ph.split([].slice.call($document.scripts || [{src:"./i"}]).pop().src).dir;
     function createPackage(space) {
         if ( $.type(space) != "string" && space != null )
             $.error("invalid namespace, expected a null value or a string");
