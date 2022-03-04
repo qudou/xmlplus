@@ -2,9 +2,14 @@
 <html>
     <head>
         <script src="../../../../xmlplus.js"></script>
-        <script src="index.js"></script>
+        <script>
+			xp.each(['a','b','c'], function (index, value) {
+				console.log(index, value);
+			});
+			xp.each({a:1,b:2,c:3}, function (key, value) {
+				console.log(key, value);
+			});
+		</script>
     </head>
-    <body>
-        <i:Example xmlns:i="//xp"></i:Example>
-    </body>
+    <body></body>
 </html>

@@ -3,9 +3,9 @@
     <head>
         <script src="../../../../xmlplus.js"></script>
         <script>
-			var xml = "<title>Title</title>";
-			var xmlDoc = xp.parseXML(xml);
-			console.log(xmlDoc.lastChild.nodeName); // title
+			console.log(xp.hasNamespace(null));         // false
+			console.log(xp.hasNamespace("div"));        // false
+			console.log(xp.hasNamespace("//xp/Index")); // true 或者 false，这取决于实际的应用
 		</script>
     </head>
     <body></body>

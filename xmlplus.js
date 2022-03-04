@@ -43,18 +43,12 @@ var isSVG = {}, isHTML = {};
     while (s[++i]) isSVG[s[i]] = isHTML[s[i]] = 1;
 }());
 
-// The Original contains the set of components imported by the imports function.
-// It contains original, unprocessed components.
-// It contains two levels: the first is the component space and the second is the component name.
-// eg. Original["//xp"][Input] = {};
-var Original = {};
-
 // The Source is used to help implement the inheritance of components, and then it is no longer used.
 var Source = {};
 
 // The Library contains the set of components imported by the imports function.
-// Unlike original, the components are initialized by the system
-// Like original, it contains two levels.
+// The components are initialized by the system
+// It contains two levels: the first is the component space and the second is the component name.
 // eg. Library["//xp"][Input] = {};
 var Library = {};
 
@@ -181,13 +175,6 @@ var $ = {
         }
         return target;
     },
-    expand: function (obj) {
-        for ( var name in obj )
-            NodeElementAPI[name] && $.error("the api '" + name + "', already exists");
-        $.extend(NodeElementAPI, obj), $.extend(CopyElementAPI, obj);
-        $.extend(DeferElementAPI, obj), $.extend(ShareElementAPI, obj);
-        return this;
-    },
     parseXML: function (data) {
         var xml;
         if ( !data || typeof data !== "string" )
@@ -219,17 +206,6 @@ var $ = {
     messages: function (obj) {
         var item = Store[obj.guid()];
         return item && item.ctr.messages() || [];
-    },
-    clearLibrary: function (space) {
-        if ( typeof space != "string" )
-            $.error("invalid space, expected a string");
-        var patt = new RegExp("^" + space.substr(2));
-        for ( var k in Library )
-            if ( k.match(patt) ) {
-                delete Library[k];
-                delete Original[k];
-            }
-        return this;
     },
     getElementById: function (id, isGuid) {
         if ( isGuid )
@@ -1908,14 +1884,13 @@ var Extends = [];
 
 function makePackage(root, space) {
     if ( !Library[space] )
-        Source[space] = {}, Library[space] = {}, Original[space] = {};
+        Source[space] = {}, Library[space] = {};
     function imports( components ) {
         if ( !$.isPlainObject(components) )
             $.error("invalid components, expected a plainObject");
         for ( var name in components ) {
             var map = components[name].map,
                 iname = name.toLowerCase();
-            Original[space][iname] = components[name];
             if ( map && map.extend && $.type(map.extend.from) == "string" ) {
                 Extends.push({name: iname, space: space, src: components[name] });
             } else {
