@@ -1766,7 +1766,8 @@ function Finder(env) {
         for ( i = 0; i < list.length; i++ ) {
             id = list[i].getAttribute("id");
             item = hp.create(Store[list[i].uid]);
-            sys[id] = item.api, items[id] = item.value;
+            sys[id] = item.api;
+            items[id] = item.value;
         }
     }
     return { sys: sys, items: items, refresh: refresh };
