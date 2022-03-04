@@ -23,12 +23,10 @@
 - [isEmptyObject](/api#全局_isEmptyObject)：判断一个对象是否空对象
 - [isSystemObject](/api#全局_isSystemObject)：判断一个对象是否框架的系统对象
 - [extend](/api#全局_extend)：将两个或多个对象的内容合并到第一个对象中
-- [expand](/api#全局_expand)：对系统接口进行扩展
 - [each](/api#全局_each)：遍历一个数组或者其它对象
 - [parseXML](/api#全局_parseXML)：将给定的字符串解析为 XML 文档
 - [hasNamespace](/api#全局_hasNamespace)：判定当前系统是否包含给定的命名空间
 - [hasComponent](/api#全局_hasComponent)：判定当前系统中是否包含给定的组件
-- [clearLibrary](/api#全局_clearLibrary)：按照给定的模式清除当前系统中相关命名空间及组件
 - [getElementById](/api#全局_getElementById)：由给定的标识符获取相关对象
 
 对于这些接口的使用，下面仅给出了几个示例，具体内容请参看 [全局接口](/api#全局)。
