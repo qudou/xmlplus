@@ -1750,25 +1750,28 @@ function Finder(env) {
         return result;
     }
     function refresh() {
-        var i, k, id, item,
-            list = XPath.select("//*[@id]", env.xml);
-        for ( i in items ) {
+        for ( var i in items ) {
             delete sys[i];
             delete items[i];
         }
-        for ( i in env.ali ) {
+        for ( var i in env.ali ) {
             sys[i] = sys(env.ali[i]);
             items[i] = new Collection;
-            for ( k = 0; k < sys[i].length; k++ )
+            for ( var k = 0; k < sys[i].length; k++ )
                 items[i].push(sys[i][k].val());
             sys[i].call("addClass", env.aid + env.cid + i);
         }
-        for ( i = 0; i < list.length; i++ ) {
-            id = list[i].getAttribute("id");
-            item = hp.create(Store[list[i].uid]);
-            sys[id] = item.api;
-            items[id] = item.value;
-        }
+        (function parse(node) {
+            var id = node.getAttribute("id");
+            if (id) {
+                var item = hp.create(Store[node.uid]);
+                sys[id] = item.api;
+                items[id] = item.value;
+            }
+            var i, kids = node.childNodes;
+            for ( i = 0; i < kids.length; i++  )
+                kids[i].nodeType == 1 && parse(kids[i]);
+        }(env.xml.lastChild));
     }
     return { sys: sys, items: items, refresh: refresh };
 }
