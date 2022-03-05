@@ -459,8 +459,8 @@ var bd = {
         if ($.isPlainObject(bind)) {
             let i = e.target.elem(),
                 n = i.nodeName;
-            let get = Store[uid].env.value[bind.hook.get]
-                    || bd.Getters[n] || bd.Getters[`${n}-${i.getAttribute("type")}`] || bd.Getters["OTHERS"];;
+            let v = Store[uid].env.value;
+            let get = v && v[bind.hook.get] || bd.Getters[n] || bd.Getters[`${n}-${i.getAttribute("type")}`] || bd.Getters["OTHERS"];;
             bind.proxy[bind.key] = get(i, [e.target]);
         }
     },
@@ -593,7 +593,8 @@ var bd = {
         function setter(value) {
             targets.forEach(target => {
                 let e = target.elem();
-                let set = target.env.value[hook.set] || getOperator("Setters", e);
+                let v = target.env.value;
+                let set = v && v[hook.set] || getOperator("Setters", e);
                 set(e, value, target);
             });
         }
