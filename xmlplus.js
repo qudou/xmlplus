@@ -59,6 +59,8 @@ var Store = {};
 // You can access the objects through the function '$.getElementById'.
 var Global = {};
 
+var Themes = {};
+
 var $ = {
     startup: startup,
     create: function (path, options) {
@@ -587,7 +589,8 @@ var bd = {
         }
         function getter() {
             let e = targets[0].elem();
-            let get = targets[0].env.value[hook.get] || getOperator("Getters", e);
+            let v = targets[0].env.value;
+            let get = v && v[hook.get] || getOperator("Getters", e);
             return get(e, targets);
         }
         function setter(value) {
@@ -1630,6 +1633,7 @@ function CompManager() {
         o.opt = $.extend(true, {}, w.opt);
         o.cfg = $.extend(true, {}, w.cfg);
         o.ctr = o.map.msgscope ? Communication() : env.ctr;
+        // aid: appid, cid: classid
         o.dir = w.dir, o.css = w.css, o.ali = w.ali, o.fun = w.fun, o.cid = w.cid;
         o.smr = env.smr, o.env = env, o.node = node, o.aid = env.aid, node.uid = o.uid;
         var exprs = aliasMatch(env, node);
@@ -1675,9 +1679,22 @@ function CompManager() {
 function StyleManager() {
     var table = {},
         parent = $document.body ? $document.getElementsByTagName("head")[0] : $document.createElement("void");
+    function getVars(str) {
+        var ret, array = [];
+        var re = new RegExp("--[.-a-z0-9\\\/]+?(?=\\)|;|\\s)", "ig");
+        while(ret = re.exec(str))
+            array.push(ret[0]);
+        return array;
+    }
     function cssText(ins) {
         var klass = ins.aid + ins.cid,
             text = ins.css.replace(WELL, "." + klass).replace(/\$/ig, klass);
+        getVars(text).forEach(function(key) {
+            var path = ph.fullPath(ins.dir+'/'+ins.node.localName.toLowerCase(), key);
+            var re = ph.split(path);
+            var value = Themes[re.dir] && Themes[re.dir][re.basename];
+            value && (text = text.replace(key, value));
+        });
         return $document.createTextNode(text);
     }
     function newStyle(ins) {
@@ -1886,6 +1903,26 @@ function parseEnvXML(env, parent, node) {
     return iterate(node, parent);
 }
 
+function makeTheme(root, space) {
+    Themes[space] = Themes[space] || {};
+    function imports(extend, themes) {
+        if ( $.isPlainObject(extend) ) {
+            $.extend(Themes[space], extend);
+            return this;
+        }
+        extend = extend.substr(2);
+        extend = Themes[extend] || {};
+        $.extend(Themes[space], extend, themes);
+        return this;
+    }
+    function var_ (value) {
+        var path = ph.fullPath(root, value);
+        var ret = ph.split(path);
+        return Themes[ret.dir][ret.basename];
+    }
+    return { imports: imports, var_: var_ };
+}
+
 // In order to implement the inheritance of components,
 // this global array is used to store the inherited components temporarily
 var Extends = [];
@@ -1929,8 +1966,13 @@ function xmlplus(root, callback) {
             $.error("invalid namespace, expected a null value or a string");
         return makePackage(root, space ? (root + "/" + space) : root);
     }
+    function createTheme(space) {
+        if ( $.type(space) != "string" && space != null )
+            $.error("invalid namespace, expected a null value or a string");
+        return makeTheme(root, space ? (root + "/" + space) : root);
+    }
     try {
-        callback.call(xmlplus, xmlplus, createPackage);
+        callback.call(xmlplus, xmlplus, createPackage, createTheme);
     } catch(error) {
         isReady = -1;
         throw error;
