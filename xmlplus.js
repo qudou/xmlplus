@@ -1688,21 +1688,21 @@ function CompManager() {
 function StyleManager() {
     var table = {},
         parent = $document.body ? $document.getElementsByTagName("head")[0] : $document.createElement("void");
-    var regexp = new RegExp("--[.-a-z0-9\\\/]+?(?=\\)|;|:|\\s)", "ig");
+        var regexp = new RegExp("var\\([.-a-z0-9\\\/]+?\\)", "ig");
     function cssText(ins) {
         var klass = ins.aid + ins.cid,
             text = ins.css.replace(WELL, "." + klass).replace(/\$/ig, klass);
         text = text.replaceAll(regexp, v => {
+            var v = v.substring(4, v.length - 1);
             var path = ph.fullPath(ins.dir+'/'+ins.node.localName.toLowerCase(), v);
+            console.log("ooo", v, path)
             var re = ph.split(path);
             var value = Themes[re.dir] && Themes[re.dir].vars[re.basename];
-            return value ? value : v;
+            return 'var(' + (value ? value : v) + ')';
         });
         return $document.createTextNode(text);
     }
     function newStyle(ins) {
-        var theme = Themes[ins.dir+'/'+ins.node.localName.toLowerCase()];
-        theme && addClass(ins.elem(), theme.cid);
         var style = $document.createElement("style");
         style.appendChild(cssText(ins));
         return parent.appendChild(style);
@@ -1723,6 +1723,8 @@ function StyleManager() {
         } else if ( ins.css ) {
             table[key] = { count: 1, style: newStyle(ins), ins: ins };
         }
+        var theme = Themes[ins.dir+'/'+ins.node.localName.toLowerCase()];
+        theme && addClass(ins.elem(), theme.cid);
         var id = ins.node.getAttribute("id");
         if ( id && ins.env.css.indexOf("#" + id) != -1 ) {
             addClass(ins.elem(), ins.env.aid + ins.env.cid + id);
@@ -1911,14 +1913,14 @@ function parseEnvXML(env, parent, node) {
 function makeTheme(root, space) {
     function imports(themes, prefix) {
         $.each(themes, (klass, theme) => {
-            let style = {},
+            let style = [],
                 classId = $.guid();
             for (let v in theme) {
-                style[v + classId] = theme[v];
+                style.push(`${v + classId}:${theme[v]}`);
                 theme[v] = v + classId;
             }
             let path = `${space}/${klass.toLowerCase()}`;
-            let css = JSON.stringify(style).replaceAll(/'|"/g, '').replaceAll(",", ';');
+            let css = `{${style.join(';')}}`
             prefix = prefix ? `.${prefix}` : "";
             Themes[path] = {cid: classId, vars: theme, css: `${prefix} .${classId} ${css}`};
         });
