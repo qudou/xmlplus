@@ -1679,25 +1679,21 @@ function CompManager() {
 function StyleManager() {
     var table = {},
         parent = $document.body ? $document.getElementsByTagName("head")[0] : $document.createElement("void");
-    function getVars(str) {
-        var ret, array = [];
-        var re = new RegExp("--[.-a-z0-9\\\/]+?(?=\\)|;|\\s)", "ig");
-        while(ret = re.exec(str))
-            array.push(ret[0]);
-        return array;
-    }
+    var regexp = new RegExp("--[.-a-z0-9\\\/]+?(?=\\)|;|\\s)", "ig");
     function cssText(ins) {
         var klass = ins.aid + ins.cid,
             text = ins.css.replace(WELL, "." + klass).replace(/\$/ig, klass);
-        getVars(text).forEach(function(key) {
-            var path = ph.fullPath(ins.dir+'/'+ins.node.localName.toLowerCase(), key);
+        text = text.replaceAll(regexp, var_ => {
+            var path = ph.fullPath(ins.dir+'/'+ins.node.localName.toLowerCase(), var_);
             var re = ph.split(path);
-            var value = Themes[re.dir] && Themes[re.dir][re.basename];
-            value && (text = text.replace(key, value));
+            var value = Themes[re.dir] && Themes[re.dir].value[re.basename];
+            return value ? value : var_;
         });
         return $document.createTextNode(text);
     }
     function newStyle(ins) {
+        var theme = Themes[ins.dir+'/'+ins.node.localName.toLowerCase()];
+        theme && addClass(ins.elem(), theme.cid);
         var style = $document.createElement("style");
         style.appendChild(cssText(ins));
         return parent.appendChild(style);
@@ -1904,23 +1900,23 @@ function parseEnvXML(env, parent, node) {
 }
 
 function makeTheme(root, space) {
-    Themes[space] = Themes[space] || {};
-    function imports(extend, themes) {
-        if ( $.isPlainObject(extend) ) {
-            $.extend(Themes[space], extend);
-            return this;
-        }
-        extend = extend.substr(2);
-        extend = Themes[extend] || {};
-        $.extend(Themes[space], extend, themes);
+    var head = $document.body ? $document.getElementsByTagName("head")[0] : $document.createElement("void");
+    function imports(themes, prefix) {
+        $.each(themes, (klass, item) => {
+            var path = space + '/' + klass.toLowerCase();
+            var obj = {}, cid = $.guid();
+            for (var k in item) {
+                obj[k+cid] = item[k];
+                item[k] = k+cid;
+            }
+            Themes[path] = {cid: cid, value: item};
+            var css = JSON.stringify(obj).replaceAll(/'|"/g, '').replaceAll(",", ';');
+            head.appendChild($document.createElement("style"));
+            head.lastChild.innerHTML = `.${prefix} .${cid} ${css}`;
+        });
         return this;
     }
-    function var_ (value) {
-        var path = ph.fullPath(root, value);
-        var ret = ph.split(path);
-        return Themes[ret.dir][ret.basename];
-    }
-    return { imports: imports, var_: var_ };
+    return { imports: imports };
 }
 
 // In order to implement the inheritance of components,
