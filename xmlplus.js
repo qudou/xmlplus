@@ -261,7 +261,7 @@ var ph = (function () {
         var i = path.lastIndexOf('/');
         return { dir: path.substring(0, i), basename: path.substr(i+1).toLowerCase() };
     }
-    // [/dir/foo, ..] => dir, [/dir, ./bar] => dir/bar
+    // [dir/foo, ..] => dir, [dir, ./bar] => dir/bar
     function fullPath(dir, patt) {
         var key = dir + patt;
         if ( table[key] )
@@ -797,7 +797,16 @@ $.extend(hp, (function () {
         result.css = (extend.css == "r") ? target.css : (source.css || '') + (target.css || '');
         return result;
     }
-    return { imports: imports, source: source, extend: extend, component: component };
+    var themeHasMade = false;
+    function makeTheme() {
+        if (themeHasMade) return;
+        var head = $document.body ? $document.getElementsByTagName("head")[0] : $document.createElement("void");
+        var cssText = "";
+        $.each(Themes, (klass, theme) => cssText += theme.css);
+        head.appendChild($document.createElement("style"));
+        head.lastChild.innerHTML = cssText;
+    }
+    return { imports: imports, source: source, extend: extend, component: component, makeTheme: makeTheme };
 }()));
 
 var Collection = (function () {
@@ -1679,15 +1688,15 @@ function CompManager() {
 function StyleManager() {
     var table = {},
         parent = $document.body ? $document.getElementsByTagName("head")[0] : $document.createElement("void");
-    var regexp = new RegExp("--[.-a-z0-9\\\/]+?(?=\\)|;|\\s)", "ig");
+    var regexp = new RegExp("--[.-a-z0-9\\\/]+?(?=\\)|;|:|\\s)", "ig");
     function cssText(ins) {
         var klass = ins.aid + ins.cid,
             text = ins.css.replace(WELL, "." + klass).replace(/\$/ig, klass);
-        text = text.replaceAll(regexp, var_ => {
-            var path = ph.fullPath(ins.dir+'/'+ins.node.localName.toLowerCase(), var_);
+        text = text.replaceAll(regexp, v => {
+            var path = ph.fullPath(ins.dir+'/'+ins.node.localName.toLowerCase(), v);
             var re = ph.split(path);
-            var value = Themes[re.dir] && Themes[re.dir].value[re.basename];
-            return value ? value : var_;
+            var value = Themes[re.dir] && Themes[re.dir].vars[re.basename];
+            return value ? value : v;
         });
         return $document.createTextNode(text);
     }
@@ -1900,19 +1909,18 @@ function parseEnvXML(env, parent, node) {
 }
 
 function makeTheme(root, space) {
-    var head = $document.body ? $document.getElementsByTagName("head")[0] : $document.createElement("void");
     function imports(themes, prefix) {
-        $.each(themes, (klass, item) => {
-            var path = space + '/' + klass.toLowerCase();
-            var obj = {}, cid = $.guid();
-            for (var k in item) {
-                obj[k+cid] = item[k];
-                item[k] = k+cid;
+        $.each(themes, (klass, theme) => {
+            let style = {},
+                classId = $.guid();
+            for (let v in theme) {
+                style[v + classId] = theme[v];
+                theme[v] = v + classId;
             }
-            Themes[path] = {cid: cid, value: item};
-            var css = JSON.stringify(obj).replaceAll(/'|"/g, '').replaceAll(",", ';');
-            head.appendChild($document.createElement("style"));
-            head.lastChild.innerHTML = `.${prefix} .${cid} ${css}`;
+            let path = `${space}/${klass.toLowerCase()}`;
+            let css = JSON.stringify(style).replaceAll(/'|"/g, '').replaceAll(",", ';');
+            prefix = prefix ? `.${prefix}` : "";
+            Themes[path] = {cid: classId, vars: theme, css: `${prefix} .${classId} ${css}`};
         });
         return this;
     }
@@ -2001,6 +2009,7 @@ function startup(xml, parent, param) {
         env.xml.getAttribute("id") || env.xml.setAttribute("id", $.guid());
         env.cfg[env.xml.getAttribute("id")] = param;
     }
+    hp.makeTheme();
     env.xml = env.xml.parentNode || xdocument.cloneNode().appendChild(env.xml).parentNode;
     fragment = inBrowser ? $document.createDocumentFragment() : parent;
     instance = parseEnvXML(env, fragment, env.xml.lastChild);
