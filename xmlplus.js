@@ -30,7 +30,7 @@ var xdocument, $document;
 var XPath, DOMParser_, XMLSerializer_, NodeElementAPI;
 var Manager = [HtmlManager(),CompManager(),,TextManager(),TextManager(),,,,TextManager(),,];
 var Formater = { "int": parseInt, "float": parseFloat, "bool": new Function("v","return v==true || v=='true';") };
-var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", defer: "", cfgs: {}, attrs: {}, format: {} }, fun: new Function };
+var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", defer: "", cfgs: {}, attrs: {}, format: {}, classes: {} }, fun: new Function };
 var isReady;
 
 // isHTML contains isSVG
@@ -58,8 +58,6 @@ var Store = {};
 // The Global stores the application objects created by the '$.startup' function. 
 // You can access the objects through the function '$.getElementById'.
 var Global = {};
-
-var Themes = {};
 
 var $ = {
     startup: startup,
@@ -333,6 +331,15 @@ var hp = {
     },
     css: function (elem, name) { 
         return elem.style[name] || getComputedStyle(elem, "").getPropertyValue(name);
+    },
+    addClass: function (elem, value) {
+        var klass = elem.getAttribute("class"),
+            input = value.split(/\s+/),
+            result = klass ? klass.split(/\s+/) : [];
+        for ( var i = 0; i < input.length; i++ )
+            if ( result.indexOf(input[i]) < 0 )
+                result.push(input[i]);
+        elem.setAttribute("class", result.join(" "));
     },
     callback: function () {
         var ret = this.fn.apply(this.data, [].slice.call(arguments));
@@ -797,16 +804,7 @@ $.extend(hp, (function () {
         result.css = (extend.css == "r") ? target.css : (source.css || '') + (target.css || '');
         return result;
     }
-    var themeHasMade = false;
-    function makeTheme() {
-        if (themeHasMade) return;
-        var head = $document.body ? $document.getElementsByTagName("head")[0] : $document.createElement("void");
-        var cssText = "";
-        $.each(Themes, (klass, theme) => cssText += theme.css);
-        head.appendChild($document.createElement("style"));
-        head.lastChild.innerHTML = cssText;
-    }
-    return { imports: imports, source: source, extend: extend, component: component, makeTheme: makeTheme };
+    return { imports: imports, source: source, extend: extend, component: component };
 }()));
 
 var Collection = (function () {
@@ -1688,18 +1686,9 @@ function CompManager() {
 function StyleManager() {
     var table = {},
         parent = $document.body ? $document.getElementsByTagName("head")[0] : $document.createElement("void");
-        var regexp = new RegExp("var\\([.-a-z0-9\\\/]+?\\)", "ig");
     function cssText(ins) {
         var klass = ins.aid + ins.cid,
             text = ins.css.replace(WELL, "." + klass).replace(/\$/ig, klass);
-        text = text.replaceAll(regexp, v => {
-            var v = v.substring(4, v.length - 1);
-            var path = ph.fullPath(ins.dir+'/'+ins.node.localName.toLowerCase(), v);
-            console.log("ooo", v, path)
-            var re = ph.split(path);
-            var value = Themes[re.dir] && Themes[re.dir].vars[re.basename];
-            return 'var(' + (value ? value : v) + ')';
-        });
         return $document.createTextNode(text);
     }
     function newStyle(ins) {
@@ -1707,14 +1696,22 @@ function StyleManager() {
         style.appendChild(cssText(ins));
         return parent.appendChild(style);
     }
-    function addClass(elem, value) {
-        var klass = elem.getAttribute("class"),
-            input = value.split(/\s+/),
-            result = klass ? klass.split(/\s+/) : [];
-        for ( var i = 0; i < input.length; i++ )
-            if ( result.indexOf(input[i]) < 0 )
-                result.push(input[i]);
-        elem.setAttribute("class", result.join(" "));
+    function mapClasses(env, node, elem) {
+        var classes = [],
+            id = node.getAttribute("id");
+        if ( id && env.map.classes[id] )
+            classes = env.map.classes[id].split(' ');
+        classes.forEach(function (klass) {
+            var path = ph.fullPath(env.dir, klass);
+            var re = ph.split(path);
+            var basename = re.basename;
+            var s = ph.split(re.dir);
+            re = Library[s.dir] && Library[s.dir][s.basename];
+            if (re) {
+                 basename = basename.replace('#', env.aid + re.cid);
+                 hp.addClass(elem, basename);
+            }
+        });
     }
     function create(ins) {
         var key = ins.env.aid + ins.cid;
@@ -1723,11 +1720,10 @@ function StyleManager() {
         } else if ( ins.css ) {
             table[key] = { count: 1, style: newStyle(ins), ins: ins };
         }
-        var theme = Themes[ins.dir+'/'+ins.node.localName.toLowerCase()];
-        theme && addClass(ins.elem(), theme.cid);
+        mapClasses(ins.env, ins.node, ins.elem());
         var id = ins.node.getAttribute("id");
         if ( id && ins.env.css.indexOf("#" + id) != -1 ) {
-            addClass(ins.elem(), ins.env.aid + ins.env.cid + id);
+            hp.addClass(ins.elem(), ins.env.aid + ins.env.cid + id);
         }
     }
     function remove(ins) {
@@ -1910,25 +1906,6 @@ function parseEnvXML(env, parent, node) {
     return iterate(node, parent);
 }
 
-function makeTheme(root, space) {
-    function imports(themes, prefix) {
-        $.each(themes, (klass, theme) => {
-            let style = [],
-                classId = $.guid();
-            for (let v in theme) {
-                style.push(`${v + classId}:${theme[v]}`);
-                theme[v] = v + classId;
-            }
-            let path = `${space}/${klass.toLowerCase()}`;
-            let css = `{${style.join(';')}}`
-            prefix = prefix ? `.${prefix}` : "";
-            Themes[path] = {cid: classId, vars: theme, css: `${prefix} .${classId} ${css}`};
-        });
-        return this;
-    }
-    return { imports: imports };
-}
-
 // In order to implement the inheritance of components,
 // this global array is used to store the inherited components temporarily
 var Extends = [];
@@ -2011,7 +1988,6 @@ function startup(xml, parent, param) {
         env.xml.getAttribute("id") || env.xml.setAttribute("id", $.guid());
         env.cfg[env.xml.getAttribute("id")] = param;
     }
-    hp.makeTheme();
     env.xml = env.xml.parentNode || xdocument.cloneNode().appendChild(env.xml).parentNode;
     fragment = inBrowser ? $document.createDocumentFragment() : parent;
     instance = parseEnvXML(env, fragment, env.xml.lastChild);
