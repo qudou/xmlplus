@@ -120,7 +120,7 @@ xmlplus("bob", function (xp, $_) {
 
 ## 路径
 
-前面说过一个命名空间的完整引用必需从根命名空间开始，并且以双斜杆开头。这种组件的引用方式叫做绝对路径引用。除此以外，还有另一种组件的引用方式，叫做为相对路径引用。下面对这两者分别进行论述。
+前面说过一个命名空间的完整引用必需从根命名空间开始，并且以双斜杆开头。这种组件的引用方式叫做绝对路径引用。除此以外，还有另一种组件的引用方式，叫做相对路径引用。下面对这两者分别进行论述。
 
 ### 绝对路径
 
@@ -168,7 +168,7 @@ xmlplus("xp", function (xp, $_) {
 xmlplus("xp", function (xp, $_) {
     $_().imports({
         Index: {
-            xml: "<i:Calendar xmlns:i='.'/>" // 或者<Calendar/>也可以
+            xml: "<i:Calendar xmlns:i='.'/>" // 或者<Calendar/>
         },
         Calendar: {}
     });
@@ -186,7 +186,7 @@ xmlplus("xp", function (xp, $_) {
     });
     $_("form").imports({
         Index: {
-            xml: "<i:Calendar xmlns:i='..'/>"
+            xml: "<i:Calendar xmlns:i='..'/>" // 或者<Calendar xmlns='..'/>
         }
     });
 });
@@ -209,7 +209,7 @@ xmlplus.startup("//xp/Calendar", parent);
 xmlplus.startup("//xp/Calendar", "parent"); 
 ```
 
-另外如果不提供第二个参数，那么将采用默认值作为组件实例化后被追加到的 DOM 元素对象。在浏览器端该默认值为 `window.body`，在服务端该值由系统内部创建。
+另外，如果不提供第二个参数，那么将采用默认值作为组件实例化后被追加到的 DOM 元素对象。在浏览器端该默认值为 `window.body`，在服务端该值由系统内部创建。
 
 下面是另一种组件的执行方式，它明确给出了组件的 XML 字符串描述，这与前一种方式等价。
 
@@ -254,7 +254,7 @@ xmlplus.startup("//xp/Calendar", "parent", {date: "2016/01/01"});
 </html>
 ```
 
-如果要禁用这种解析方式，并以函数 `startup` 启动当然也是可以的，只要给 body 添加属性 `noparse` 即可。例如，默认情况下，下面示例中的组件 Index 不会实例化，除非你使用函数 `startup` 显示地实例化它。
+如果要禁用这种解析方式，并以函数 `startup` 启动当然也是可以的，只要给 body 添加属性 `init='false'` 即可。例如，默认情况下，下面示例中的组件 Index 不会实例化，除非你使用函数 `startup` 显示地实例化它。
 
 ```html
 <!DOCTYPE html>
@@ -263,7 +263,7 @@ xmlplus.startup("//xp/Calendar", "parent", {date: "2016/01/01"});
         <script src="xmlplus.js"></script>
         <script src="index.js"></script>
     </head>
-    <body noparse="true">
+    <body init="false">
         <i:Index xmlns:i="//xp"></i:Index>
     </body>
 </html>

@@ -2011,7 +2011,7 @@ function startup(xml, parent, param) {
             define( "xmlplus", [], new Function("return xmlplus;"));
         hp.ready(function () {
             if ( isReady !== -1 ) {
-                rdoc.body.hasAttribute("noparse") || hp.parseHTML(rdoc.body);
+                rdoc.body.getAttribute("init") == "false" || hp.parseHTML(rdoc.body);
                 isReady = true;
             }
         });
