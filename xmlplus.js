@@ -261,7 +261,7 @@ var ph = (function () {
         var i = path.lastIndexOf('/');
         return { dir: path.substring(0, i), basename: path.substr(i+1).toLowerCase() };
     }
-    // [dir/foo, ..] => dir, [dir, ./bar] => dir/bar
+    // (dir/foo, ..) => dir, (dir, ./bar) => dir/bar
     function fullPath(dir, patt) {
         var key = dir + patt;
         if ( table[key] )
