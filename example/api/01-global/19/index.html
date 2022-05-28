@@ -2,9 +2,11 @@
 <html>
     <head>
         <script src="../../../../xmlplus.js"></script>
-        <script src="index.js"></script>
+        <script>
+			console.log(xp.hasComponent(null));         // false
+			console.log(xp.hasComponent("div"));        // true
+			console.log(xp.hasComponent("//xp/Index")); // false 或者一个组件的 JSON 描述，这取决于实际的应用
+		</script>
     </head>
-    <body>
-        <i:Example xmlns:i="//xp"></i:Example>
-    </body>
+    <body></body>
 </html>

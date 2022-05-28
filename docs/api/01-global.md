@@ -15,7 +15,7 @@ startup(object[,parent][,options])
 
 ```js
 // 01-01
-xmlplus("xp", function (xp, $_, t) {
+xmlplus("xp", function (xp, $_) {
     $_().imports({
         Example: {
             xml: "<h1>hello, world</h1>"
@@ -36,7 +36,7 @@ create(path[,options])
 - `options` : `Anything` 为目标组件提供初始输入值
 - `Returns` : `Anything` 实例化出的组件对象
 
-该函数是一个轻量的用于创建组件对象的函数，它只是简单地调用组件的函数项来返回所需的对象。
+该函数是一个用于创建轻量的组件对象的函数，它只是简单地调用组件的函数项来返回所需的对象。
 
 ```js
 // 01-02
@@ -304,6 +304,23 @@ var xmlDoc = xp.parseXML(xml);
 console.log(xmlDoc.lastChild.nodeName); // title
 ```
 
+## serialize
+
+```js
+serialize(node)
+```
+
+- `node` : `HTMLElement | XMLElement` DOM 节点
+- `Returns` : `String` XML 字符串
+
+序列化指定的 DOM 节点，序列化后的结果包含节点的子级。
+
+```js
+// 01-17
+// <h1 xmlns="http://www.w3.org/1999/xhtml" id="h1">hello,world</h1>
+console.log(xp.serialize(document.getElementById("h1")));
+```
+
 ## hasNamespace
 
 ```js
@@ -316,7 +333,7 @@ hasNamespace(object)
 判定当前系统是否包含给定的命名空间，如果包含则返回 `true`，否则返回 `false`。
 
 ```js
-// 01-17
+// 01-18
 console.log(xp.hasNamespace(null));         // false
 console.log(xp.hasNamespace("div"));        // false
 console.log(xp.hasNamespace("//xp/Index")); // true 或者 false，这取决于实际的应用
@@ -334,7 +351,7 @@ hasComponent(object)
 判定当前系统中是否包含给定的组件，如果不包含则返回 `false`；如果是 HTML 标签，则返回 `true`；否则返回组件的 JSON 描述。
 
 ```js
-// 01-18
+// 01-19
 console.log(xp.hasComponent(null));         // false
 console.log(xp.hasComponent("div"));        // true
 console.log(xp.hasComponent("//xp/Index")); // false 或者一个组件的 JSON 描述，这取决于实际的应用
@@ -352,7 +369,7 @@ messages(object)
 根据给定的系统对象，返回该对象所在消息作用域内的所有已被侦听的消息字符串。请参考下面的示例。
 
 ```js
-// 01-19
+// 01-20
 Example: {
     xml: "<div id='example'/>",
     fun: function (sys, items, opts) {
@@ -376,7 +393,7 @@ getElementById(id[,isGuid])
 由给定的标识符获取相关对象。这需要分三种情况来看。如果 `isGuid` 为 `true`，那么将返回系统对象。请参考下面的示例。
 
 ```js
-// 01-20
+// 01-21
 Example: {
     xml: "<div id='example'/>",
     fun: function (sys, items, opts) {

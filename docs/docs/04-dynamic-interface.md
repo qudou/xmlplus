@@ -11,6 +11,7 @@
 全局接口由全局对象 xmlplus 或 xp 提供。下面给出的是所有的全局接口列表。
 
 - [startup](/api#全局_startup)：实例化一个组件
+- [create](/api#全局_create)：用于创建轻量的组件对象
 - [guid](/api#全局_guid)：获取系统内的唯一的全局标识符
 - [error](/api#全局_error)：抛出一个错误
 - [ready](/api#全局_ready)：在页面文档加载后激活回调函数
@@ -25,8 +26,10 @@
 - [extend](/api#全局_extend)：将两个或多个对象的内容合并到第一个对象中
 - [each](/api#全局_each)：遍历一个数组或者其它对象
 - [parseXML](/api#全局_parseXML)：将给定的字符串解析为 XML 文档
+- [serialize](/api#全局_serialize)：序列化指定的 DOM 节点
 - [hasNamespace](/api#全局_hasNamespace)：判定当前系统是否包含给定的命名空间
 - [hasComponent](/api#全局_hasComponent)：判定当前系统中是否包含给定的组件
+- [messages](/api#全局_messages)：获取给定系统对象所在消息作用域内的所有已被侦听的消息字符串
 - [getElementById](/api#全局_getElementById)：由给定的标识符获取相关对象
 
 对于这些接口的使用，下面仅给出了几个示例，具体内容请参看 [全局接口](/api#全局)。

@@ -1,10 +1,11 @@
-xmlplus("xp", function (xp, $_, t) {
+xmlplus("xp", function (xp, $_) {
     $_().imports({
         Example: {
             xml: "<div id='example'/>",
             fun: function (sys, items, opts) {
-                var guid = sys.example.guid();
-                console.log(sys.example == xp.getElementById(guid, true)); // true
+                this.watch("foo", ()=> console.log("foo"));
+                this.watch("bar", ()=> console.log("bar"));
+                console.log(xp.messages(this)); // ["foo", "bar"]
             }
         }
     });

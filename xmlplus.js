@@ -24,8 +24,8 @@ var svgns = "http://www.w3.org/2000/svg";
 var htmlns = "http://www.w3.org/1999/xhtml";
 var xlinkns = "http://www.w3.org/1999/xlink";
 
-// xdocument is for virtual DOM, and $document is for real DOM.
-var xdocument, $document;
+// vdoc is for virtual DOM, and rdoc is for real DOM.
+var vdoc, rdoc;
 
 var XPath, DOMParser_, XMLSerializer_, NodeElementAPI;
 var Manager = [HtmlManager(),CompManager(),,TextManager(),TextManager(),,,,TextManager(),,];
@@ -204,13 +204,15 @@ var $ = {
         return Library[s.dir] && Library[s.dir][s.basename] || false;
     },
     messages: function (obj) {
+        if (!$.isSystemObject(obj))
+            $.error("invalid input, expected a SystemObject");
         var item = Store[obj.guid()];
         return item && item.ctr.messages() || [];
     },
     getElementById: function (id, isGuid) {
         if ( isGuid )
             return Store[id] && Store[id].api;
-        return inBrowser ? (Global[id] || $document.getElementById(id)) : null;
+        return inBrowser ? (Global[id] || rdoc.getElementById(id)) : null;
     }
 };
 
@@ -288,26 +290,26 @@ var hp = {
         if ( typeof input != "string" )
             $.error("invalid input, expected a string or a xml node");
         if ( isHTML[input] )
-            return xdocument.createElement(input);
+            return vdoc.createElement(input);
         if ( input.charAt(0) == '<' ) try {
             return $.parseXML(input).lastChild;
         } catch (e) {
-            return xdocument.createTextNode(input);
+            return vdoc.createTextNode(input);
         }
         var i = input.lastIndexOf('/'),
             dir = ph.fullPath(dir || "", input.substring(0, i) || "."),
             basename = input.substr(i+1);
         if ( Library[dir] && Library[dir][basename.toLowerCase()] )
-            return xdocument.createElementNS("//" + dir, 'i:' + basename);
-        return xdocument.createTextNode(input);
+            return vdoc.createElementNS("//" + dir, 'i:' + basename);
+        return vdoc.createTextNode(input);
     },
     defDisplay: (function () {
         var elemDisplay = {};
         return function ( nodeName ) {
             var elem, display;
             if (!elemDisplay[nodeName]) {
-                elem = $document.createElement(nodeName);
-                $document.body.appendChild(elem);
+                elem = rdoc.createElement(nodeName);
+                rdoc.body.appendChild(elem);
                 display = getComputedStyle(elem, "").getPropertyValue("display");
                 elem.parentNode.removeChild(elem);
                 display == "none" && (display = "block");
@@ -320,7 +322,7 @@ var hp = {
         var parent = elem.offsetParent;
         while ( parent && hp.css(parent, "position") == "static" )
             parent = parent.offsetParent;
-        return parent || $document.documentElement; 
+        return parent || rdoc.documentElement; 
     },
     offset: function (elem) {
         var obj = elem.getBoundingClientRect();
@@ -388,7 +390,7 @@ var hp = {
         var buffer = {};
         return function ( node, parent ) {
             var nodeName = node.nodeName;
-            buffer[nodeName] || (buffer[nodeName] = $document.createElementNS(isSVG[nodeName] ? svgns : (isHTML[nodeName] ? htmlns : node.namespaceURI), nodeName));
+            buffer[nodeName] || (buffer[nodeName] = rdoc.createElementNS(isSVG[nodeName] ? svgns : (isHTML[nodeName] ? htmlns : node.namespaceURI), nodeName));
             var elem = buffer[nodeName].cloneNode();
             parent.appendChild(elem);
             for ( var i = 0; i < node.attributes.length; i++ ) {
@@ -1009,7 +1011,7 @@ var EventModuleAPI = (function () {
     }
     function Event(type, bubble) {
         var canBubble = !(bubble === false),
-            event = $document.createEvent(specialEvents[type] || "Events");
+            event = rdoc.createEvent(specialEvents[type] || "Events");
         event.initEvent(type, canBubble, true);
         return event;
     }
@@ -1046,7 +1048,7 @@ var CommonElementAPI = {
             this.node.data = elem.lastChild.data = value + "";
         } else {
             this.api.kids(0).call("remove");
-            this.api.append(xdocument.createTextNode(value + ""));
+            this.api.append(vdoc.createTextNode(value + ""));
         }
         return this;
     },
@@ -1142,7 +1144,7 @@ var CommonElementAPI = {
             this.node.appendChild(src.node);
             Manager[src.typ].chenv(this.env, src);
             if ( isTop ) {
-                srcEnv.xml.appendChild(xdocument.createElement("void"));
+                srcEnv.xml.appendChild(vdoc.createElement("void"));
                 parseEnvXML(srcEnv, srcParent, srcEnv.xml.lastChild);
             }
             srcEnv.fdr.refresh();
@@ -1174,7 +1176,7 @@ var CommonElementAPI = {
             elem.parentNode.insertBefore(src.elem(), elem);
             Manager[src.typ].chenv(this.env, src);
             if ( isTop ) {
-                srcEnv.xml.appendChild(xdocument.createElement("void"));
+                srcEnv.xml.appendChild(vdoc.createElement("void"));
                 parseEnvXML(srcEnv, srcParent, srcEnv.xml.lastChild);
             }
             srcEnv.fdr.refresh();
@@ -1207,7 +1209,7 @@ var CommonElementAPI = {
             this.node = src.node;
             Manager[src.typ].chenv(this.env, src);
             if ( isTop ) {
-                srcEnv.xml.appendChild(xdocument.createElement("void"));
+                srcEnv.xml.appendChild(vdoc.createElement("void"));
                 parseEnvXML(srcEnv, srcParent, srcEnv.xml.lastChild);
             }
             srcEnv.fdr.refresh();
@@ -1539,7 +1541,7 @@ var TextElement = (function() {
     return function ( node, parent ) {
         var o = { uid: $.guid() };
         o.typ = node.nodeType;
-        o.ele = $document["create" + types[o.typ]](node.nodeValue);
+        o.ele = rdoc["create" + types[o.typ]](node.nodeValue);
         return o;
     };
 }());
@@ -1619,7 +1621,7 @@ function setComponent(env, ins) {
     if ( !share ) {
         ins.api = ins.back;
     } else if ( share.ins ) {
-        ins.xml.replaceChild(xdocument.createElement("void"), ins.xml.lastChild);
+        ins.xml.replaceChild(vdoc.createElement("void"), ins.xml.lastChild);
         ins.api = hp.build(ins, CopyElementAPI);
         share.copys.push(ins);
         ins.fun = function () {return share.ins.value;};
@@ -1685,14 +1687,14 @@ function CompManager() {
 
 function StyleManager() {
     var table = {},
-        parent = $document.body ? $document.getElementsByTagName("head")[0] : $document.createElement("void");
+        parent = rdoc.body ? rdoc.getElementsByTagName("head")[0] : rdoc.createElement("void");
     function cssText(ins) {
         var klass = ins.aid + ins.cid,
             text = ins.css.replace(WELL, "." + klass).replace(/\$/ig, klass);
-        return $document.createTextNode(text);
+        return rdoc.createTextNode(text);
     }
     function newStyle(ins) {
-        var style = $document.createElement("style");
+        var style = rdoc.createElement("style");
         style.appendChild(cssText(ins));
         return parent.appendChild(style);
     }
@@ -1808,7 +1810,7 @@ function setDeferNode(env, node) {
     }
     var id = newNode.getAttribute("id");
     if ( index != -1 || (id && env.map.defer.indexOf(id) != -1) ) {
-        newNode = xdocument.createElement("void");
+        newNode = vdoc.createElement("void");
         id && newNode.setAttribute("id", id);
         node.parentNode.replaceChild(newNode, node);
         newNode.defer = node;
@@ -1971,11 +1973,11 @@ function startup(xml, parent, param) {
         $.error("target type must be ELEMENT_NODE");
     if ( $.isPlainObject(parent) ) {
         param = parent;
-        parent = $document.body || $document.cloneNode();
+        parent = rdoc.body || rdoc.cloneNode();
     } else if ( parent === undefined ) {
-        parent = $document.body || $document.cloneNode();
+        parent = rdoc.body || rdoc.cloneNode();
     } else if ( typeof parent == "string" ) {
-        parent =  $document.getElementById(parent);
+        parent =  rdoc.getElementById(parent);
         if (!parent)
             $.error("parent element " + parent + " not found");
     }
@@ -1988,8 +1990,8 @@ function startup(xml, parent, param) {
         env.xml.getAttribute("id") || env.xml.setAttribute("id", $.guid());
         env.cfg[env.xml.getAttribute("id")] = param;
     }
-    env.xml = env.xml.parentNode || xdocument.cloneNode().appendChild(env.xml).parentNode;
-    fragment = inBrowser ? $document.createDocumentFragment() : parent;
+    env.xml = env.xml.parentNode || vdoc.cloneNode().appendChild(env.xml).parentNode;
+    fragment = inBrowser ? rdoc.createDocumentFragment() : parent;
     instance = parseEnvXML(env, fragment, env.xml.lastChild);
     inBrowser && parent.appendChild(fragment);
     instance = $.extend(hp.create(instance).api, {style: env.smr.style});
@@ -2001,15 +2003,15 @@ function startup(xml, parent, param) {
         XPath = window.xpath || { select: hp.xpathQuery };
         DOMParser_ = DOMParser;
         XMLSerializer_ = XMLSerializer;
-        $document = document;
-        xdocument = $.parseXML("<void/>");
+        rdoc = document;
+        vdoc = $.parseXML("<void/>");
         NodeElementAPI = $.extend(ClientElementAPI, EventModuleAPI, CommonElementAPI);
         window.xmlplus = window.xp = $.extend(xmlplus, $);
         if ( typeof define === "function" && define.amd )
             define( "xmlplus", [], new Function("return xmlplus;"));
         hp.ready(function () {
             if ( isReady !== -1 ) {
-                $document.body.hasAttribute("noparse") || hp.parseHTML($document.body);
+                rdoc.body.hasAttribute("noparse") || hp.parseHTML(rdoc.body);
                 isReady = true;
             }
         });
@@ -2018,7 +2020,7 @@ function startup(xml, parent, param) {
         XPath = require("xpath");
         DOMParser_ = require("exmldom").DOMParser;
         XMLSerializer_ = require("exmldom").XMLSerializer;
-        xdocument = $document = $.parseXML("<void/>");
+        vdoc = rdoc = $.parseXML("<void/>");
         NodeElementAPI = $.extend(ServerElementAPI, EventModuleAPI, CommonElementAPI);
         module.exports = $.extend(xmlplus, $);
     }
