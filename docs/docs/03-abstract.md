@@ -62,11 +62,11 @@ function (sys, items, opts) {
         for (var i = 0; i < inputs.length; i++)
             inputs[i].prop("value", input[i]);
     }
-    return Object.defineProperty({}, "value", { get: getValue, set: setValue });
+    return Object.defineProperty({}, "val", { get: getValue, set: setValue });
 }
 ```
 
-在函数项中，组件对象 `sys.box` 侦听了各文本框对象的 `keypress` 事件，回调函数过滤非数字输入，且当输入达到 3 个字符长时，光标自动跳转到下一输入框并选中该框内容。此外，函数项还返回了一个用于设置和读取 IP 值的接口。此处涉及到事件通信相关的内容，后续会有专门的章节讲述，这里先略过。
+在函数项中，组件对象 `sys.box` 侦听了各文本框对象的 `keypress` 事件，回调函数过滤非数字输入，且当输入达到 3 个字符长时，光标自动跳转到下一输入框并选中该框内容。此外，函数项还返回了一个用于设置和读取 IP 值的接口。
 
 ## 使用 IPv4 输入框组件
 
@@ -81,17 +81,17 @@ Index: {
               掩码：<IPv4Box id='musk'/>\
           </div>",
     fun: function (sys, items, opts) {
-        items.addr.value = "192.168.0.1";
-        items.musk.value = "255.255.255.0";
-        console.log("addr", items.addr.value);
-        console.log("musk", items.musk.value);
+        items.addr.val = "192.168.0.1";
+        items.musk.val = "255.255.255.0";
+        console.log("addr", items.addr.val);
+        console.log("musk", items.musk.val);
     }
 }
 ```
 
-由于组件 IPv4Box 与 Index 同属于一个命名空间，所以可以忽略命名空间的引用。在组件 Index 中，实例化了两个 IPv4Box 组件，分别命名为 addr 和 musk。函数项通过参数 `items` 引用了值对象 addr 和 musk，并调用接口 `value` 获取与设置相应的 IP 值。
+由于组件 IPv4Box 与 Index 同属于一个命名空间，所以可以忽略命名空间的引用。在组件 Index 中，实例化了两个 IPv4Box 组件，分别命名为 addr 和 musk。函数项通过参数 `items` 引用了值对象 addr 和 musk，并调用接口 `val` 获取与设置相应的 IP 值。
 
-注意，这里调用的组件 IPv4Box 返回的 `value` 接口是通过 `items.addr` 和 `items.musk` 得到的。参数 `sys` 包含同名的系统对象 addr 和 musk 的引用，并且也有一个 `value` 函数，但与值对象接口中的 `value` 是两个不同的东西。
+注意，这里调用的组件 IPv4Box 返回的 `val` 接口是通过 `items.addr` 和 `items.musk` 得到的。参数 `sys` 包含同名的系统对象 addr 和 musk 的引用，并且也有一个 `val` 函数，但与值对象接口中的 `val` 是两个不同的东西。
 
 ## 组件 Ipv4Box 所定义的抽象
 

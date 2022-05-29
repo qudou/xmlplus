@@ -7,10 +7,10 @@ xmlplus("xp", function (xp, $_, t) {
                       掩码：<IPv4Box id='musk'/>\
                   </div>",
             fun: function (sys, items, opts) {
-                items.addr.value = "192.168.0.1";
-                items.musk.value = "255.255.255.0";
-                console.log("addr", items.addr.value);
-                console.log("musk", items.musk.value);
+                items.addr.val = "192.168.0.1";
+                items.musk.val = "255.255.255.0";
+                console.log("addr", items.addr.val);
+                console.log("musk", items.musk.val);
             }
         },
         IPv4Box: {
@@ -40,7 +40,7 @@ xmlplus("xp", function (xp, $_, t) {
                     for (var i = 0; i < inputs.length; i++)
                         inputs[i].prop("value", input[i]);
                 }
-                return Object.defineProperty({}, "value", { get: getValue, set: setValue });
+                return Object.defineProperty({}, "val", { get: getValue, set: setValue });
             }
         }
     });

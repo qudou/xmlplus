@@ -88,7 +88,7 @@ every | forEach | indexOf | map | pop | push | shift | slice | some | splice | u
 
 ### 与组件生命周期相关的接口
 
-这类接口主要完成组件对象的创建、移除与替换的操作。
+这类接口主要完成组件对象的创建、替换与移除的操作。
 
 - [append](/api#生命周期_append)：给当前组件对象子级追加一个组件对象
 - [before](/api#生命周期_before)：在当前组件对象之前插入一个组件对象
@@ -109,7 +109,7 @@ every | forEach | indexOf | map | pop | push | shift | slice | some | splice | u
 - [last](/api#检索_last)：获取当前节点的最后一个子节点对象，返回系统对象
 - [next](/api#检索_next)：获取当前节点的下一个节点对象，返回系统对象
 - [prev](/api#检索_prev)：获取当前节点的前一个节点对象，返回系统对象
-- [children](/api#检索_children)：获取当前节点的所有子节点对象，返回系统对象集
+- [kids](/api#检索_kids)：获取当前节点的所有子节点对象，返回系统对象集
 
 上面的接口中，前两个比较特殊，它们属于通用检索接口，分别等于函数项的前两个参数。它们的用法在后续章节[《检索》](docs#searching)中会有详细的介绍。
 
@@ -132,14 +132,12 @@ every | forEach | indexOf | map | pop | push | shift | slice | some | splice | u
 
 这类接口用于获取或者设置与组件对象相关联的一些信息。
 
-- [value](/api#其它_value)：获取组件对象的值对象
+- [val](/api#其它_val)：获取组件对象的值对象
 - [localName](/api#其它_localName)：获取组件对象相应的组件名
 - [namespace](/api#其它_namespace)：获取组件对象所属的命名空间
 - [guid](/api#其它_guid)：获取组件对象的唯一标识符
 - [toString](/api#其它_toString)：获得组件对象的 id 或者唯一标识符
 - [serialize](/api#其它_serialize)：序列化视图项或者视图项所对应的 HTML DOM 文档树
-- [data](/api#其它_data)：获取或者设置组件所绑定的数据
-- [removeData](/api#其它_removeData)：移除组件所绑定的数据
 
 ## 值对象接口
 
@@ -150,24 +148,24 @@ every | forEach | indexOf | map | pop | push | shift | slice | some | splice | u
 Index: {
     xml: "<Ipv4Box id='ipbox'/>",
     fun: function (sys, items, opts) {
-        items.ipbox.value = "192,168,0,1";
-        console.log(items.ipbox.value);
+        items.ipbox.val = "192,168,0,1";
+        console.log(items.ipbox.val);
         console.log(sys.ipbox.val() == items.ipbox);
     }
 }
 ```
 
-对于接口 value 的使用，前一章已经讲过了，这里主要注意函数项的最后一行。运行示例，控制台打印出的值是 `true`，这说明系统函数 `sys.ipbox.value` 的返回值与 `items.ipbox` 是相等的。下面是 `value` 接口的一种可能的使用方式：
+对于接口 val 的使用，前一章已经讲过了，这里主要注意函数项的最后一行。运行示例，控制台打印出的值是 `true`，这说明系统函数 `sys.ipbox.val` 的返回值与 `items.ipbox` 是相等的。下面是 `val` 接口的一种可能的使用方式：
 
 ```js
-sys.ipbox.css("color","blue").val().value = "192,168,0,1";
+sys.ipbox.css("color","blue").val().val = "192,168,0,1";
 ```
 
-上面代码中，系统函数 `css` 返回的是 `sys.ipbox` 的引用。系统函数 `value` 属于 `sys.ipbox` 的一个接口。`value` 函数不用提供任何的输入参数，它返回的是对等的 `items.ipbox` 的引用。在某些场合，这可以简化代码的书写。
+上面代码中，系统函数 `css` 返回的是 `sys.ipbox` 的引用。系统函数 `val` 属于 `sys.ipbox` 的一个接口。`val` 函数不用提供任何的输入参数，它返回的是对等的 `items.ipbox` 的引用。在某些场合，这可以简化代码的书写。
 
 ## 不同类型对象之间的接口差异
 
-在[《组件与空间》](/docs#组件与空间)中，描述了系统内部的五种组件类型。按照拥有的接口数量划分，可以分为两类，其中 HTML 元素对象和自定义组件对象拥有所有的系统对象接口（排除 `sys` 与 `items`），而其余的组件，包括文本，CDATASection 描述以及注释，则只拥有如下的部分系统接口。
+在[《组件与空间》](/docs#组件与空间)中，描述了系统内部的五种组件类型。按照拥有的接口数量划分，可以分为两类，其中 HTML 元素和自定义组件拥有所有的系统对象接口（排除 `sys` 与 `items`），而其余的组件，包括文本，CDATASection 描述以及注释，则只拥有如下的部分系统接口。
 
 - [before](/api#生命周期_before)：在当前对象之前插入一个对象
 - [replace](/api#生命周期_replace)：替换掉当前对象
@@ -178,7 +176,7 @@ sys.ipbox.css("color","blue").val().value = "192,168,0,1";
 - [guid](/api#其它_guid)：获取组件对象的唯一标识符
 - [toString](/api#其它_toString)：获得组件对象的 id 或者唯一标识符
 
-另外，根据系统的运行环境不同，HTML 元素对象和自定义组件对象所拥有系统对象接口也有区别。在浏览器端，它们拥有前面所述的所有系统对象接口。但在服务端，以下接口不可见。
+另外，根据系统的运行环境不同，HTML 元素和自定义组件所拥有系统对象接口也有区别。在浏览器端，它们拥有前面所述的所有系统对象接口。但在服务端，以下接口并不可见。
 
 - [width](/api#DOM_width)：获取或者设置节点的宽度
 - [height](/api#DOM_height)：获取或者设置节点的高度
