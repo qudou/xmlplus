@@ -42,16 +42,16 @@ Index: {
 ```js
 // 05-03
 Index: {
-    cfg: { button: { fontSize: 16 } },
+    cfg: { buttons: { fontSize: 16 } },
     xml: "<div id='index'>\
               <Button id='foo'/>\
               <Button id='bar'/>\
           </div>",
-    ali: { button: "//Button" }
+    ali: { buttons: "//Button" }
 }
 ```
 
-在该示例中，别名项指定所有的 Button 组件对象的名称为 "button"。于是在配置项中，`fontSize` 的目标对象也就包含了所有的 Button 组件对象，从而组件对象 foo 和 bar 的 `fontSize` 初始值都会被设置成 `16`。
+在该示例中，别名项指定所有的 Button 组件对象的名称为 "buttons"。于是在配置项中，`fontSize` 的目标对象也就包含了所有的 Button 组件对象，从而组件对象 foo 和 bar 的 `fontSize` 初始值都会被设置成 `16`。
 
 ## 属性值作为输入初始值
 
@@ -64,7 +64,7 @@ Index: {
 }
 ```
 
-上面的 `fontSize` 值在实例化时会以字符串的形式被主动映射到组件 Button 的参数项中，从而覆盖原始的默认值。这种指定初始值的方式是最方便，但也有其局限性。因为它只能提供简单形式的输入。如果初始输入是一个复杂的对象，它就无能为力了。
+上面的 `fontSize` 值在实例化时会以字符串的形式被主动映射到组件 Button 的参数项中，从而覆盖原始的默认值。这种指定初始值的方式是最方便，但也有其局限性。因为它只能提供简单形式的输入。如果初始输入是一个复杂的对象，它就不那么方便了。
 
 默认情况下，属性值会以字符串的形式被映射到组件的参数项中。如果期望得到的是数值型或者布尔型，就要在组件的映射项中指定格式化参数 `format`。
 
@@ -96,9 +96,9 @@ Format: {
 ```js
 // 05-06
 Index: {
-    cfg: { foo: { fontSize: 10 }, button: { fontSize: 11 } },
+    cfg: { foo: { fontSize: 10 }, buttons: { fontSize: 11 } },
     xml: "<Button id='foo' fontSize='12'/>",
-    ali: { button: "//button" }
+    ali: { buttons: "//button" }
 }
 ```
 
@@ -106,7 +106,7 @@ Index: {
 
 - A：使用默认的 `fontSize`，其值为 `24`
 - B：使用 `cfg` 中 foo 的设置，其值为 `10`
-- C：使用 `cfg` 中 button 的设置，其值为 `11`
+- C：使用 `cfg` 中 buttons 的设置，其值为 `11`
 - D：使用属性值，其值为 `12`
 
 为了测定优先级，你可以每次测定出最高优先级的输入后，将其记录下来，然后移除它。之后再测定出次优先级别的配置，以此类推。那么你最终得到的优先级次序是这样的：

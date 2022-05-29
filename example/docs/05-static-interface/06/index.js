@@ -1,9 +1,9 @@
-xmlplus("xp", function ( xp, $_, t) {
+xmlplus("xp", function ( xp, $_) {
     $_().imports({
         Index: {
-            cfg: { foo: { fontSize: 10 }, button: { fontSize: 11 } },
+            cfg: { foo: { fontSize: 10 }, buttons: { fontSize: 11 } },
             xml: "<Button id='foo' fontSize='12'/>",
-            ali: { button: "//button" }
+            ali: { buttons: "//button" }
         },
         Button: {
             opt: { fontSize: 24 },

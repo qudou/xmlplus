@@ -1,12 +1,12 @@
 xmlplus("xp", function ( xp, $_, t) {
     $_().imports({
         Index: {
-            cfg: { button: { fontSize: 16 } },
+            cfg: { buttons: { fontSize: 16 } },
             xml: "<div id='index'>\
                       <Button id='foo'/>\
                       <Button id='bar'/>\
                   </div>",
-            ali: { button: "//Button" }
+            ali: { buttons: "//Button" }
         },
         Button: {
             opt: { fontSize: 24 },
