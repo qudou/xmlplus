@@ -1,4 +1,4 @@
-# 全局
+﻿# 全局
 
 ## startup
 
@@ -40,7 +40,7 @@ create(path[,options])
 
 ```js
 // 01-02
-xmlplus("xp", function (xp, $_, t) {
+xmlplus("xp", function (xp, $_) {
     $_().imports({
         Example: {
             fun: function(sys, items, opts) {
@@ -428,7 +428,7 @@ Example: {
     <head>
         <script src="xmlplus.js"></script>
         <script>
-            xmlplus("xp", function (xp, $_, t) {
+            xmlplus("xp", function (xp, $_) {
                 $_().imports({
                     Index: {}
                 });
