@@ -1,4 +1,4 @@
-xmlplus("xp", function (xp, $_, t) {
+xmlplus("xp", function (xp, $_) {
     $_().imports({
         Index: {
             xml: "<div id='index'>\
@@ -8,8 +8,8 @@ xmlplus("xp", function (xp, $_, t) {
                   </div>",
             fun: function ( sys, items, opts ) {
                 sys.btn.on("click", function(e) {
-                    console.log("foo", items.foo.value);
-                    console.log("bar", items.bar.value);
+                    console.log("foo", items.foo.val);
+                    console.log("bar", items.bar.val);
                 });
             }
         },
@@ -25,7 +25,7 @@ xmlplus("xp", function (xp, $_, t) {
                 function setValue(value) {
                     sys.input.prop("value", parse(value));
                 }
-                return Object.defineProperty({}, "value", { get: getValue, set: setValue });
+                return Object.defineProperty({}, "val", { get: getValue, set: setValue });
             }
         },
         Form: {
@@ -36,9 +36,9 @@ xmlplus("xp", function (xp, $_, t) {
             map: { attrs: { foo: "format", bar: "format" } },
             fun: function (sys, items, opts) {
                 function getValue() {
-                    return [items.foo.value, items.bar.value];
+                    return [items.foo.val, items.bar.val];
                 }
-                return Object.defineProperty({}, "value", { get: getValue });
+                return Object.defineProperty({}, "val", { get: getValue });
             }
         }
     });

@@ -1,4 +1,4 @@
-xmlplus("xp", function (xp, $_, t) {
+xmlplus("xp", function (xp, $_) {
     $_().imports({
         Index: {
             xml: "<Input disabled='true'/>"
@@ -16,7 +16,7 @@ xmlplus("xp", function (xp, $_, t) {
                 function setValue(value) {
                     sys.input.prop("value", parse(value));
                 }
-                return Object.defineProperty({}, "value", { get: getValue, set: setValue });
+                return Object.defineProperty({}, "val", { get: getValue, set: setValue });
             }
         }
     });

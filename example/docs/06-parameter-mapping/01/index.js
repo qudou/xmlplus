@@ -1,4 +1,4 @@
-xmlplus("xp", function (xp, $_, t) {
+xmlplus("xp", function (xp, $_) {
     $_().imports({
         Index: {
             xml: "<div id='index'>\
@@ -6,10 +6,10 @@ xmlplus("xp", function (xp, $_, t) {
                      <Input id='bar' format='int'/>\
                   </div>",
             fun: function (sys, items, opts) {
-                items.foo.value = "hello, world";
-                items.bar.value = 27.1828;
-                console.log("foo", items.foo.value);
-                console.log("bar", items.bar.value);
+                items.foo.val = "hello, world";
+                items.bar.val = 27.1828;
+                console.log("foo", items.foo.val);
+                console.log("bar", items.bar.val);
             }
         },
         Input: {
@@ -24,7 +24,7 @@ xmlplus("xp", function (xp, $_, t) {
                 function setValue(value) {
                     sys.input.prop("value", parse(value));
                 }
-                return Object.defineProperty({}, "value", { get: getValue, set: setValue });
+                return Object.defineProperty({}, "val", { get: getValue, set: setValue });
             }
         }
     });

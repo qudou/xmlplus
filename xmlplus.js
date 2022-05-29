@@ -1203,7 +1203,6 @@ var CommonElementAPI = {
                 srcEnv = src.env,
                 srcParent = src.elem().parentNode,
                 isTop = srcEnv.xml.lastChild == src.node;
-            this.api.trigger("willRemoved");
             elem.parentNode.replaceChild(src.elem(), elem);
             this.node.parentNode.replaceChild(src.node, this.node);
             this.node = src.node;
@@ -1217,7 +1216,6 @@ var CommonElementAPI = {
             Manager[this.typ].recycle(this);
             return target;
         }
-        this.api.trigger("willRemoved");
         target = hp.parseToXML(target, this.env.dir);
         if ( target.nodeType == ELEMENT_NODE && $.isPlainObject(options) ) {
             target.getAttribute("id") || target.setAttribute("id", $.guid());
@@ -1236,7 +1234,6 @@ var CommonElementAPI = {
             this.api.replace("void");
         } else {
             var elem = this.elem();
-            this.api.trigger("willRemoved");
             elem.parentNode.removeChild(elem);
             this.node.parentNode.removeChild(this.node);
             this.node.nodeType == ELEMENT_NODE && this.node.hasAttribute("id") && this.env.fdr.refresh();

@@ -14,15 +14,15 @@ Index: {
              <Input id='bar' format='int'/>\
           </div>",
     fun: function (sys, items, opts) {
-        items.foo.value = "hello, world";
-        items.bar.value = 27.1828;
-        console.log("foo", items.foo.value);
-        console.log("bar", items.bar.value);
+        items.foo.val = "hello, world";
+        items.bar.val = 27.1828;
+        console.log("foo", items.foo.val);
+        console.log("bar", items.bar.val);
     }
 } 
 ```
 
-此示例实例化了两个组件 Input。组件 Input 允许接收一个 `format` 参数作为其静态接口输入，并提供一个属性 `value` 作为其动态输入输出接口。`format` 参数有三种可能的值：`string` (默认)、`int` 以及 `float`。这三种值分别对应三种数据类型：字符串型、整型和浮点型。属性 `value` 根据 `format` 的值来进行格式化输入输出。下面是示例的输出结果：
+此示例实例化了两个组件 Input。组件 Input 允许接收一个 `format` 参数作为其静态接口输入，并提供一个属性 `val` 作为其动态输入输出接口。`format` 参数有三种可能的值：`string` (默认)、`int` 以及 `float`。这三种值分别对应三种数据类型：字符串型、整型和浮点型。属性 `val` 根据 `format` 的值来进行格式化输入输出。下面是示例的输出结果：
 
 ```
 hello, world
@@ -115,7 +115,7 @@ Index: {
 
 将组件对象的初始参数映射到配置项与映射到内部组件对象的属性部分，所做的配置是类似的。
 
-现在有这么一个需求，它要求将上面实现的两个 Input 组件组合成一个新组件。新组件仅需要一个 `format` 输入值，该值最终会被映射给内部的两个 Input 组件对象。同时新组件还提供一个只读属性接口 `value`，该接口可将两个 Input 的值组合成数组输出。我们首先想到的是使用上述的属性映射来实现。
+现在有这么一个需求，它要求将上面实现的两个 Input 组件组合成一个新组件。新组件仅需要一个 `format` 输入值，该值最终会被映射给内部的两个 Input 组件对象。同时新组件还提供一个只读属性接口 `val`，该接口可将两个 Input 的值组合成数组输出。我们首先想到的是使用上述的属性映射来实现。
 
 ```js
 // 06-05
@@ -129,7 +129,7 @@ Form: {
         function getValue() {
             return [items.foo.value, items.bar.value];
         }
-        return Object.defineProperty({}, "value", { get: getValue });
+        return Object.defineProperty({}, "val", { get: getValue });
     }
 }
 ```

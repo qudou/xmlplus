@@ -1,4 +1,4 @@
-xmlplus("xp", function ( xp, $_) {
+xmlplus("xp", function (xp, $_) {
     $_().imports({
         Index: {
             cfg: { foo: { fontSize: 10 }, buttons: { fontSize: 11 } },
