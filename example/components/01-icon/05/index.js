@@ -1,4 +1,4 @@
-xmlplus("xp", function (xp, $_, t) {
+﻿xmlplus("xp", function (xp, $_) {
     $_().imports({
         Index: {
             // 注：字体文件的引用是不允许跨域的，所以你必须将本示例部署到一个 web 服务器上才能看到效果

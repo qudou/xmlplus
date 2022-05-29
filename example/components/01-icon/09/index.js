@@ -1,4 +1,4 @@
-xmlplus("xp", function (xp, $_, t) {
+xmlplus("xp", function (xp, $_) {
     $_().imports({
         Index: {
             css: "#index { width: 34px; height: 34px; background: #AAA; }",

@@ -1,4 +1,4 @@
-# 基本模板
+﻿# 基本模板
 
 由于 xmlplus 是一个既可以在浏览器端运行，又可以在服务端运行的框架，所以这里将给出两套基本的开发模板，分别对应两端的运行环境。
 
@@ -9,7 +9,7 @@
 ```js
 // 02-01
 const xmlplus = require("xmlplus");
-xmlplus("xp", function (xp, $_, t) {
+xmlplus("xp", function (xp, $_) {
     $_().imports({
         Index: {
             fun: function (sys, items, opts) {
@@ -30,7 +30,7 @@ xmlplus("xp", function (xp, $_, t) {
 
 ```js
 // 02-02
-xmlplus("xp", function (xp, $_, t) {
+xmlplus("xp", function (xp, $_) {
     $_().imports({
         Index: {
             css: "#text { color: red; }",

@@ -1,4 +1,4 @@
-xmlplus("xp", function (xp, $_, t) {
+﻿xmlplus("xp", function (xp, $_) {
     $_().imports({
         Example: {
             xml: "<div id='example'>\

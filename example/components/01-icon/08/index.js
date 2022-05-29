@@ -1,4 +1,4 @@
-xmlplus("xp", function (xp, $_, t) {
+xmlplus("xp", function (xp, $_) {
     $_().imports({
         Index: {
             css: "#index > * { padding: 10px; background: #F9F9F9; }\

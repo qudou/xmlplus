@@ -1,4 +1,4 @@
-xmlplus("xp", function (xp, $_, t) {
+xmlplus("xp", function (xp, $_) {
     $_().imports({
         TicTacToe: {
             css: "#index { text-align: center; margin: 20px; }",

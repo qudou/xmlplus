@@ -1,5 +1,5 @@
 const xmlplus = require("xmlplus");
-xmlplus("xp", function (xp, $_, t) {
+xmlplus("xp", function (xp, $_) {
     $_().imports({
         Index: {
             fun: function (sys, items, opts) {
