@@ -30,7 +30,7 @@ var vdoc, rdoc;
 var XPath, DOMParser_, XMLSerializer_, NodeElementAPI;
 var Manager = [HtmlManager(),CompManager(),,TextManager(),TextManager(),,,,TextManager(),,];
 var Formater = { "int": parseInt, "float": parseFloat, "bool": new Function("v","return v==true || v=='true';") };
-var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", defer: "", cfgs: {}, attrs: {}, format: {}, classes: {} }, fun: new Function };
+var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", defer: "", cfgs: {}, attrs: {}, format: {}, class: {} }, fun: new Function };
 var isReady;
 
 // isHTML contains isSVG
@@ -1696,12 +1696,12 @@ function StyleManager() {
         return parent.appendChild(style);
     }
     function mapClasses(env, node, elem) {
-        var classes = [],
+        var klass = [],
             id = node.getAttribute("id");
-        if ( id && env.map.classes[id] )
-            classes = env.map.classes[id].split(' ');
-        classes.forEach(function (klass) {
-            var path = ph.fullPath(env.dir, klass);
+        if ( id && env.map.class[id] )
+            klass = env.map.class[id].split(' ');
+        klass.forEach(function (item) {
+            var path = ph.fullPath(env.dir, item);
             var re = ph.split(path);
             var basename = re.basename;
             var s = ph.split(re.dir);
