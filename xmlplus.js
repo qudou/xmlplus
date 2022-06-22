@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.7.3
+ * xmlplus.js v1.7.4
  * https://xmlplus.cn
  * (c) 2017-2022 qudou
  * Released under the MIT license
