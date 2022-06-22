@@ -8,7 +8,9 @@ xmlplus("xp", function (xp, $_) {
                 sys.index.on("event", function(e) {
                     console.log("hello, world");
                 });
-                sys.span.trigger("event");
+                sys.span.on("click", function(e) {
+                    sys.span.trigger("event");
+                });
             }
         }
     });

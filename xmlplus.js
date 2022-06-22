@@ -921,33 +921,50 @@ var Communication = function () {
 
 var EventModuleAPI = (function () {
     var eventTable = {},
+        listeners = {},
         ignoreProps = /^([A-Z]|returnValue$|layer[XY]$|keyLocation$)/,
-        eventMethods = "preventDefault stopImmediatePropagation stopPropagation".split(" "),
         specialEvents={ click: "MouseEvents", mousedown: "MouseEvents", mouseup: "MouseEvents", mousemove: "MouseEvents" };
     function assert(type, selector, fn) {
         typeof type == "string" || $.error("invalid type, expected a string");
         typeof fn == "function" || $.error("invalid handler, expected a function");
         selector == undefined || typeof selector == "string" || $.error("invalid selector, expected a string");
     }
+    function eventHandler(event) {
+        let target = event.target.xmlTarget;
+        if (!target) return;
+        let node = target.node;
+        let cancelBubble = false;
+        while (node.uid) {
+            let items =(eventTable[node.uid] || {})[event.type] || [];
+            for (let i = 0; i < items.length; i++) {
+                let e = items[i].handler(event);
+                e.cancelBubble && (cancelBubble = true);
+                if (e.cancelImmediateBubble) break;
+            }
+            if (cancelBubble) break;
+            let tnode = node.parentNode;
+            node = tnode.uid ? tnode : (Store[node.uid].env.node || {});
+        }
+    }
     function on(type, selector, fn) {
-        if ( typeof selector == "function" )
+        if (typeof selector == "function")
             fn = selector, selector = undefined;
         assert(type, selector, fn);
         var uid = this.uid, listener = this.api;
-        function handler( event ) {
-            if ( !event.target.xmlTarget ) return;
+        function handler(event) {
             var e = createProxy(event, listener);
-            if ( !selector )
-                return fn.apply(listener, [e].concat(event.data));
+            if (!selector)
+                return fn.apply(listener, [e].concat(event.data)), e;
             listener.find(selector).forEach(function(item) {
-                if ( item.contains(e.target) )
+                if (item.contains(e.target))
                     fn.apply(item, [e].concat(event.data));
             });
+            return e;
         }
-        this.elem().addEventListener(type, handler);
         eventTable[uid] = eventTable[uid] || {};
-        eventTable[uid][type] = eventTable[uid][type] || []
-        eventTable[uid][type].push({ selector: selector, fn: fn, handler: handler})
+        eventTable[uid][type] = eventTable[uid][type] || [];
+        eventTable[uid][type].push({ selector: selector, fn: fn, handler: handler});
+        listeners[type] || rdoc.addEventListener(listeners[type] = type, eventHandler);
         return this;
     }
     function once(type, selector, fn) {
@@ -965,8 +982,7 @@ var EventModuleAPI = (function () {
         return this.api.on(type, selector, fn);
     }
     function off(type, selector, fn) {
-        var k, elem = this.elem(),
-            item = eventTable[this.uid] || {};
+        var k, item = eventTable[this.uid] || {};
         if ( type == undefined ) {
             for ( type in item )
                 off.call(this, type);
@@ -976,26 +992,18 @@ var EventModuleAPI = (function () {
         var buf = [].slice.call(item[type]);
         if ( typeof selector == "function" ) {
             for ( k in buf )
-                if ( selector == buf[k].fn ) {
+                if ( selector == buf[k].fn )
                     item[type].splice(item[type].indexOf(buf[k]), 1);
-                    elem.removeEventListener(type, buf[k].handler);
-                }
         } else if ( selector == undefined ) {
-            for ( k in buf )
-                 elem.removeEventListener(type, buf[k].handler);
             item[type].splice(0);
         } else if ( typeof fn == "function" ) {
             for ( k in buf )
-                if ( fn == buf[k].fn && selector == buf[k].selector ) {
+                if ( fn == buf[k].fn && selector == buf[k].selector )
                     item[type].splice(item[type].indexOf(buf[k]), 1);
-                    elem.removeEventListener(type, buf[k].handler);
-                }
         } else { // typeof selector == "string" only
             for ( k in buf )
-                if ( selector == buf[k].selector ) {
+                if ( selector == buf[k].selector )
                     item[type].splice(item[type].indexOf(buf[k]), 1);
-                    elem.removeEventListener(type, buf[k].handler);
-                }
         }
         return this;
     }
@@ -1022,16 +1030,10 @@ var EventModuleAPI = (function () {
                 proxy[key] = event[key];
         proxy.currentTarget = listener;
         proxy.target = (event.xmlTarget || hp.create(event.target.xmlTarget)).api;
-        return compatible(proxy, event);
-    }
-    function compatible(event, source) {
-        eventMethods.forEach(function( name ) {
-            var method = source[name];
-            event[name] = function () {
-                return method && method.apply(source, arguments);
-            };
-        });
-        return event;
+        proxy.preventDefault = ()=> event.preventDefault();
+        proxy.stopImmediatePropagation = ()=> proxy.cancelImmediateBubble = true;
+        proxy.stopPropagation = ()=> proxy.cancelBubble = true;
+        return proxy;
     }
     return { on: on, once: once, off: off, trigger: trigger, remove: remove };
 }());

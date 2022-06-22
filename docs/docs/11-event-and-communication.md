@@ -124,7 +124,7 @@ Index: {
 
 ## 事件的派发
 
-除了默认产生的事件外，组件还可以派发自定义的事件，系统函数 `trigger` 就专门干这事的。下面的函数项中，组件对象 span 在结尾处派发了一个自定义事件，该事件最终被顶层组件对象 index 侦听到。
+除了默认产生的事件外，组件还可以派发自定义的事件，系统函数 `trigger` 就专门干这事的。下面的函数项中，当点击组件对象 span 时，该对象会派发了一个自定义事件，该事件最终被顶层组件对象 index 侦听到。
 
 ```js
 // 11-08
@@ -136,7 +136,10 @@ Index: {
         sys.index.on("event", function (e) {
             console.log("hello, world");
         });
-        sys.span.trigger("event");
+        sys.span.on("click", function (e) {
+            sys.span.trigger("event");
+        });
+        
     }
 }
 ```
@@ -153,7 +156,9 @@ Index: {
         sys.index.on("event", function (e, a, b) {
             console.log(a, b); // 1 hello
         });
-        sys.span.trigger("event", [1,"hello"]);
+        sys.span.on("click", function (e) {
+            sys.span.trigger("event", [1,"hello"]);
+        });
     }
 }
 ```
@@ -211,7 +216,9 @@ Index: {
         sys.index.on("event", function (e, a, b) {
             console.log(a, b);
         });
-        sys.span.trigger("event", [1,"hello"], false);
+        sys.span.on("click", function(e) {
+            sys.span.trigger("event", [1,"hello"], false);
+        });
     }
 }
 ```
@@ -243,15 +250,18 @@ Index: {
 Index: {
     xml: "<div id='index'>\
               <Widget id='widget'/>\
+              <button id='trigger'>trigger</button>\
           </div>",
     fun: function (sys, items, opts) {
         sys.index.on("event", function (e) {
             console.log(e.target.elem());
         });
-        sys.widget.trigger("event");
+        sys.trigger.on("click", function(e) {
+            sys.widget.trigger("event");
+        });
     }
 },
 Widget: {}
 ```
 
-此示例包含一个空组件 Widget，在组件 Index 的函数项中，组件对象 widget 派发了一个 event 事件，该事件由其父级组件对象 index 捕获。由于组件对象默认 widget 对应一个 DOM 元素 void，并且组件对象 index 对应一个 DOM 元素 div ，所以由组件对象 widget 派发的事件就从 void 元素传递给 div 元素。这样就使得空组件也能传递事件，这可以说是系统为空组件生成 DOM 元素 void 的一个重要原因。
+此示例包含一个空组件 Widget，在组件 Index 的函数项中，当点击组件对象 widget 时，该对象会派发了一个 event 事件，该事件由其父级组件对象 index 捕获。由于组件对象默认 widget 对应一个 DOM 元素 void，并且组件对象 index 对应一个 DOM 元素 div ，所以由组件对象 widget 派发的事件就从 void 元素传递给 div 元素。这样就使得空组件也能传递事件，这可以说是系统为空组件生成 DOM 元素 void 的一个重要原因。
