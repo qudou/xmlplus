@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.7.4
+ * xmlplus.js v1.7.5
  * https://xmlplus.cn
  * (c) 2017-2022 qudou
  * Released under the MIT license
@@ -953,6 +953,7 @@ var EventModuleAPI = (function () {
         var uid = this.uid, listener = this.api;
         function handler(event) {
             var e = createProxy(event, listener);
+            event.bubble === false && e.stopPropagation();
             if (!selector)
                 return fn.apply(listener, [e].concat(event.data)), e;
             listener.find(selector).forEach(function(item) {
@@ -1008,7 +1009,8 @@ var EventModuleAPI = (function () {
         return this;
     }
     function trigger(type, data, bubble) {
-        var event = Event(type, bubble);
+        var event = Event(type, true);
+        event.bubble = bubble;
         event.xmlTarget = Store[this.uid];
         event.data = data == null ? [] : ($.isArray(data) ? data : [data]);
         this.elem().dispatchEvent(event);
