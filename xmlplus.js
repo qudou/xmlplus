@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.7.5
+ * xmlplus.js v1.7.6
  * https://xmlplus.cn
  * (c) 2017-2022 qudou
  * Released under the MIT license
@@ -965,7 +965,7 @@ var EventModuleAPI = (function () {
         eventTable[uid] = eventTable[uid] || {};
         eventTable[uid][type] = eventTable[uid][type] || [];
         eventTable[uid][type].push({ selector: selector, fn: fn, handler: handler});
-        listeners[type] || rdoc.addEventListener(listeners[type] = type, eventHandler);
+        listeners[type] || this.elem().ownerDocument.addEventListener(listeners[type] = type, eventHandler);
         return this;
     }
     function once(type, selector, fn) {
