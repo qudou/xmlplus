@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.7.8
+ * xmlplus.js v1.7.9
  * https://xmlplus.cn
  * (c) 2017-2022 qudou
  * Released under the MIT license
@@ -1031,14 +1031,14 @@ var EventModuleAPI = (function () {
         let cancelBubble = false;
         let elem = target.elem();
         while (node.uid) {
-            if (cancelBubble || event.bubble === false && Store[node.uid].elem() !== elem)
-                break;
             let items =(eventTable[node.uid] || {})[event.type] || [];
             for (let i = 0; i < items.length; i++) {
                 let e = items[i].handler(event);
                 e.cancelBubble && (cancelBubble = true);
                 if (e.cancelImmediateBubble) break;
             }
+            if (cancelBubble || event.bubble === false && Store[node.uid].elem() !== elem)
+                break;
             let tnode = node.parentNode;
             node = tnode.uid ? tnode : (Store[node.uid].env.node || {});
         }
