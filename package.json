@@ -1,6 +1,6 @@
 {
   "name": "xmlplus",
-  "version": "1.7.6",
+  "version": "1.7.7",
   "dependencies": {
     "xpath": "^0.0.24",
     "exmldom": "^0.1.21"

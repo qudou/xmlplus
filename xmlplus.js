@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.7.6
+ * xmlplus.js v1.7.7
  * https://xmlplus.cn
  * (c) 2017-2022 qudou
  * Released under the MIT license
@@ -929,23 +929,6 @@ var EventModuleAPI = (function () {
         typeof fn == "function" || $.error("invalid handler, expected a function");
         selector == undefined || typeof selector == "string" || $.error("invalid selector, expected a string");
     }
-    function eventHandler(event) {
-        let target = event.target.xmlTarget;
-        if (!target) return;
-        let node = target.node;
-        let cancelBubble = false;
-        while (node.uid) {
-            let items =(eventTable[node.uid] || {})[event.type] || [];
-            for (let i = 0; i < items.length; i++) {
-                let e = items[i].handler(event);
-                e.cancelBubble && (cancelBubble = true);
-                if (e.cancelImmediateBubble) break;
-            }
-            if (cancelBubble) break;
-            let tnode = node.parentNode;
-            node = tnode.uid ? tnode : (Store[node.uid].env.node || {});
-        }
-    }
     function on(type, selector, fn) {
         if (typeof selector == "function")
             fn = selector, selector = undefined;
@@ -953,7 +936,6 @@ var EventModuleAPI = (function () {
         var uid = this.uid, listener = this.api;
         function handler(event) {
             var e = createProxy(event, listener);
-            event.bubble === false && e.stopPropagation();
             if (!selector)
                 return fn.apply(listener, [e].concat(event.data)), e;
             listener.find(selector).forEach(function(item) {
@@ -965,7 +947,12 @@ var EventModuleAPI = (function () {
         eventTable[uid] = eventTable[uid] || {};
         eventTable[uid][type] = eventTable[uid][type] || [];
         eventTable[uid][type].push({ selector: selector, fn: fn, handler: handler});
-        listeners[type] || this.elem().ownerDocument.addEventListener(listeners[type] = type, eventHandler);
+        let doc = this.elem().ownerDocument;
+        listeners[type] = listeners[type] || [];
+        if (listeners[type].indexOf(doc) == -1) {
+            listeners[type].push(doc);
+            doc.addEventListener(type, eventHandler)
+        }
         return this;
     }
     function once(type, selector, fn) {
@@ -1036,6 +1023,23 @@ var EventModuleAPI = (function () {
         proxy.stopImmediatePropagation = ()=> proxy.cancelImmediateBubble = true;
         proxy.stopPropagation = ()=> proxy.cancelBubble = true;
         return proxy;
+    }
+    function eventHandler(event) {
+        let target = event.target.xmlTarget;
+        if (!target) return;
+        let node = target.node;
+        let cancelBubble = false;
+        while (node.uid) {
+            let items =(eventTable[node.uid] || {})[event.type] || [];
+            for (let i = 0; i < items.length; i++) {
+                let e = items[i].handler(event);
+                e.cancelBubble && (cancelBubble = true);
+                if (e.cancelImmediateBubble) break;
+            }
+            if (event.bubble === false || cancelBubble) break;
+            let tnode = node.parentNode;
+            node = tnode.uid ? tnode : (Store[node.uid].env.node || {});
+        }
     }
     return { on: on, once: once, off: off, trigger: trigger, remove: remove };
 }());
@@ -1992,9 +1996,9 @@ function startup(xml, parent, param) {
         env.cfg[env.xml.getAttribute("id")] = param;
     }
     env.xml = env.xml.parentNode || vdoc.cloneNode().appendChild(env.xml).parentNode;
-    fragment = inBrowser ? rdoc.createDocumentFragment() : parent;
+    fragment = parent.ownerDocument.createDocumentFragment();
     instance = parseEnvXML(env, fragment, env.xml.lastChild);
-    inBrowser && parent.appendChild(fragment);
+    parent.appendChild(fragment);
     instance = $.extend(hp.create(instance).api, {style: env.smr.style});
     return instance.on("input", bd.onbind);
 }
