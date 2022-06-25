@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.7.9
+ * xmlplus.js v1.7.10
  * https://xmlplus.cn
  * (c) 2017-2022 qudou
  * Released under the MIT license
@@ -947,11 +947,9 @@ var EventModuleAPI = (function () {
         eventTable[uid] = eventTable[uid] || {};
         eventTable[uid][type] = eventTable[uid][type] || [];
         eventTable[uid][type].push({ selector: selector, fn: fn, handler: handler});
-        let doc = this.elem().ownerDocument;
-        listeners[type] = listeners[type] || [];
-        if (listeners[type].indexOf(doc) == -1) {
-            listeners[type].push(doc);
-            doc.addEventListener(type, eventHandler)
+        if (!listeners[type]) {
+            listeners[type] = type;
+            rdoc.addEventListener(type, eventHandler)
         }
         return this;
     }
@@ -997,7 +995,7 @@ var EventModuleAPI = (function () {
     }
     function trigger(type, data, bubble) {
         var event = Event(type, true);
-        event.bubble = bubble;
+        event.bubble_ = bubble;
         event.xmlTarget = Store[this.uid];
         event.data = data == null ? [] : ($.isArray(data) ? data : [data]);
         this.elem().dispatchEvent(event);
@@ -1031,13 +1029,15 @@ var EventModuleAPI = (function () {
         let cancelBubble = false;
         let elem = target.elem();
         while (node.uid) {
+            if (event.bubble_ === false && Store[node.uid].elem() !== elem)
+                break;
             let items =(eventTable[node.uid] || {})[event.type] || [];
             for (let i = 0; i < items.length; i++) {
                 let e = items[i].handler(event);
                 e.cancelBubble && (cancelBubble = true);
                 if (e.cancelImmediateBubble) break;
             }
-            if (cancelBubble || event.bubble === false && Store[node.uid].elem() !== elem)
+            if (cancelBubble)
                 break;
             let tnode = node.parentNode;
             node = tnode.uid ? tnode : (Store[node.uid].env.node || {});
@@ -1980,9 +1980,9 @@ function startup(xml, parent, param) {
         $.error("target type must be ELEMENT_NODE");
     if ( $.isPlainObject(parent) ) {
         param = parent;
-        parent = rdoc.body || rdoc.cloneNode();
+        parent = rdoc.body || rdoc.lastChild;
     } else if ( parent === undefined ) {
-        parent = rdoc.body || rdoc.cloneNode();
+        parent = rdoc.body || rdoc.lastChild;
     } else if ( typeof parent == "string" ) {
         parent =  rdoc.getElementById(parent);
         if (!parent)
@@ -1998,7 +1998,7 @@ function startup(xml, parent, param) {
         env.cfg[env.xml.getAttribute("id")] = param;
     }
     env.xml = env.xml.parentNode || vdoc.cloneNode().appendChild(env.xml).parentNode;
-    fragment = parent.ownerDocument.createDocumentFragment();
+    fragment = rdoc.createDocumentFragment();
     instance = parseEnvXML(env, fragment, env.xml.lastChild);
     parent.appendChild(fragment);
     instance = $.extend(hp.create(instance).api, {style: env.smr.style});
@@ -2027,7 +2027,8 @@ function startup(xml, parent, param) {
         XPath = require("xpath");
         DOMParser_ = require("exmldom").DOMParser;
         XMLSerializer_ = require("exmldom").XMLSerializer;
-        vdoc = rdoc = $.parseXML("<void/>");
+        vdoc = $.parseXML("<body/>");
+        rdoc = $.parseXML("<body/>");
         NodeElementAPI = $.extend(ServerElementAPI, EventModuleAPI, CommonElementAPI);
         module.exports = $.extend(xmlplus, $);
     }
