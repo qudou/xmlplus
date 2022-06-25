@@ -139,7 +139,6 @@ Index: {
         sys.span.on("click", function (e) {
             sys.span.trigger("event");
         });
-        
     }
 }
 ```
