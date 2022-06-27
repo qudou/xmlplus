@@ -6,7 +6,7 @@ xmlplus("xp", function (xp, $_) {
                      <button>button-B</button>\
                   </div>",
             fun: function (sys, items, opts) {
-                sys.index.on("click", "button", function(e) {
+                sys.index.on("click", "*", function(e) {
                     console.log(this.localName(), this.text());
                 });
             }

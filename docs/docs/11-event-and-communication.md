@@ -33,14 +33,14 @@ Index: {
              <button>button-B</button>\
           </div>",
     fun: function (sys, items, opts) {
-        sys.index.on("click", "button", function (e) {
+        sys.index.on("click", "*", function (e) {
             console.log(this.localName(), this.text());
         });
     }
 }
 ```
 
-在该示例的侦听器中，`this` 指向的是被点击的按钮对象。另外，上面示例中的 XPath 选择器 `*` 选取的结果并不包含组件对象 index 本身，该组件对象只是检索操作的一个上下文。
+在该示例的侦听器中，`this` 指向的是被点击的按钮对象。另外，示例中的 XPath 选择器 `*` 选取的结果并不包含组件对象 index 本身，该组件对象只是检索操作的一个上下文。
 
 当一个系统对象侦听一个事件时，在侦听器中可以获取派发事件的对象引用。如下面的示例所示，`e.target`、和 `sys.button` 同为派发事件的对象引用。
 
@@ -68,7 +68,8 @@ Index: {
           </div>",
     fun: function (sys, items, opts) {
         sys.index.on("click", function (e) {
-            console.log(e.currentTarget == sys.index, sys.index == this); // true
+            console.log(e.currentTarget == sys.index); // true
+            console.log(e.currentTarget == this);      // true
         });
     }
 }
@@ -124,39 +125,39 @@ Index: {
 
 ## 事件的派发
 
-除了默认产生的事件外，组件还可以派发自定义的事件，系统函数 `trigger` 就专门干这事的。下面的函数项中，当点击组件对象 span 时，该对象会派发了一个自定义事件，该事件最终被顶层组件对象 index 侦听到。
+除了默认产生的事件外，组件还可以派发自定义的事件，系统函数 `trigger` 就专门干这事的。下面的函数项中，当点击组件对象 button 时，该对象会派发了一个自定义事件，该事件最终被顶层组件对象 index 侦听到。
 
 ```js
 // 11-08
 Index: {
     xml: "<div id='index'>\
-             <span id='span'>trigger</span>\
+             <button id='button'>click</button>\
           </div>",
     fun: function(sys, items, opts) {
         sys.index.on("event", function (e) {
             console.log("hello, world");
         });
-        sys.span.on("click", function (e) {
-            sys.span.trigger("event");
+        sys.button.on("click", function (e) {
+            this.trigger("event");
         });
     }
 }
 ```
 
-系统函数 `trigger` 在派发事件时可以携带数据，事件侦听方可以在回调函数中获取到数据。下面的组件对象 span 派发的事件携带了两个数据，该数据分别由侦听方的回调函数的第二和第三个参数获得。
+系统函数 `trigger` 在派发事件时可以携带数据，事件侦听方可以在回调函数中获取到数据。下面的组件对象 button 派发的事件携带了两个数据，该数据分别由侦听方的回调函数的第二和第三个参数获得。
 
 ```js
 // 11-09
 Index: {
     xml: "<div id='index'>\
-             <span id='span'>trigger</span>\
+             <button id='button'>click</button>\
           </div>",
     fun: function (sys, items, opts) {
         sys.index.on("event", function (e, a, b) {
             console.log(a, b); // 1 hello
         });
-        sys.span.on("click", function (e) {
-            sys.span.trigger("event", [1,"hello"]);
+        sys.button.on("click", function (e) {
+            this.trigger("event", [1,"hello"]);
         });
     }
 }
@@ -164,7 +165,7 @@ Index: {
 
 ## 事件的冒泡行为
 
-默认情况下，许多事件是允许冒泡的。如下面的示例所示，按钮的父级 div 层可以侦听来自此按钮的点击事件。
+默认情况下，事件是允许冒泡的。如下面的示例所示，按钮的父级 div 层可以侦听来自此按钮的点击事件。
 
 ```js
 // 11-10
@@ -255,13 +256,13 @@ Index: {
 Index: {
     xml: "<div id='index'>\
               <Widget id='widget'/>\
-              <button id='trigger'>trigger</button>\
+              <button id='button'>click</button>\
           </div>",
     fun: function (sys, items, opts) {
         sys.index.on("event", function (e) {
             console.log(e.target.elem());
         });
-        sys.trigger.on("click", function(e) {
+        sys.button.on("click", function(e) {
             sys.widget.trigger("event");
         });
     }
@@ -270,3 +271,43 @@ Widget: {}
 ```
 
 此示例包含一个空组件 Widget，在组件 Index 的函数项中，当点击组件对象 widget 时，该对象会派发了一个 event 事件，该事件由其父级组件对象 index 捕获。由于组件对象默认 widget 对应一个 DOM 元素 void，并且组件对象 index 对应一个 DOM 元素 div ，所以由组件对象 widget 派发的事件就从 void 元素传递给 div 元素。这样就使得空组件也能传递事件，这可以说是系统为空组件生成 DOM 元素 void 的一个重要原因。
+
+## 事件流
+
+前面讲过，默认情况下，事件是允许冒泡的。下面，我们通过一个综合的示例，来看下事件在组件之间的是如何流动的。
+
+```js
+// 11-15
+Index: {
+    xml: "<div id='index'>\
+            <Button id='button'/>\
+          </div>",
+    fun: function (sys, items, opts) {
+        this.on("event", function (e, msg) {
+            console.log(4, msg);
+        });
+        sys.index.on("event", function (e, msg) {
+            console.log(2, msg);
+        });
+        sys.index.on("event", function (e, msg) {
+            console.log(3, msg);
+        });
+        sys.button.on("event", function(e, msg) {
+            console.log(1, msg);
+        });
+    }
+},
+Button: {
+    xml: "<button id='button'>click</button>",
+    fun: function (sys, items, opts) {
+        sys.button.on("click", function (e) {
+            this.trigger("event", "hi, bob!");
+        });
+    }
+}
+```
+
+此示例中，Index 组件包含一个 div 元素组件以及一个自定义组件 Button。在自定义组件 Button 中，有一个事件 event 的触发语句。而在 Index 组件中，则定义了 4 个不同的侦听器。当点击按钮时，这 4 个侦听器会按一定的顺序触发。触发的规则为：
+
+1. 从下往上依次触发
+2. 先注册的侦听器优先触发

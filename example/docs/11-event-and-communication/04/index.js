@@ -7,6 +7,7 @@ xmlplus("xp", function (xp, $_) {
             fun: function (sys, items, opts) {
                 sys.index.on("click", function(e) {
                     console.log(e.currentTarget == sys.index); // true
+                    console.log(e.currentTarget == this);      // true
                 });
             }
         }
