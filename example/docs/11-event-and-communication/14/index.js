@@ -1,12 +1,19 @@
 xmlplus("xp", function (xp, $_) {
     $_().imports({
         Index: {
-            xml: "<a id='link' href='/'>click</a>",
+            xml: "<div id='index'>\
+                      <Widget id='widget'/>\
+                      <button id='trigger'>trigger</button>\
+                  </div>",
             fun: function (sys, items, opts) {
-                sys.link.on("click", function(e) {
-                    e.preventDefault();
+                sys.index.on("event", function(e) {
+                    console.log(e.target.elem());
+                });
+                sys.trigger.on("click", function(e) {
+                    sys.widget.trigger("event");
                 });
             }
-        }
+        },
+        Widget: {}
     });
 });

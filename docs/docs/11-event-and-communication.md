@@ -203,29 +203,10 @@ Button: {
 }
 ```
 
-当派发自定义事件时，默认情况下是允许事件冒泡的。但当指定 `trigger` 函数的第三个参数为 `false` 值时，派发的事件就不是冒泡的。在下面的示例中，由于组件对象 span 在派发事件时指定不冒泡，所以组件对象 index 是无法侦听到来自组件对象 span 的 event 事件的。
+与上述的 `stopPropagation` 函数类似，事件的 `stopImmediatePropagation` 函数也用来阻止事件冒泡。不过，该函数除了阻止事件冒泡，还阻止了剩下的事件处理程序被执行。
 
 ```js
 // 11-12
-Index: {
-    xml: "<div id='index'>\
-             <span id='span'>trigger</span>\
-          </div>",
-    fun: function (sys, items, opts) {
-        sys.index.on("event", function (e, a, b) {
-            console.log(a, b);
-        });
-        sys.span.on("click", function(e) {
-            sys.span.trigger("event", [1,"hello"], false);
-        });
-    }
-}
-```
-
-与上述的 `stopPropagation` 函数类似，事件的 `stopImmediatePropagation` 函数也用来阻止事件冒泡。不过，该函数除了阻止阻止事件冒泡，还阻止了剩下的事件处理程序被执行。
-
-```js
-// 11-13
 Index: {
     xml: "<div id='index'>\
              <button id='btn'>click</button>\
@@ -245,14 +226,14 @@ Index: {
 }
 ```
 
-上面示例中，由于在按钮的第一个侦听器中调用了事件的 `stopImmediatePropagation` 函数，从而，当点击按钮时，控制台只会打印数字 2。并且，其父级的侦听器和按钮的另一个侦听器均不会得到调用。
+在上面示例中，由于在按钮的第一个侦听器中调用了事件的 `stopImmediatePropagation` 函数，从而，当点击按钮时，控制台只会打印数字 2。并且，其父级的侦听器和按钮的另一个侦听器均不会得到调用。
 
 ## 阻止事件的默认行为
 
 在浏览器端，默认情况下，当用户点击一个 url 链接时，浏览器会跳转到相应的页面。若要阻止这类的默认行为，可以通过调用事件的 `preventDefault` 函数来实现。
 
 ```js
-// 11-14
+// 11-13
 Index: {
     xml: "<a id='link' href='/'>click</a>",
     fun: function (sys, items, opts) {
@@ -270,7 +251,7 @@ Index: {
 在浏览器端，事件之间的传递依托于浏览器提供的 DOM 元素之间的通信能力。在服务端，事件之间的传递则由经过扩展的 xmldom 软件包提供。非空组件对象之间的事件传递不难理解。这里主要通过下面的示例来看看空组件对象之间是如何传递事件的。
 
 ```js
-// 11-15
+// 11-14
 Index: {
     xml: "<div id='index'>\
               <Widget id='widget'/>\

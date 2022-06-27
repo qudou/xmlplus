@@ -2,14 +2,19 @@ xmlplus("xp", function (xp, $_) {
     $_().imports({
         Index: {
             xml: "<div id='index'>\
-                     <span id='span'>trigger</span>\
+                     <button id='btn'>click</button>\
                   </div>",
             fun: function (sys, items, opts) {
-                sys.index.on("event", function(e, a, b) {
-                    console.log(a, b);
+                sys.index.on("click", function (e) {
+                    console.log("1");
                 });
-                sys.span.on("click", function(e) {
-                    sys.span.trigger("event", [1,"hello"], false);
+                sys.btn.on("click", function(e) {
+                    //e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    console.log("2");
+                });
+                sys.btn.on("click", function(e) {
+                    console.log("3");
                 });
             }
         }

@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.7.11
+ * xmlplus.js v1.7.12
  * https://xmlplus.cn
  * (c) 2017-2022 qudou
  * Released under the MIT license
@@ -993,9 +993,8 @@ var EventModuleAPI = (function () {
         }
         return this;
     }
-    function trigger(type, data, bubble) {
+    function trigger(type, data) {
         var event = Event(type, true);
-        event.bubble_ = bubble;
         event.xmlTarget = Store[this.uid];
         event.data = data == null ? [] : ($.isArray(data) ? data : [data]);
         this.elem().dispatchEvent(event);
@@ -1027,10 +1026,7 @@ var EventModuleAPI = (function () {
         if (!target) return;
         let node = target.node;
         let cancelBubble = false;
-        let elem = target.elem();
         while (node.uid) {
-            if (event.bubble_ === false && Store[node.uid].elem() !== elem)
-                break;
             let items =(eventTable[node.uid] || {})[event.type] || [];
             for (let i = 0; i < items.length; i++) {
                 let e = items[i].handler(event);
@@ -1040,8 +1036,7 @@ var EventModuleAPI = (function () {
                 }
                 e.cancelBubble && (cancelBubble = true);
             }
-            if (cancelBubble)
-                break;
+            if (cancelBubble) break;
             let tnode = node.parentNode;
             node = tnode.uid ? tnode : (Store[node.uid].env.node || {});
         }
