@@ -66,35 +66,13 @@ Index: {
 
 上面的 `fontSize` 值在实例化时会以字符串的形式被主动映射到组件 Button 的参数项中，从而覆盖原始的默认值。这种指定初始值的方式是最方便，但也有其局限性。因为它只能提供简单形式的输入。如果初始输入是一个复杂的对象，它就不那么方便了。
 
-默认情况下，属性值会以字符串的形式被映射到组件的参数项中。如果期望得到的是数值型或者布尔型，就要在组件的映射项中指定格式化参数 `format`。
-
-```js
-// 05-05
-Index: {
-    xml: "<Format fontSize='16'/>"
-},
-Format: {
-    opt: { setp: "28.5", fontSize: "24", width: "28px", disabled: "true" },
-    map: { format: {"int": "step", "float": "fontSize width", "bool": "disabled"} },
-    fun: function (sys, items, opts) {
-        console.log(opts.step, typeof opts.step);
-        console.log(opts.fontSize, typeof opts.fontSize);
-        console.log(opts.width, typeof opts.width);
-        console.log(opts.disabled, typeof opts.disabled);
-    }
-}
-```
-
-组件 Format 的映射项中的 `format` 参数指明如何格式化输入参数。在此组件中，`step` 被格式化为整型，`fontSize` 和 `width` 被格式化为浮点型，而 `disabled` 则被格式化为布尔型。
-
-注意，对于类型为 `bool` 的参数，如果相应的值是字符串 `true`，则为真值，否则为假值。
 
 ## 四种参数设定方式的优先级
 
 上面描述了四种设定初始参数值的方式。现在来看看它们之间的优先级是怎样的。下面的示例给组件对象 foo 同时提供了 `fontSize` 的四种初始参数值，其中默认值为 `24`。
 
 ```js
-// 05-06
+// 05-05
 Index: {
     cfg: { foo: { fontSize: 10 }, buttons: { fontSize: 11 } },
     xml: "<Button id='foo' fontSize='12'/>",

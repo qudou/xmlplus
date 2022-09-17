@@ -29,7 +29,8 @@ var vdoc, rdoc;
 
 var XPath, DOMParser_, XMLSerializer_, NodeElementAPI;
 var Manager = [HtmlManager(),CompManager(),,TextManager(),TextManager(),,,,TextManager(),,];
-var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", defer: "", cfgs: {}, attrs: {}, class: {} }, fun: new Function };
+var Formater = { "int": parseInt, "float": parseFloat, "bool": new Function("v","return v==true || v=='true';") };
+var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", defer: "", cfgs: {}, attrs: {}, format: {}, class: {} }, fun: new Function };
 var isReady;
 
 // isHTML contains isSVG
@@ -736,7 +737,7 @@ $.extend(hp, (function () {
         ["opt","cfg","map","ali"].forEach(function (k) {
             $.isPlainObject(obj[k]) || $.error("invalid " + k + " expected a plainObject");
         });
-        ["cfgs","attrs"].forEach(function (k) {
+        ["format","cfgs","attrs"].forEach(function (k) {
             $.isPlainObject(obj.map[k]) || $.error("invalid " + k + " in map, expected a plainObject");
         });
         typeof obj.map.defer == "string" || $.error("invalid defer in map, expected a string");
@@ -757,7 +758,10 @@ $.extend(hp, (function () {
         }
     }
     function initialize(obj) {
-        var map = obj.map;
+        var i, formats = {}, map = obj.map;
+        for ( i in map.format )
+            Formater[i] && (formats[i] = obj.map.format[i].split(' '));
+        map.format = formats;
         resetInput(map.attrs), resetInput(map.cfgs);
         map.defer = map.defer ? map.defer.split(' ') : [];
         map.share = map.share ? map.share.split(' ') : [];
@@ -1864,6 +1868,13 @@ function resetOptions(env, ins, exprs) {
     for ( i = 0; i < ins.node.attributes.length; i++ ) {
         o = ins.node.attributes[i];
         o.prefix || (ins.opt[o.name] = o.value);
+    }
+    for ( i in ins.map.format ) {
+        list = ins.map.format[i];
+        for ( k = 0; k < list.length; k++ ) {
+            o = ins.opt[list[k]];
+            o && (ins.opt[list[k]] = Formater[i](o));
+        }
     }
 }
 

@@ -1,17 +1,16 @@
 xmlplus("xp", function (xp, $_) {
     $_().imports({
         Index: {
-            xml: "<Format fontSize='16'/>"
+            cfg: { foo: { fontSize: 10 }, buttons: { fontSize: 11 } },
+            xml: "<Button id='foo' fontSize='12'/>",
+            ali: { buttons: "//button" }
         },
-        Format: {
-            opt: { step: "28.5", fontSize: "24", width: "28px", disabled: "true" },
-            map: { format: {"int": "step", "float": "fontSize width", "bool": "disabled"} },
+        Button: {
+            opt: { fontSize: 24 },
+            xml: "<button id='foo'>hello</button>",
             fun: function (sys, items, opts) {
-                console.log(opts.step, typeof opts.step);
-                console.log(opts.fontSize, typeof opts.fontSize);
-                console.log(opts.width, typeof opts.width);
-                console.log(opts.disabled, typeof opts.disabled);
+                sys.foo.css("font-size", opts.fontSize + "px");
             }
-        }
+        } 
     });
 });
