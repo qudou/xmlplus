@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.7.13
+ * xmlplus.js v1.7.14
  * https://xmlplus.cn
  * (c) 2017-2022 qudou
  * Released under the MIT license
@@ -837,7 +837,7 @@ var Collection = (function () {
         values: function () {
             var result = new Collection;
             for ( var i = 0; i < this.length; i++ )
-                result.push(this[i].value());
+                result.push(this[i].val());
             return result;
         }
     };
