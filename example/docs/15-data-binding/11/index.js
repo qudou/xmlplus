@@ -2,7 +2,7 @@ xmlplus("xp", function (xp, $_) {
     $_().imports({
         Index: {
             xml: "<input id='index' type='text'/>",
-            map: { bind: { model: {get: "getter", set: "setter"} } },
+            bnd: { model: {get: "getter", set: "setter"} },
             fun: function (sys, items, opts) {
                 setTimeout(function () {
                     window.ret = sys.index.bind("hello, world");

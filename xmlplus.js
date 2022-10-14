@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.7.14
+ * xmlplus.js v1.7.15
  * https://xmlplus.cn
  * (c) 2017-2022 qudou
  * Released under the MIT license
@@ -29,7 +29,7 @@ var vdoc, rdoc;
 
 var XPath, DOMParser_, XMLSerializer_, NodeElementAPI;
 var Manager = [HtmlManager(),CompManager(),,TextManager(),TextManager(),,,,TextManager(),,];
-var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", defer: "", cfgs: {}, attrs: {}, class: {} }, fun: new Function };
+var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", defer: "", cfgs: {}, attrs: {}, class: {} }, bnd: {}, fun: new Function };
 var isReady;
 
 // isHTML contains isSVG
@@ -507,7 +507,7 @@ var bd = {
     },
     bindObject: function (that) {
         let objects = {}, binds = {};
-        let bind = that.map.bind || {};
+        let bind = that.bnd;
         let proxy = new bd.ObjectProxy(objects, binds);
         function setter(target) {
             let props = Object.getOwnPropertyNames(target);
@@ -515,7 +515,7 @@ var bd = {
                 return $.each(props, (i,key) => proxy[key] = target[key]);
             $.each(props, (i,key) => {
                 let value = target[key];
-                binds[key] ||= [];
+                binds[key] = binds[key] || [];
                 objects[key] = value;
                 let views = that.fdr.sys[bind[key] && bind[key].skey || key];
                 if (!views) {
@@ -574,7 +574,7 @@ var bd = {
         return {get: ()=>{return proxy}, set: setter, del: delter, unbind: unbind};
     },
     bindLiteral: function (that, proxy, key) {
-        let hook = (that.env.map.bind ||= {})[key] || {};
+        let hook = that.env.bnd[key] || {};
         let targets = getTargets(that);
         if (targets.length == 0)
             return bd.BindNormal();
@@ -1644,7 +1644,7 @@ function CompManager() {
         o.cfg = $.extend(true, {}, w.cfg);
         o.ctr = o.map.msgscope ? Communication() : env.ctr;
         // aid: appid, cid: classid
-        o.dir = w.dir, o.css = w.css, o.ali = w.ali, o.fun = w.fun, o.cid = w.cid;
+        o.dir = w.dir, o.css = w.css, o.ali = w.ali, o.fun = w.fun, o.cid = w.cid, o.bnd = w.bnd;
         o.smr = env.smr, o.env = env, o.node = node, o.aid = env.aid, node.uid = o.uid;
         var exprs = aliasMatch(env, node);
         resetAttrs(env, node, exprs);

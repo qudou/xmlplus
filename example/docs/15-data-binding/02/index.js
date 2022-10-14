@@ -7,7 +7,7 @@ xmlplus("xp", function (xp, $_) {
             }
         },
         Input: {
-            xml: "<input id='index' type='text'/>"
+            xml: "<input id='model' type='text'/>"
         }
     });
 });
