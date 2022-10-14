@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.7.15
+ * xmlplus.js v1.7.16
  * https://xmlplus.cn
  * (c) 2017-2022 qudou
  * Released under the MIT license
@@ -505,9 +505,8 @@ var bd = {
     isLiteral: function (value) {
         return $.isNumeric(value) || $.type(value) == "string" || $.type(value) == "boolean";
     },
-    bindObject: function (that) {
+    bindObject: function (view) {
         let objects = {}, binds = {};
-        let bind = that.bnd;
         let proxy = new bd.ObjectProxy(objects, binds);
         function setter(target) {
             let props = Object.getOwnPropertyNames(target);
@@ -517,9 +516,9 @@ var bd = {
                 let value = target[key];
                 binds[key] = binds[key] || [];
                 objects[key] = value;
-                let views = that.fdr.sys[bind[key] && bind[key].skey || key];
+                let views = view.fdr.sys[view.bnd[key] && view.bnd[key].skey || key];
                 if (!views) {
-                    binds[key].push(bd.BindNormal());
+                    binds[key].push(bd.BindNormal(view, key));
                     return proxy[key] = target[key];
                 }
                 if ($.isSystemObject(views))
@@ -560,10 +559,10 @@ var bd = {
         }
         return {get: ()=>{return proxy}, set: setter, del: delter, unbind: unbind};
     },
-    bindArray: function (that) {
-        let render = that.node.cloneNode(false);
+    bindArray: function (view) {
+        let render = view.node.cloneNode(false);
         render.removeAttribute("id");
-        let proxy = bd.ArrayProxy(that.api.hide(), render);
+        let proxy = bd.ArrayProxy(view.api.hide(), render);
         function setter(v) {
             for (let i in v)
                 proxy[i] = v[i];
@@ -572,7 +571,7 @@ var bd = {
         }
         function delter() {
             unbind();
-            that.api.remove();
+            view.api.remove();
         }
         function unbind() {
             while (proxy.length)
@@ -580,15 +579,15 @@ var bd = {
         }
         return {get: ()=>{return proxy}, set: setter, del: delter, unbind: unbind};
     },
-    bindLiteral: function (that, proxy, key) {
-        let hook = that.env.bnd[key] || {};
-        let targets = getTargets(that);
+    bindLiteral: function (view, proxy, key) {
+        let hook = view.env.bnd[key] || {};
+        let targets = getTargets(view);
         if (targets.length == 0)
-            return bd.BindNormal();
+            return bd.BindNormal(view, key);
         targets.forEach(i => Binds[i.node.uid] = {hook: hook, proxy: proxy, key: key});
-        function getTargets(that) {
-            if (!that.fdr) return [that];
-            let targets = that.fdr.sys[hook.skey || key];
+        function getTargets(view) {
+            if (!view.fdr) return [view];
+            let targets = view.fdr.sys[hook.skey || key];
             if (!targets) return [];
             if ($.isSystemObject(targets))
                 targets = [targets];
@@ -628,13 +627,16 @@ var bd = {
         }
         return {get: getter, set: setter, del: delter, unbind: unbind};
     },
-    BindNormal: function () {
+    BindNormal: function (view, key) {
         let tmpValue;
+		let hook = view.env.bnd[key] || {};
         function getter() {
-            return tmpValue;
+			let get = hook.get && view.value[hook.get];
+            return get ? get() : tmpValue;
         }
         function setter(value) {
-            tmpValue = value;
+			let set = hook.set && view.value[hook.set];
+			set ? set(null, value) : (tmpValue = value);
         }
         function dump() {}
         return {get: getter, set: setter, del: dump, unbind: dump};
