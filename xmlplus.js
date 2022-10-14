@@ -526,11 +526,18 @@ var bd = {
                     views = [views];
                 views = views.map(v => {return Store[v.guid()]});
                 if ($.isArray(value)) {
-                    views.forEach(v => binds[key].push(bd.bindArray(v)));
+                    views.forEach(view => {
+						binds[key].push(bd.bindArray(view));
+					});
                 } else if ($.isPlainObject(value)) {
-                    views.forEach(v => binds[key].push(bd.bindObject(v)));
+                    views.forEach(view => {
+						view.api.trigger("beforeBind", [value]);
+						binds[key].push(bd.bindObject(view));
+					});
                 } else if (bd.isLiteral(value)) {
-                    views.forEach(v => binds[key].push(bd.bindLiteral(v, proxy, key)));
+                    views.forEach(view => {
+						binds[key].push(bd.bindLiteral(view, proxy, key));
+					});
                 } else {
                     $.error(`Type error: ${value}`);
                 }
@@ -942,7 +949,7 @@ var EventModuleAPI = (function () {
         }
         eventTable[uid] = eventTable[uid] || {};
         eventTable[uid][type] = eventTable[uid][type] || [];
-        eventTable[uid][type].push({ selector: selector, fn: fn, handler: handler});
+        eventTable[uid][type].push({selector: selector, fn: fn, handler: handler});
         if (!listeners[type]) {
             listeners[type] = type;
             rdoc.addEventListener(type, eventHandler)
@@ -1348,9 +1355,11 @@ var CommonElementAPI = {
             } else if ($.isPlainObject(value)) {
                 if (!view.fdr)
                     $.error("a PlainObject is not allow to bind a htmltag!");
+				view.api.trigger("beforeBind", [value]);
                 model = bd.bindObject(view);
-            } else if (bd.isLiteral(value))
+            } else if (bd.isLiteral(value)) {
                 model = bd.bindLiteral(view, proxy, propKey);
+			}
             model.set(value);
             return true;
         }
