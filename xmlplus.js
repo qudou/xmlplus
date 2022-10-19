@@ -381,9 +381,11 @@ var hp = {
         return this.ele || Store[this.xml.lastChild.uid].elem();
     },
     appendTo: function () {
-        if ( this.ele ) return this.ele;
+        if (this.ele) return this.ele;
         var target = this.fdr.sys[this.map.appendTo];
-        return target && target.elem() || Store[this.xml.lastChild.uid].elem();
+		if (!target)
+			return Store[this.xml.lastChild.uid].elem()
+		return Store[target.guid()].appendTo();
     },
     createElement: (function() {
         var buffer = {};
@@ -512,36 +514,7 @@ var bd = {
             let props = Object.getOwnPropertyNames(target);
             if (!$.isEmptyObject(objects))
                 return $.each(props, (i,key) => proxy[key] = target[key]);
-            $.each(props, (i,key) => {
-                let value = target[key];
-                binds[key] = binds[key] || [];
-                objects[key] = value;
-                let views = view.fdr.sys[view.bnd[key] && view.bnd[key].skey || key];
-                if (!views) {
-                    binds[key].push(bd.BindNormal(view, key));
-                    return proxy[key] = target[key];
-                }
-                if ($.isSystemObject(views))
-                    views = [views];
-                views = views.map(v => {return Store[v.guid()]});
-                if ($.isArray(value)) {
-                    views.forEach(view => {
-						binds[key].push(bd.bindArray(view));
-					});
-                } else if ($.isPlainObject(value)) {
-                    views.forEach(view => {
-						view.api.trigger("beforeBind", [value]);
-						binds[key].push(bd.bindObject(view));
-					});
-                } else if (bd.isLiteral(value)) {
-                    views.forEach(view => {
-						binds[key].push(bd.bindLiteral(view, proxy, key));
-					});
-                } else {
-                    $.error(`Type error: ${value}`);
-                }
-                proxy[key] = target[key];
-            });
+            $.each(props, (i,key) => bind(target, key));
         }
         function delter() {
             for (let k in proxy)
@@ -557,6 +530,36 @@ var bd = {
                 delete binds[key];
             });
         }
+		function bind(target, key) {
+			let value = target[key];
+			binds[key] = binds[key] || [];
+			objects[key] = value;
+			let views = view.fdr.sys[view.bnd[key] && view.bnd[key].skey || key];
+			if (!views) {
+				binds[key].push(bd.BindNormal(view, key));
+				return proxy[key] = value;
+			}
+			if ($.isSystemObject(views))
+				views = [views];
+			views = views.map(v => {return Store[v.guid()]});
+			if ($.isArray(value)) {
+				views.forEach(view => {
+					binds[key].push(bd.bindArray(view));
+				});
+			} else if ($.isPlainObject(value)) {
+				views.forEach(view => {
+					view.api.trigger("beforeBind", [value]);
+					binds[key].push(bd.bindObject(view));
+				});
+			} else if (bd.isLiteral(value)) {
+				views.forEach(view => {
+					binds[key].push(bd.bindLiteral(view, proxy, key));
+				});
+			} else {
+				$.error(`Type error: ${value}`);
+			}
+			proxy[key] = value;
+		}
         return {get: ()=>{return proxy}, set: setter, del: delter, unbind: unbind};
     },
     bindArray: function (view) {
@@ -598,21 +601,23 @@ var bd = {
             });
             return result;
         }
-        function getOperator(target, e) {
+        function operator(target, e) {
             return bd[target][e.nodeName] || bd[target][`${e.nodeName}-${e.getAttribute("type")}`] || bd[target]["OTHERS"];
         }
         function getter() {
             let e = targets[0].elem();
             let v = targets[0].env.value;
-            let get = v && v[hook.get] || getOperator("Getters", e);
-            return get(e, targets);
+			if (v && v.hasOwnProperty(key))
+				return v[key];
+            return operator("Getters", e)(e, targets);
         }
         function setter(value) {
             targets.forEach(target => {
                 let e = target.elem();
                 let v = target.env.value;
-                let set = v && v[hook.set] || getOperator("Setters", e);
-                set(e, value, target);
+				if (v && v.hasOwnProperty(key))
+					return v[key] = value;
+                operator("Setters", e)(e, value, target);
             });
         }
         function delter() {
@@ -629,14 +634,14 @@ var bd = {
     },
     BindNormal: function (view, key) {
         let tmpValue;
-		let hook = view.env.bnd[key] || {};
+		let v = view.value;
         function getter() {
-			let get = hook.get && view.value[hook.get];
-            return get ? get() : tmpValue;
+			return v && v.hasOwnProperty(key) ? v[key] : tmpValue;
         }
         function setter(value) {
-			let set = hook.set && view.value[hook.set];
-			set ? set(null, value) : (tmpValue = value);
+			if (v && v.hasOwnProperty(key))
+				return v[key] = value;
+			tmpValue = value;
         }
         function dump() {}
         return {get: getter, set: setter, del: dump, unbind: dump};
@@ -938,7 +943,8 @@ var EventModuleAPI = (function () {
         if (typeof selector == "function")
             fn = selector, selector = undefined;
         assert(type, selector, fn);
-        var uid = this.uid, listener = this.api;
+        var uid = this.elem().xmlTarget.uid;
+		var listener = this.api;
         function handler(event) {
             var e = createProxy(event, listener);
             if (!selector)
@@ -973,7 +979,7 @@ var EventModuleAPI = (function () {
         return this.api.on(type, selector, fn);
     }
     function off(type, selector, fn) {
-        var k, item = eventTable[this.uid] || {};
+        var k, item = eventTable[this.elem().xmlTarget.uid] || {};
         if ( type == undefined ) {
             for ( type in item )
                 off.call(this, type);
@@ -998,9 +1004,10 @@ var EventModuleAPI = (function () {
         }
         return this;
     }
-    function trigger(type, data) {
+    function trigger(type, data, bubble) {
         var event = Event(type, true);
         event.xmlTarget = Store[this.uid];
+		event.bubble_ = bubble == false ? false : true;
         event.data = data == null ? [] : ($.isArray(data) ? data : [data]);
         this.elem().dispatchEvent(event);
         return this;
@@ -1027,12 +1034,11 @@ var EventModuleAPI = (function () {
         return proxy;
     }
     function eventHandler(event) {
-        let target = event.target.xmlTarget;
-        if (!target) return;
-        let node = target.node;
+        let target = event.target;
         let cancelBubble = false;
-        while (node.uid) {
-            let items =(eventTable[node.uid] || {})[event.type] || [];
+        while (target.xmlTarget) {
+			let uid = target.xmlTarget.uid;
+            let items =(eventTable[uid] || {})[event.type] || [];
             for (let i = 0; i < items.length; i++) {
                 let e = items[i].handler(event);
                 if (e.cancelImmediateBubble) {
@@ -1041,9 +1047,9 @@ var EventModuleAPI = (function () {
                 }
                 e.cancelBubble && (cancelBubble = true);
             }
-            if (cancelBubble) break;
-            let tnode = node.parentNode;
-            node = tnode.uid ? tnode : (Store[node.uid].env.node || {});
+            if (cancelBubble || !event.bubbles || event.bubble_ == false) 
+				break;
+			target = target.parentNode;
         }
     }
     return { on: on, once: once, off: off, trigger: trigger, remove: remove };
@@ -1894,13 +1900,15 @@ function parseEnvXML(env, parent, node) {
                 iterate(node.childNodes[i], ins.ele);
             env.smr.create(ins);
         } else if ( (ins = Manager[1].create(env, node, parent)) ) {
-            parseEnvXML(ins, parent, ins.xml.lastChild);
+			var father = ins.map.fragment == false ? rdoc.lastChild : parent;
+            var re = parseEnvXML(ins, parent, ins.xml.lastChild);
             ins.fdr.refresh();
             var appendTo = ins.appendTo();
             for ( i = 0; i < node.childNodes.length; i++ )
                 iterate(node.childNodes[i], appendTo);
             env.smr.create(ins);
             ins.value = ins.fun.call(ins.api, ins.fdr.sys, ins.fdr.items, ins.opt);
+			father == parent || parent.appendChild(re.elem());
         } else {
             $.release || console.warn($.serialize(node) + " not found");
             ins = Manager[0].create(env, node, parent);
