@@ -202,6 +202,12 @@ var $ = {
         s.dir = s.dir.substr(2);
         return Library[s.dir] && Library[s.dir][s.basename] || false;
     },
+    messages: function (obj) {
+        if (!$.isSystemObject(obj))
+            $.error("invalid input, expected a SystemObject");
+        var item = Store[obj.guid()];
+        return item && item.ctr.messages() || [];
+    },
     getElementById: function (id, isGuid) {
         if ( isGuid )
             return Store[id] && Store[id].api;
@@ -854,23 +860,90 @@ var Collection = (function () {
     return fn;
 }());
 
+var Communication = function () {
+    var table = {};
+    function watch(type, fn, priority) {
+        var list = table[type] = table[type] || [],
+            priority = $.isNumeric(priority) ? priority : -Infinity,
+            target = { source: this, fn: fn, priority: priority };
+        var i = 0, len = list.length;
+        for ( ; i < len; i++ )
+            if ( priority > list[i].priority ) {
+                list.splice(i, 0, target);
+                break;
+            }
+        list.length == len && list.push(target);
+        return this;
+    }
+    function glance(type, fn, priority) {
+        function callback(e) {
+            e.currentTarget.unwatch(type, callback);
+            fn.apply(this, [].slice.call(arguments));
+        }
+        return this.api.watch(type, callback, priority);
+    }
+    function unwatch(type, fn) {
+        var key, buf;
+        if ( type == undefined ) {
+            for ( key in table )
+              unwatch.call(this, key);
+        } else if ( typeof type == "function" ) {
+            for ( key in table )
+              unwatch.call(this, key, type);
+        } else if ( fn == undefined ) {
+            buf = [].slice.call(table[type] || []);
+            for ( key in buf )
+              if ( buf[key].source == this )
+                table[type].splice(table[type].indexOf(buf[key]), 1);
+        } else {
+            buf = [].slice.call(table[type] || []);
+            for ( key in buf )
+              if ( buf[key].source == this && buf[key].fn == fn )
+                table[type].splice(table[type].indexOf(buf[key]), 1);
+        }
+        return this;
+    }
+    function notify(type, data) {
+        if ( !table[type] ) return;
+        data = data == null ? [] : ($.isArray(data) ? data : [data]);
+        var i = 0, buf = [].slice.call(table[type]);
+        for ( ; i < buf.length; i++ ) {
+            var obj = [{type: type, target: this.api, currentTarget: buf[i].source.api}].concat(data);
+            if (buf[i].fn.apply(this.api, obj) === false)
+                return this;
+        }
+        return this;
+    }
+    function remove(item) {
+        for ( var type in table ) {
+            var i, array = [];
+            for ( i = 0; i < table[type].length; i++ )
+                if ( table[type][i].source != item )
+                    array.push(table[type][i]);
+            table[type] = array;
+        }
+    }
+    function messages() {
+        return Object.keys(table);
+    }
+    return { watch: watch, glance: glance, unwatch: unwatch, notify: notify, remove: remove, messages: messages };
+};
+
 var MessageModuleAPI = (function () {
     var table = {};
     function watch(type, fn) {
-        if (typeof fn !== "function") 
-			$.error("invalid handler, expected a function");
 		var uid = this.elem().xmlTarget.uid;
         table[uid] = table[uid] || {};
         table[uid][type] = table[uid][type] || [];
-        table[uid][type].push({watcher: this, fn: fn});
+        table[uid][type].push({source: this, fn: fn});
         return this;
     }
     function glance(type, fn) {
         function callback(e) {
-            this.unwatch(type, callback);
+            e.currentTarget.unwatch(type, callback);
             fn.apply(this, [].slice.call(arguments));
         }
-        return this.api.watch(type, callback);
+        return this.api.watch(type, fn);
     }
     function unwatch(type, fn) {
         var item = table[this.elem().xmlTarget.uid] || {};
@@ -889,51 +962,31 @@ var MessageModuleAPI = (function () {
         return this;
     }
     function notify(type, data) {
-		var that = this;
 		data = data == null ? [] : ($.isArray(data) ? data : [data]);
-		(function iterate(target) {
-			var uid = target.uid;
-			if (target.fdr) {
-				var filter = target.map.msgFilter;
-				if (filter && filter.test(type))
-					return;
-				iterate(Store[Store[uid].xml.lastChild.uid]);
-			} else {
-				var targets = table[uid] && table[uid] || {};
-				targets[type] && targets[type].forEach(item => {
-					var e = {type: type, target: that.api, currentTarget: item.watcher.api};
-					item.fn.apply(item.watcher.api, [e].concat(data));
-				});
+		(function iterate(elem) {
+			var uid = elem.xmlTarget.uid;
+			var targets = table[uid] && table[uid] || [];
+			targets.forEach(item => {
+				var obj = [{type: type, target: this.api, currentTarget: item[i].source.api}].concat(data);
+				if (item[i].fn.apply(this.api, obj) === false)
+					return this;
+			});
+			for (var i = 0; i < elem.childNodes.length; i++) {
+				let ele = elem.childNodes[i];
+                ele.nodeType == 1 && iterate(ele);
 			}
-			for (var i = 0; i < target.node.childNodes.length; i++) {
-				var node = target.node.childNodes[i];
-                node.nodeType == 1 && iterate(Store[node.uid]);
-			}
-		}(this));
+		}(this.elem()));
         return this;
     }
     function remove(target) {
         delete table[target.uid];
     }
     function messages() {
-		var result = {};
-		(function iterate(target) {
-			var uid = target.uid;
-			if (target.fdr)
-				iterate(Store[Store[uid].xml.lastChild.uid]);
-			else if (table[uid]) {
-				for (var key in table[uid])
-				    result[key] = 1;
-			}
-			for (var i = 0; i < target.node.childNodes.length; i++) {
-				var node = target.node.childNodes[i];
-                node.nodeType == 1 && iterate(Store[node.uid]);
-			}
-		}(this));
-		return Object.keys(result);
+		var uid = this.elem().xmlTarget.uid;
+		return Object.keys(table[uid] && table[uid] || {});
     }
 	return { watch: watch, glance: glance, unwatch: unwatch, notify: notify, remove: remove, messages: messages };
-}());
+});
 
 var EventModuleAPI = (function () {
     var eventTable = {},
@@ -1148,6 +1201,22 @@ var CommonElementAPI = {
             elem = elem.parentNode;
         } while (elem);
         return false;
+    },
+    notify: function (type, data) {
+        return this.ctr.notify.call(this, type, data);
+    },
+    watch: function (type, fn, priority) {
+        if ( typeof fn != "function" )
+            $.error("invalid callback, expected a function");
+        return this.ctr.watch.call(this, type, fn, priority);
+    },
+    glance: function (type, fn, priority) {
+        if ( typeof fn != "function" )
+            $.error("invalid callback, expected a function");
+        return this.ctr.glance.call(this, type, fn, priority);
+    },
+    unwatch: function (type, fn) {
+        return this.ctr.unwatch.call(this, type, fn);
     },
     append: function (target, options, parent) {
         parent = parent || this.appendTo();
@@ -1621,7 +1690,7 @@ function HtmlManager() {
             resetAttrs(env, node, aliasMatch(env, node));
         o.ele = hp.createElement(node, parent);
         o.api = node.defer ? hp.build(o, DeferElementAPI) : o.back;
-        o.env = env, o.node = node, node.uid = o.uid, o.ele.xmlTarget = o;
+        o.ctr = env.ctr, o.env = env, o.node = node, node.uid = o.uid, o.ele.xmlTarget = o;
         return Store[o.uid] = o;
     }
     function recycle(item) {
@@ -1632,7 +1701,7 @@ function HtmlManager() {
             Manager[o.typ].recycle(o);
         }
         delete Store[item.uid];
-        MessageModuleAPI.remove(item);
+        item.ctr.remove(item);
         item.env.smr.remove(item);
         EventModuleAPI.remove(item);
         table[item.node.nodeName].push(item);
@@ -1644,6 +1713,7 @@ function HtmlManager() {
             Manager[o.typ].chenv(env, o);
         }
         item.env = env;
+        item.ctr = env.ctr;
     }
     return { create: create, recycle: recycle, chenv: chenv };
 }
@@ -1673,6 +1743,7 @@ function CompManager() {
         o.map = $.extend(true, {}, w.map);
         o.opt = $.extend(true, {}, w.opt);
         o.cfg = $.extend(true, {}, w.cfg);
+        o.ctr = o.map.msgscope ? Communication() : env.ctr;
         // aid: appid, cid: classid
         o.dir = w.dir, o.css = w.css, o.ali = w.ali, o.fun = w.fun, o.cid = w.cid, o.bnd = w.bnd;
         o.smr = env.smr, o.env = env, o.node = node, o.aid = env.aid, node.uid = o.uid;
@@ -1699,7 +1770,7 @@ function CompManager() {
         }
         Manager[deep.typ].recycle(deep);
         delete Store[item.uid];
-        MessageModuleAPI.remove(item);
+        item.ctr.remove(item);
         item.smr.remove(item);
         EventModuleAPI.remove(item);
         table.push(item);
@@ -1711,6 +1782,7 @@ function CompManager() {
             Manager[o.typ].chenv(env, o);
         }
         item.env = env;
+        item.msgscope || (item.ctr = env.ctr);
     }
     return { create: create, recycle: recycle, chenv: chenv };
 }
@@ -2008,6 +2080,7 @@ function startup(xml, parent, param) {
     }
     env.fdr = Finder(env);
     env.smr = StyleManager();
+    env.ctr = Communication();
     env.aid = inBrowser ? $.guid() : "";
     env.api = hp.build(env, NodeElementAPI);
     if ( $.isPlainObject(param) ) {
@@ -2029,7 +2102,7 @@ function startup(xml, parent, param) {
         XMLSerializer_ = XMLSerializer;
         rdoc = document;
         vdoc = $.parseXML("<void/>");
-        NodeElementAPI = $.extend(ClientElementAPI, EventModuleAPI, MessageModuleAPI, CommonElementAPI);
+        NodeElementAPI = $.extend(ClientElementAPI, EventModuleAPI, CommonElementAPI);
         window.xmlplus = window.xp = $.extend(xmlplus, $);
         if ( typeof define === "function" && define.amd )
             define( "xmlplus", [], new Function("return xmlplus;"));
@@ -2046,7 +2119,7 @@ function startup(xml, parent, param) {
         XMLSerializer_ = require("exmldom").XMLSerializer;
         vdoc = $.parseXML("<body/>");
         rdoc = $.parseXML("<body/>");
-        NodeElementAPI = $.extend(ServerElementAPI, EventModuleAPI, MessageModuleAPI, CommonElementAPI);
+        NodeElementAPI = $.extend(ServerElementAPI, EventModuleAPI, CommonElementAPI);
         module.exports = $.extend(xmlplus, $);
     }
     CopyElementAPI = $.extend({}, NodeElementAPI, CopyElementAPI);
