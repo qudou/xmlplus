@@ -377,9 +377,9 @@ var hp = {
     appendTo: function () {
         if (this.ele) return this.ele;
         var target = this.fdr.sys[this.map.appendTo];
-		if (!target)
-			return Store[this.xml.lastChild.uid].elem()
-		return Store[target.guid()].appendTo();
+        if (!target)
+            return Store[this.xml.lastChild.uid].elem()
+        return Store[target.guid()].appendTo();
     },
     createElement: (function() {
         var buffer = {};
@@ -524,36 +524,36 @@ var bd = {
                 delete binds[key];
             });
         }
-		function bind(target, key) {
-			let value = target[key];
-			binds[key] = binds[key] || [];
-			objects[key] = value;
-			let views = view.fdr.sys[view.bnd[key] && view.bnd[key].skey || key];
-			if (!views) {
-				binds[key].push(bd.BindNormal(view, key));
-				return proxy[key] = value;
-			}
-			if ($.isSystemObject(views))
-				views = [views];
-			views = views.map(v => {return Store[v.guid()]});
-			if ($.isArray(value)) {
-				views.forEach(view => {
-					binds[key].push(bd.bindArray(view));
-				});
-			} else if ($.isPlainObject(value)) {
-				views.forEach(view => {
-					view.api.trigger("beforeBind", [value]);
-					binds[key].push(bd.bindObject(view));
-				});
-			} else if (bd.isLiteral(value)) {
-				views.forEach(view => {
-					binds[key].push(bd.bindLiteral(view, proxy, key));
-				});
-			} else {
-				$.error(`Type error: ${value}`);
-			}
-			proxy[key] = value;
-		}
+        function bind(target, key) {
+            let value = target[key];
+            binds[key] = binds[key] || [];
+            objects[key] = value;
+            let views = view.fdr.sys[view.bnd[key] && view.bnd[key].skey || key];
+            if (!views) {
+                binds[key].push(bd.BindNormal(view, key));
+                return proxy[key] = value;
+            }
+            if ($.isSystemObject(views))
+                views = [views];
+            views = views.map(v => {return Store[v.guid()]});
+            if ($.isArray(value)) {
+                views.forEach(view => {
+                    binds[key].push(bd.bindArray(view));
+                });
+            } else if ($.isPlainObject(value)) {
+                views.forEach(view => {
+                    view.api.trigger("beforeBind", [value]);
+                    binds[key].push(bd.bindObject(view));
+                });
+            } else if (bd.isLiteral(value)) {
+                views.forEach(view => {
+                    binds[key].push(bd.bindLiteral(view, proxy, key));
+                });
+            } else {
+                $.error(`Type error: ${value}`);
+            }
+            proxy[key] = value;
+        }
         return {get: ()=>{return proxy}, set: setter, del: delter, unbind: unbind};
     },
     bindArray: function (view) {
@@ -601,16 +601,16 @@ var bd = {
         function getter() {
             let e = targets[0].elem();
             let v = targets[0].env.value;
-			if (v && v.hasOwnProperty(key))
-				return v[key];
+            if (v && v.hasOwnProperty(key))
+                return v[key];
             return operator("Getters", e)(e, targets);
         }
         function setter(value) {
             targets.forEach(target => {
                 let e = target.elem();
                 let v = target.env.value;
-				if (v && v.hasOwnProperty(key))
-					return v[key] = value;
+                if (v && v.hasOwnProperty(key))
+                    return v[key] = value;
                 operator("Setters", e)(e, value, target);
             });
         }
@@ -628,14 +628,14 @@ var bd = {
     },
     BindNormal: function (view, key) {
         let tmpValue;
-		let v = view.value;
+        let v = view.value;
         function getter() {
-			return v && v.hasOwnProperty(key) ? v[key] : tmpValue;
+            return v && v.hasOwnProperty(key) ? v[key] : tmpValue;
         }
         function setter(value) {
-			if (v && v.hasOwnProperty(key))
-				return v[key] = value;
-			tmpValue = value;
+            if (v && v.hasOwnProperty(key))
+                return v[key] = value;
+            tmpValue = value;
         }
         function dump() {}
         return {get: getter, set: setter, del: dump, unbind: dump};
@@ -858,8 +858,8 @@ var MessageModuleAPI = (function () {
     var table = {};
     function watch(type, fn) {
         if (typeof fn !== "function") 
-			$.error("invalid handler, expected a function");
-		var uid = this.elem().xmlTarget.uid;
+            $.error("invalid handler, expected a function");
+        var uid = this.elem().xmlTarget.uid;
         table[uid] = table[uid] || {};
         table[uid][type] = table[uid][type] || [];
         table[uid][type].push({watcher: this, fn: fn});
@@ -886,55 +886,55 @@ var MessageModuleAPI = (function () {
                 if (fn == buf[k].fn)
                     item[type].splice(item[type].indexOf(buf[k]), 1);
         } else {
-			delete item[type];
-		}
+            delete item[type];
+        }
         return this;
     }
     function notify(type, data) {
-		var that = this;
-		data = data == null ? [] : ($.isArray(data) ? data : [data]);
-		(function iterate(target) {
-			var uid = target.uid;
-			if (target.fdr) {
-				var filter = target.map.msgFilter;
-				if (filter && filter.test(type))
-					return;
-				iterate(Store[Store[uid].xml.lastChild.uid]);
-			} else {
-				var targets = table[uid] && table[uid] || {};
-				targets[type] && targets[type].forEach(item => {
-					var e = {type: type, target: that.api, currentTarget: item.watcher.api};
-					item.fn.apply(that.api, [e].concat(data));
-				});
-			}
-			for (var i = 0; i < target.node.childNodes.length; i++) {
-				var node = target.node.childNodes[i];
+        var that = this;
+        data = data == null ? [] : ($.isArray(data) ? data : [data]);
+        (function iterate(target) {
+            var uid = target.uid;
+            if (target.fdr) {
+                var filter = target.map.msgFilter;
+                if (filter && filter.test(type))
+                    return;
+                iterate(Store[Store[uid].xml.lastChild.uid]);
+            } else {
+                var targets = table[uid] && table[uid] || {};
+                targets[type] && targets[type].forEach(item => {
+                    var e = {type: type, target: that.api, currentTarget: item.watcher.api};
+                    item.fn.apply(that.api, [e].concat(data));
+                });
+            }
+            for (var i = 0; i < target.node.childNodes.length; i++) {
+                var node = target.node.childNodes[i];
                 node.nodeType == 1 && iterate(Store[node.uid]);
-			}
-		}(this));
+            }
+        }(this));
         return this;
     }
     function remove(target) {
         delete table[target.uid];
     }
     function messages() {
-		var result = {};
-		(function iterate(target) {
-			var uid = target.uid;
-			if (target.fdr)
-				iterate(Store[Store[uid].xml.lastChild.uid]);
-			else if (table[uid]) {
-				for (var key in table[uid])
-				    result[key] = 1;
-			}
-			for (var i = 0; i < target.node.childNodes.length; i++) {
-				var node = target.node.childNodes[i];
+        var result = {};
+        (function iterate(target) {
+            var uid = target.uid;
+            if (target.fdr)
+                iterate(Store[Store[uid].xml.lastChild.uid]);
+            else if (table[uid]) {
+                for (var key in table[uid])
+                    result[key] = 1;
+            }
+            for (var i = 0; i < target.node.childNodes.length; i++) {
+                var node = target.node.childNodes[i];
                 node.nodeType == 1 && iterate(Store[node.uid]);
-			}
-		}(this));
-		return Object.keys(result);
+            }
+        }(this));
+        return Object.keys(result);
     }
-	return { watch: watch, glance: glance, unwatch: unwatch, notify: notify, remove: remove, messages: messages };
+    return { watch: watch, glance: glance, unwatch: unwatch, notify: notify, remove: remove, messages: messages };
 }());
 
 var EventModuleAPI = (function () {
@@ -952,7 +952,7 @@ var EventModuleAPI = (function () {
             fn = selector, selector = undefined;
         assert(type, selector, fn);
         var uid = this.elem().xmlTarget.uid;
-		var listener = this.api;
+        var listener = this.api;
         function handler(event) {
             var e = createProxy(event, listener);
             if (!selector)
@@ -1015,7 +1015,7 @@ var EventModuleAPI = (function () {
     function trigger(type, data, bubble) {
         var event = Event(type, true);
         event.xmlTarget = Store[this.uid];
-		event.bubble_ = bubble == false ? false : true;
+        event.bubble_ = bubble == false ? false : true;
         event.data = data == null ? [] : ($.isArray(data) ? data : [data]);
         this.elem().dispatchEvent(event);
         return this;
@@ -1045,7 +1045,7 @@ var EventModuleAPI = (function () {
         let target = event.target;
         let cancelBubble = false;
         while (target.xmlTarget) {
-			let uid = target.xmlTarget.uid;
+            let uid = target.xmlTarget.uid;
             let items =(eventTable[uid] || {})[event.type] || [];
             for (let i = 0; i < items.length; i++) {
                 let e = items[i].handler(event);
@@ -1056,8 +1056,8 @@ var EventModuleAPI = (function () {
                 e.cancelBubble && (cancelBubble = true);
             }
             if (cancelBubble || !event.bubbles || event.bubble_ == false) 
-				break;
-			target = target.parentNode;
+                break;
+            target = target.parentNode;
         }
     }
     return { on: on, once: once, off: off, trigger: trigger, remove: remove };
@@ -1132,15 +1132,15 @@ var CommonElementAPI = {
         elem.setAttribute("class", result.join(" "));
         return this;
     },
-	hasClass: function(value) {
-	    var elem = this.elem();
-		value = value || '';
-		var env = this.env;
-		value = value.replace(/#/g, env.aid + env.cid);
-		if (value.length == 0) 
-			return false;
+    hasClass: function(value) {
+        var elem = this.elem();
+        value = value || '';
+        var env = this.env;
+        value = value.replace(/#/g, env.aid + env.cid);
+        if (value.length == 0) 
+            return false;
         return new RegExp(' ' + value + ' ').test(' ' + elem.getAttribute("class") + ' ');
-	},
+    },
     contains: function (obj) {
         if ( !obj ) return false;
         var target = this.elem(),
@@ -1364,11 +1364,11 @@ var CommonElementAPI = {
             } else if ($.isPlainObject(value)) {
                 if (!view.fdr)
                     $.error("a PlainObject is not allow to bind a htmltag!");
-				view.api.trigger("beforeBind", [value]);
+                view.api.trigger("beforeBind", [value]);
                 model = bd.bindObject(view);
             } else if (bd.isLiteral(value)) {
                 model = bd.bindLiteral(view, proxy, propKey);
-			}
+            }
             model.set(value);
             return true;
         }
@@ -1420,14 +1420,14 @@ var ClientElementAPI = {
         elem.style.width = parseFloat(value) + "px";
         return this;
     },
-	outerWidth: function (includeMargins) {
-		var elem = this.elem();
-		if (includeMargins) {
-		    var styles = getComputedStyle(elem, null);
-		    return elem.offsetWidth + parseFloat(styles.getPropertyValue('margin-right')) + parseFloat(styles.getPropertyValue('margin-left'));
-		}
-		return elem.offsetWidth;
-	},
+    outerWidth: function (includeMargins) {
+        var elem = this.elem();
+        if (includeMargins) {
+            var styles = getComputedStyle(elem, null);
+            return elem.offsetWidth + parseFloat(styles.getPropertyValue('margin-right')) + parseFloat(styles.getPropertyValue('margin-left'));
+        }
+        return elem.offsetWidth;
+    },
     height: function (value) {
         var elem = this.elem();
         if (value === undefined)
@@ -1435,14 +1435,14 @@ var ClientElementAPI = {
         elem.style.height = parseFloat(value) + "px";
         return this;
     },
-	outerHeight: function (includeMargins) {
-		var elem = this.elem();
-		if (includeMargins) {
-		    var styles = getComputedStyle(elem, null);
-		    return elem.offsetHeight + parseFloat(styles.getPropertyValue('margin-bottom')) + parseFloat(styles.getPropertyValue('margin-top'));
-		}
-		return elem.offsetHeight;
-	},
+    outerHeight: function (includeMargins) {
+        var elem = this.elem();
+        if (includeMargins) {
+            var styles = getComputedStyle(elem, null);
+            return elem.offsetHeight + parseFloat(styles.getPropertyValue('margin-bottom')) + parseFloat(styles.getPropertyValue('margin-top'));
+        }
+        return elem.offsetHeight;
+    },
     offset: function (coordinates) {
         var elem = this.elem();
         if ( coordinates ) {
@@ -1914,7 +1914,7 @@ function parseEnvXML(env, parent, node) {
                 iterate(node.childNodes[i], ins.ele);
             env.smr.create(ins);
         } else if ( (ins = Manager[1].create(env, node, parent)) ) {
-			var father = ins.map.fragment == false ? rdoc.lastChild : parent;
+            var father = ins.map.fragment == false ? rdoc.lastChild : parent;
             var re = parseEnvXML(ins, parent, ins.xml.lastChild);
             ins.fdr.refresh();
             var appendTo = ins.appendTo();
@@ -1922,7 +1922,7 @@ function parseEnvXML(env, parent, node) {
                 iterate(node.childNodes[i], appendTo);
             env.smr.create(ins);
             ins.value = ins.fun.call(ins.api, ins.fdr.sys, ins.fdr.items, ins.opt);
-			father == parent || parent.appendChild(re.elem());
+            father == parent || parent.appendChild(re.elem());
         } else {
             $.release || console.warn($.serialize(node) + " not found");
             ins = Manager[0].create(env, node, parent);
