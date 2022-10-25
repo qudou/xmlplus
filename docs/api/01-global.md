@@ -357,29 +357,6 @@ console.log(xp.hasComponent("div"));        // true
 console.log(xp.hasComponent("//xp/Index")); // false 或者一个组件的 JSON 描述，这取决于实际的应用
 ```
 
-## messages
-
-```js
-messages(object)
-```
-
-- `object` : `SystemObject` 系统对象
-- `Returns` : `Array` 字符串数组
-
-根据给定的系统对象，返回该对象所在消息作用域内的所有已被侦听的消息字符串。请参考下面的示例。
-
-```js
-// 01-20
-Example: {
-    xml: "<div id='example'/>",
-    fun: function (sys, items, opts) {
-        this.watch("foo", ()=> console.log("foo"));
-        this.watch("bar", ()=> console.log("bar"));
-        console.log(xp.messages(this)); // ["foo", "bar"]
-    }
-}
-```
-
 ## getElementById
 
 ```js

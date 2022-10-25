@@ -1,13 +1,17 @@
 xmlplus("xp", function (xp, $_) {
     $_().imports({
         Index: {
-            xml: "<span id='foo'>foo</span>",
+            xml: "<div id='index'>\
+                     <span id='foo'>foo</span>\
+                     <span id='bar'>bar</span>\
+                  </div>",
             fun: function (sys, items, opts) {
-                sys.foo.glance("msg", function(e) {
-                    console.log(this.text());
-                });
-                sys.foo.notify("msg").notify("msg");
+				sys.bar.watch("msg", function(e, info) {
+					console.log(info);
+				});
+				sys.foo.notify("msg", "from foo");
+				sys.index.notify("msg", "from index");
             }
-        }
+        },
     });
 });

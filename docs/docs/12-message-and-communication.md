@@ -6,139 +6,83 @@
 - [unwatch](/api#通信_unwatch)：取消消息侦听
 - [glance](/api#通信_glance)：仅一次侦听消息
 - [notify](/api#通信_notify)：派发消息
+- [messages](/api#通信_messages)：获取系统对象消息作用域内的所有已被侦听的消息字符串
 
 ## 消息的派发与捕获
 
-派发一个消息，使用系统函数 `notify`。捕获一个消息，由系统函数 `watch` 来执行。对于下面的示例，在函数项执行完毕之前，组件对象 foo 派发了消息 msg，该消息由组件对象 bar 捕获。
+派发一个消息，使用系统函数 `notify`。捕获一个消息，由系统函数 `watch` 来执行。对于下面的示例，在函数项执行完毕之前，组件对象 index 派发了消息 msg，该消息由组件对象 foo 捕获。
 
 ```js
 // 12-01
 Index: {
     xml: "<div id='index'>\
              <span id='foo'>foo</span>\
-             <span id='bar'>bar</span>\
           </div>",
     fun: function (sys, items, opts) {
-        sys.bar.watch("msg", function (e) {
-            console.log(this.text());
+        sys.foo.watch("msg", function (e) {
+            console.log("hello, world");
         });
-        sys.foo.notify("msg");
+        sys.index.notify("msg");
     }
 }
 ```
 
-侦听一个消息时，在侦听器中可以获取派发消息的对象引用。如下面的示例，`e.target`、`this` 和 `sys.foo` 同属于一个对象的引用。
+侦听一个消息时，在侦听器中可以获取派发消息的对象引用。如下面的示例，`e.target`、`this` 和 `sys.index` 同属于一个对象的引用。
 
 ```js
 // 12-02
 Index: {
     xml: "<div id='index'>\
              <span id='foo'>foo</span>\
-             <span id='bar'>bar</span>\
           </div>",
     fun: function (sys, items, opts) {
-        sys.bar.watch("msg", function (e) {
-            console.log(e.target == this, this == sys.foo); // true true
+        sys.foo.watch("msg", function (e) {
+            console.log(e.target == this, this == sys.index); // true true
         });
-        sys.foo.notify("msg");
+        sys.index.notify("msg");
     }
 }
 ```
 
-侦听一个消息时，在侦听器中还可以获取侦听消息的对象引用，如下面的示例，`e.currentTarget` 与 `sys.bar` 同属于一个对象的引用。
+侦听一个消息时，在侦听器中还可以获取侦听消息的对象引用，如下面的示例，`e.currentTarget` 与 `sys.foo` 同属于一个对象的引用。
 
 ```js
 // 12-03
 Index: {
     xml: "<div id='index'>\
              <span id='foo'>foo</span>\
-             <span id='bar'>bar</span>\
           </div>",
     fun: function (sys, items, opts) {
-        sys.bar.watch("msg", function (e) {
-            console.log(sys.bar == e.currentTarget); // true
+        sys.foo.watch("msg", function (e) {
+            console.log(e.currentTarget == sys.foo); // true
         });
-        sys.foo.notify("msg");
+        sys.index.notify("msg");
     }
 }
 ```
 
-系统函数 `notify` 在派发消息时可以携带数据，同时在消息的侦听器中可以获取到数据。下面示例中的组件对象 foo 派发的消息携带了两个数据：数值 `37` 和字符串 `hello,world` ，这两个数据依次由侦听器的第二和第三个形参获得。
+系统函数 `notify` 在派发消息时可以携带数据，同时在消息的侦听器中可以获取到数据。下面示例中的组件对象 index 派发的消息携带了两个数据：数值 `37` 和字符串 `hello,world` ，这两个数据依次由侦听器的第二和第三个形参获得。
 
 ```js
 // 12-04
 Index: {
     xml: "<div id='index'>\
              <span id='foo'>foo</span>\
-             <span id='bar'>bar</span>\
           </div>",
     fun: function(sys, items, opts) {
-        sys.bar.watch("msg", function (e, a, b) {
+        sys.foo.watch("msg", function (e, a, b) {
             console.log(a, b); // 37 hello,world
         });
-        sys.foo.notify("msg", [37, "hello,world"]);
+        sys.index.notify("msg", [37, "hello,world"]);
     }
 }
 ```
 
-在示例中，派发消息时，数据是以数组格类型出现的。如果数据非数组类型并且仅传递一个数据对象，那么该数据可以无需要封装成数组对象而直接发送，正如下面的语句所示。
+在示例中，派发消息时，数据是以数组类型出现的。如果数据非数组类型并且仅传递一个数据对象，那么该数据可以无需要封装成数组对象而直接发送，正如下面的语句所示。
 
 ```js
-sys.foo.notify("msg", "hello,world");
+sys.index.notify("msg", "hello,world");
 ```
-
-## 指定消息侦听器的优先级别
-
-默认情况下，对于侦听同一个消息的不同组件对象，先注册的侦听器比后注册的会优先得到调用。如果想改变这种默认的次序，可以为系统函数 `watch` 指定第三个参数。请看下面的示例。
-
-```js
-// 12-05
-Index: {
-    xml: "<div id='index'>\
-             <span id='foo'>foo</span>\
-             <span id='bar'>bar</span>\
-             <span id='alice'>alice</span>\
-          </div>",
-    fun: function (sys, items, opts) {
-        sys.foo.watch("msg", function (e) {
-            console.log("foo");
-        });
-        sys.bar.watch("msg", function (e) {
-            console.log("bar");
-        }, 1);
-        sys.alice.notify("msg");
-    }
-}
-```
-
-在该示例的函数项中，对于系统函数 `sys.bar.watch`，如果不指定第三个参数，那么控制台会先打印 foo，再打印 bar。而现在的结果却是相反的，这表明该优先级参数改变了侦听器的调用次序。此参数是一个数值，不指定则等同于 `-Infinity`。此参数值越大的，优先级越高，相应的侦听器也就越先被调用。
-
-## 阻止事件继续传输
-
-如上一节所述，当某对象派发消息后，注册了该消息的侦听器会以一定的顺序逐个得到调用。但我们希望，在执行完某个侦听器后，后续的侦听器不再被调用。这很容易做到，请看下面的示例。
-
-```js
-// 12-06
-Index: {
-    xml: "<div id='index'>\
-             <span id='foo'>foo</span>\
-             <span id='bar'>bar</span>\
-             <span id='alice'>alice</span>\
-          </div>",
-    fun: function (sys, items, opts) {
-        sys.foo.watch("msg", function (e) {
-            console.log("foo");
-            return false;
-        });
-        sys.bar.watch("msg", function (e) {
-            console.log("bar");
-        });
-        sys.alice.notify("msg");
-    }
-}
-```
-
-在该示例中，当消息 msg 派发后，消息 msg 的第一个侦听器显示地返回了 false 值，这样可导致后续的侦听器不再被调用。
 
 ## 消息的注销
 
@@ -147,7 +91,7 @@ Index: {
 在下面这个例子中，由于在 `sys.foo.watch` 的回调函数中注销了被侦听的消息，所以这个回调函数只能被调用一次。
 
 ```js
-// 12-07
+// 12-05
 Index: {
     xml: "<span id='index'>foo</span>",
     fun: function (sys, items, opts) {
@@ -163,7 +107,7 @@ Index: {
 另外，可以使用系统函数 `glance` 达到与上例同样的目的，这时无需在回调函数中显示地移除侦听器。该函数确保注册的侦听器仅被调用一次，下面的示例展示了这一点。
 
 ```js
-// 12-08
+// 12-06
 Index: {
     xml: "<span id='foo'>foo</span>",
     fun: function (sys, items, opts) {
@@ -175,10 +119,10 @@ Index: {
 }
 ```
 
-一个消息的注销只能由侦听该消息的对象来执行，利用其它对象来注销是无效的。在下面示例的事件的侦听方的回调函数中，组件对象 `sys.bar` 试图注销由组件对象 `sys.foo` 注册的消息，这是无效的。
+一个消息的注销只能由侦听该消息的对象来执行，利用其它对象来注销是无效的。对于下面的示例，事件侦听方的回调函数中，组件对象 `sys.bar` 试图注销由组件对象 `sys.foo` 注册的消息，这是无效的。
 
 ```js
-// 12-09
+// 12-07
 Index: {
     xml: "<div id='index'>\
              <span id='foo'>foo</span>\
@@ -196,80 +140,56 @@ Index: {
 
 ## 消息的作用域
 
-默认情况下，消息具有全局作用域，某对象派发一个消息，任何对象都可以对其进行捕获。当在组件的映射项中指定 `msgscope` 参数来限制消息的作用域时，由本组件及其子级派发的消息只能由本组件及其子级捕获。在下面的示例中，组件 Foo 的消息作用域被限制为本组件及其子级，所以在所有侦听消息 msg 的对象中，只有组件对象 `foo` 才能捕获该消息，而组件对象 `bar` 则无法捕获该消息。
+消息的作用域与派发消息的对象密切相关，它包含派发对象及其所有的子级。所以，非派发对象的子孙节点是接收不到派发对象所派发的消息的。
 
 ```js
-// 12-10
+// 12-08
 Index: {
     xml: "<div id='index'>\
-             <Foo id='foo'/>\
+             <span id='foo'>foo</span>\
              <span id='bar'>bar</span>\
           </div>",
     fun: function (sys, items, opts) {
-        sys.foo.watch("msg", function (e) {
-            console.log("I can receive message.");
+        sys.bar.watch("msg", function(e, info) {
+            console.log(info);
         });
-        sys.bar.watch("msg", function(e) {
-            console.log("I can't receive message.");
-        });
-        sys.foo.notify("msg");
-    }
-},
-Foo: {
-    xml: "<span id='foo'>foo</span>",
-    map: { msgscope: true },
-    fun: function (sys, items, opts) {
-        sys.foo.watch("msg", function (e) {
-            console.log("I can receive message too.");
-        });
+        sys.foo.notify("msg", "from foo");
+		sys.index.notify("msg", "from index");
     }
 }
 ```
 
-另外，当一个消息作用域建立后，其它区域的对象无论派发什么消息，本作用域都无法接收。本作用域只能接收来自本作用域的消息。下面示例中，由于 Foo 组件建立了消息作用域，尽管 Index 中的组件对象 bar 派发了消息 msg ，组件对象 foo 也无法捕获该消息。
+此示例中，组件对象 foo 与 组件对象 bar 属于兄弟节点关系。所以，对于组件对象 foo 派发的消息，组件对象 bar 是无法接收的。但对于组件对象 index 派发的消息，组件对象 bar 是可以接收的。
+
+## 消息的过滤器
+
+默认情况下，当一个组件对象派发某消息时，该对象及其所有的子级都可以对其进行侦听。但如果我们在自定义组件的 map 项中定义 msgFilter 选项，则可以对指定的消息进行过滤。
 
 ```js
-// 12-11
+// 12-09
 Index: {
     xml: "<div id='index'>\
-             <Foo id='foo'/>\
-             <span id='bar'>bar</span>\
+             <Bar id='bar'/>\
           </div>",
     fun: function (sys, items, opts) {
-        sys.foo.watch("msg", function (e) {
-            console.log("I can't receive message.");
-        });
-        sys.bar.notify("msg");
+        sys.index.notify("msg").notify("info");
     }
 },
-Foo: {
-    xml: "<span id='foo'>foo</span>",
-    map: { msgscope: true }
+Bar: {
+    xml: "<span id='bar'>bar</span>",
+	map: { msgFilter: /msg/ },
+	fun: function (sys, items, opts) {
+	    sys.bar.watch("msg", function(e) {
+		    console.log("I can't receive msg!");
+		});
+		sys.bar.watch("info", function(e) {
+		    console.log("I can receive info!");
+		});
+	}
 }
 ```
 
-需要特殊说明的一种情形是，当自定义组件作为视图项中的嵌套父级时，嵌套父级组件限定了消息的作用域，那么嵌套子级将收不到嵌套父级中的任何消息。下面的示例演示了这一点。
-
-```js
-// 12-12
-Index: {
-    xml: "<Foo id='index'>\
-             <span id='bar'>bar</span>\
-          </Foo>",
-    fun: function (sys, items, opts) {
-        sys.bar.watch("msg", function (e) {
-            console.log("I can't receive message.");
-        });
-    }
-},
-Foo: {
-    xml: "<span id='foo'>foo</span>",
-    map: { msgscope: true },
-    fun: function (sys, items, opts) {
-        sys.foo.notify("msg");
-    }
-}
-```
+在该示例中，组件对象 bar 的 map 项中定义了 msgFilter 选项。msgFilter 是一个正则表达式，它描述了不允许通过的消息集。所以，对于组件对象 index 派发的两个消息，只有 info 能被组件对象 bar 侦听到。
 
 ## 消息通信与事件通信的异同
 
@@ -277,6 +197,6 @@ Foo: {
 
 消息有作用域的概念，组件之间消息的传递发生的作用域之内。而事件则是以由下而上的冒泡方式来传递的，当然也可以控制事件是否冒泡。
 
-事件是无法在除了由下而上的组件之间传递信息的，而消息则不然，这是事件机制的一个局限性，当然也算是优点。
+事件是在由下而上的组件之间传递信息的，而消息则相反，它在由上而下的组件之间传递信息。
 
 如果在浏览器端，在所有的事件集中，包含默认的浏览器事件，比如按钮的点击事件，鼠标的移动事件等等。而对于所有的消息，都是由组件自定义的，并不存在默认的消息集。

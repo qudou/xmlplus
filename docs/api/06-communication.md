@@ -212,3 +212,25 @@ Example: {
     }
 }
 ```
+
+## messages
+
+```js
+messages(object)
+```
+
+- `Returns` : `Array` 字符串数组
+
+该函数用于返当前对象的消息作用域内的所有已被侦听的消息字符串。请参考下面的示例。
+
+```js
+// 01-20
+Example: {
+    xml: "<div id='example'/>",
+    fun: function (sys, items, opts) {
+        this.watch("foo", ()=> console.log("foo"));
+        this.watch("bar", ()=> console.log("bar"));
+        console.log(this.messages()); // ["foo", "bar"]
+    }
+}
+```

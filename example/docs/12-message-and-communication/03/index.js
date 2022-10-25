@@ -3,13 +3,12 @@ xmlplus("xp", function (xp, $_) {
         Index: {
             xml: "<div id='index'>\
                      <span id='foo'>foo</span>\
-                     <span id='bar'>bar</span>\
                   </div>",
             fun: function (sys, items, opts) {
-                sys.bar.watch("msg", function(e) {
-                    console.log(sys.bar == e.currentTarget); // true
+                sys.foo.watch("msg", function(e) {
+                    console.log(e.currentTarget == sys.foo); // true
                 });
-                sys.foo.notify("msg");
+                sys.index.notify("msg");
             }
         }
     });

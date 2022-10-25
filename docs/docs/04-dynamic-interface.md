@@ -29,7 +29,6 @@
 - [serialize](/api#全局_serialize)：序列化指定的 DOM 节点
 - [hasNamespace](/api#全局_hasNamespace)：判定当前系统是否包含给定的命名空间
 - [hasComponent](/api#全局_hasComponent)：判定当前系统中是否包含给定的组件
-- [messages](/api#全局_messages)：获取给定系统对象所在消息作用域内的所有已被侦听的消息字符串
 - [getElementById](/api#全局_getElementById)：由给定的标识符获取相关对象
 
 对于这些接口的使用，下面仅给出了几个示例，具体内容请参看 [全局接口](/api#全局)。
@@ -125,6 +124,7 @@ every | forEach | indexOf | map | pop | push | shift | slice | some | splice | u
 - [unwatch](/api#通信_unwatch)：取消消息侦听
 - [glance](/api#通信_glance)：仅一次侦听消息
 - [notify](/api#通信_notify)：派发消息
+- [messages](/api#通信_messages)：获取系统对象消息作用域内的所有已被侦听的消息字符串
 
 这些接口的用法在后续章节[《事件与通信》](docs#事件与通信)及[《消息与通信》](docs#消息与通信)中有详细的介绍。
 

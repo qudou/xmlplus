@@ -885,7 +885,9 @@ var MessageModuleAPI = (function () {
             for (var k in buf)
                 if (fn == buf[k].fn)
                     item[type].splice(item[type].indexOf(buf[k]), 1);
-        }
+        } else {
+			delete item[type];
+		}
         return this;
     }
     function notify(type, data) {
@@ -902,7 +904,7 @@ var MessageModuleAPI = (function () {
 				var targets = table[uid] && table[uid] || {};
 				targets[type] && targets[type].forEach(item => {
 					var e = {type: type, target: that.api, currentTarget: item.watcher.api};
-					item.fn.apply(item.watcher.api, [e].concat(data));
+					item.fn.apply(that.api, [e].concat(data));
 				});
 			}
 			for (var i = 0; i < target.node.childNodes.length; i++) {
