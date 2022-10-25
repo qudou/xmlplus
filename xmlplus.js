@@ -29,7 +29,7 @@ var vdoc, rdoc;
 
 var XPath, DOMParser_, XMLSerializer_, NodeElementAPI;
 var Manager = [HtmlManager(),CompManager(),,TextManager(),TextManager(),,,,TextManager(),,];
-var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", defer: "", cfgs: {}, attrs: {}, class: {} }, bnd: {}, fun: new Function };
+var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", defer: "", cfgs: {}, attrs: {}, class: {}, bind: {} }, fun: new Function };
 var isReady;
 
 // isHTML contains isSVG
@@ -466,7 +466,9 @@ var bd = {
             let i = e.target.elem(),
                 n = i.nodeName;
             let v = Store[uid].env.value;
-            let get = v && v[bind.hook.get] || bd.Getters[n] || bd.Getters[`${n}-${i.getAttribute("type")}`] || bd.Getters["OTHERS"];;
+			if (v && v[bind.key])
+				return bind.proxy[bind.key] = v[bind.key];
+            let get = bd.Getters[n] || bd.Getters[`${n}-${i.getAttribute("type")}`] || bd.Getters["OTHERS"];;
             bind.proxy[bind.key] = get(i, [e.target]);
         }
     },
@@ -528,7 +530,7 @@ var bd = {
             let value = target[key];
             binds[key] = binds[key] || [];
             objects[key] = value;
-            let views = view.fdr.sys[view.bnd[key] && view.bnd[key].skey || key];
+            let views = view.fdr.sys[view.map.bind[key] || key];
             if (!views) {
                 binds[key].push(bd.BindNormal(view, key));
                 return proxy[key] = value;
@@ -577,14 +579,14 @@ var bd = {
         return {get: ()=>{return proxy}, set: setter, del: delter, unbind: unbind};
     },
     bindLiteral: function (view, proxy, key) {
-        let hook = (view.fdr ? view.bnd : view.env.bnd)[key] || {};
+        let realKey = (view.fdr ? view.map.bind : view.env.map.bind)[key] || key;
         let targets = getTargets(view);
         if (targets.length == 0)
             return bd.BindNormal(view, key);
-        targets.forEach(i => Binds[i.node.uid] = {hook: hook, proxy: proxy, key: key});
+        targets.forEach(i => Binds[i.node.uid] = {proxy: proxy, key: key});
         function getTargets(view) {
             if (!view.fdr) return [view];
-            let targets = view.fdr.sys[hook.skey || key];
+            let targets = view.fdr.sys[realKey];
             if (!targets) return [];
             if ($.isSystemObject(targets))
                 targets = [targets];
@@ -897,7 +899,7 @@ var MessageModuleAPI = (function () {
             var uid = target.uid;
             if (target.fdr) {
                 var filter = target.map.msgFilter;
-                if (filter && filter.test(type))
+                if (filter && filter.test(type) && target != that)
                     return;
                 iterate(Store[Store[uid].xml.lastChild.uid]);
             } else {
@@ -1676,7 +1678,7 @@ function CompManager() {
         o.opt = $.extend(true, {}, w.opt);
         o.cfg = $.extend(true, {}, w.cfg);
         // aid: appid, cid: classid
-        o.dir = w.dir, o.css = w.css, o.ali = w.ali, o.fun = w.fun, o.cid = w.cid, o.bnd = w.bnd;
+        o.dir = w.dir, o.css = w.css, o.ali = w.ali, o.fun = w.fun, o.cid = w.cid;
         o.smr = env.smr, o.env = env, o.node = node, o.aid = env.aid, node.uid = o.uid;
         var exprs = aliasMatch(env, node);
         resetAttrs(env, node, exprs);
@@ -1914,15 +1916,13 @@ function parseEnvXML(env, parent, node) {
                 iterate(node.childNodes[i], ins.ele);
             env.smr.create(ins);
         } else if ( (ins = Manager[1].create(env, node, parent)) ) {
-            var father = ins.map.fragment == false ? rdoc.lastChild : parent;
-            var re = parseEnvXML(ins, parent, ins.xml.lastChild);
+            parseEnvXML(ins, parent, ins.xml.lastChild);
             ins.fdr.refresh();
             var appendTo = ins.appendTo();
             for ( i = 0; i < node.childNodes.length; i++ )
                 iterate(node.childNodes[i], appendTo);
             env.smr.create(ins);
             ins.value = ins.fun.call(ins.api, ins.fdr.sys, ins.fdr.items, ins.opt);
-            father == parent || parent.appendChild(re.elem());
         } else {
             $.release || console.warn($.serialize(node) + " not found");
             ins = Manager[0].create(env, node, parent);

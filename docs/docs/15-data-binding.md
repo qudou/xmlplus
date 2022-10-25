@@ -20,9 +20,9 @@ Index: {
 }
 ```
 
-注意，对于 HTML 元素创建的组件对象请绑定字面量或者数组，如果绑定普通对象，那么该对象会被当字符串处理。
+注意，对于 HTML 元素创建的组件对象请绑定字面量或者数组，系统禁止 HTML 元素绑定普通对象。
 
-现在我们来看下系统对象如何绑定字面量。
+现在我们来看下自定义组件对象如何绑定字面量。
 
 ```js
 // 15-02
@@ -37,29 +37,29 @@ Input: {
 }
 ```
 
-此例中，系统对象 index 绑定了字面量 `"hello, world"`。由于字面量是单一的数据，系统会默认给它分配一个值为 `model` 的键名。为了能找到目标组件，被绑定的组件对象的任意子级必需有个名为 `model` 的 HTML 元素对象。
+此例中，系统对象 index 绑定了字面量 `"hello, world"`。由于字面量是单一的数据，系统会默认给它分配一个值为 `model` 的键名。为了能找到目标组件，被绑定的组件对象的任意子级必需有个名为 `key` 的 HTML 元素对象。
 
-此示例 `input` 元素对象命恰好名为 `model`。但假定上述的 `Input` 组件是第三方提供，其内部的 `input` 元素对象的名称是 `foo`，那我们又该如果描述绑定的目标对象呢？请看下面的示例：
+此示例 `input` 元素对象命恰好名为 `model`。但假定上述的 `Input` 组件对象其内部的 `input` 元素对象的名称是 `foo`，那我们又该如果描述绑定的目标对象呢？请看下面的示例：
 
 ```js
 // 15-03
 Index: {
     xml: "<Input id='index' type='text'/>",
-    bnd: {model: {skey: "foo"}},
     fun: function (sys, items, opts) {
         sys.index.bind("hello, world");
     }
 },
 Input: {
+    map: { bind: {"model": "foo"}},
     xml: "<input id='foo' type='text'/>"
 }
 ```
 
-在这里，我们在绑定项 `bnd` 中对要绑定的目标数据指定了检索目标名 `foo`，这样系统就会按此目标名去检索要绑定的对象。
+在这里，我们在绑定项 `bind` 中对要绑定的目标数据指定要映射的目标名 `foo`，这样系统就会按此目标名去检索要绑定的对象。
 
 二、绑定的数据类型是普通对象
 
-类型为普通对象的数据请与自定义对象相绑定，下面是一个简单的示例：
+类型为普通对象的数据请与自定义组件对象相绑定，下面是一个简单的示例：
 
 ```js
 // 15-04
@@ -193,25 +193,18 @@ Index: {
 // 15-11
 Index: {
     xml: "<input id='index' type='text'/>",
-    bnd: { model: {get: "getter", set: "setter" } },
     fun: function (sys, items, opts) {
-        setTimeout(function () {
-            sys.index.bind("hello, world");
-        }, 0);
-        function getter(e) {
-            return e.value.replace(/#/,'');
-        }
-        function setter(e,v) {
-            e.value = '#' + v;
-        }
-        return { getter: getter, setter: setter };
+        sys.index.bind("#hello, world");
+		var elem = this.elem()
+		return Object.defineProperty({}, "value", {
+			get: () => { return elem.value.replace(/#/,'') },
+			set: value => elem.value = '#' + value
+		});
     }
 }
 ```
 
-此例在绑定项中对被绑定对象 `index` 配置自定义的取值与赋值操作函数。其中取值函数 `get`，对于取到值会先替换掉首字符 `'#'` 再返回。而赋值函数 set，则在赋值之前会给数据值添加首字符 `'#'` 后才对被绑定对象赋值。
-
-请注意 get 和 set 这两个函数定义在函数项内并返回。如果我们直接在函数项内执行数据绑定，系统会找因不到自定义的操作函数而执行默认行为。所以，上述示例中使用定时器以延迟数据绑定操作。
+此例在绑定项中对被绑定对象 `index` 配置自定义的取值与赋值操作函数。其中取值函数对于取到值会先替换掉首字符 `'#'` 再返回。而赋值函数则在赋值之前会给数据值添加首字符 `'#'` 后才对被绑定对象赋值。
 
 ## 操作绑定后的数据
 
