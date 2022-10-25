@@ -466,8 +466,8 @@ var bd = {
             let i = e.target.elem(),
                 n = i.nodeName;
             let v = Store[uid].env.value;
-			if (v && v[bind.key])
-				return bind.proxy[bind.key] = v[bind.key];
+            if (v && v[bind.key])
+                return bind.proxy[bind.key] = v[bind.key];
             let get = bd.Getters[n] || bd.Getters[`${n}-${i.getAttribute("type")}`] || bd.Getters["OTHERS"];;
             bind.proxy[bind.key] = get(i, [e.target]);
         }
