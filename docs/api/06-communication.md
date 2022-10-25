@@ -202,13 +202,12 @@ notify(messageType[,data])
 Example: {
     xml: "<div id='example'>\
              <span id='foo'>foo</span>\
-             <span id='bar'>bar</span>\
           </div>",
     fun: function (sys, items, opts) {
-        sys.bar.watch("msg", function (e, a, b) {
+        sys.foo.watch("msg", function (e, a, b) {
             console.log(a, b); // 37 hello,world
         });
-        sys.foo.notify("msg", [37, "hello,world"]);
+        sys.example.notify("msg", [37, "hello,world"]);
     }
 }
 ```
@@ -224,7 +223,7 @@ messages(object)
 该函数用于返当前对象的消息作用域内的所有已被侦听的消息字符串。请参考下面的示例。
 
 ```js
-// 01-20
+// 06-09
 Example: {
     xml: "<div id='example'/>",
     fun: function (sys, items, opts) {
