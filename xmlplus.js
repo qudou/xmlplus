@@ -903,11 +903,18 @@ var MessageModuleAPI = (function () {
                     return;
                 iterate(Store[Store[uid].xml.lastChild.uid]);
             } else {
+				var cancel;
                 var targets = table[uid] && table[uid] || {};
-                targets[type] && targets[type].forEach(item => {
+				xp.each(targets[type], (key, item) => {
                     var e = {type: type, target: that.api, currentTarget: item.watcher.api};
+					e.stopImmediateNotification = ()=> e.cancelImmediate = true;
+					e.stopNotification = ()=> e.cancel = true;
                     item.fn.apply(that.api, [e].concat(data));
+					if (e.cancelImmediate)
+						return !(cancel = true);
+					e.cancel && (cancel = e.cancel);
                 });
+				if (cancel) return;
             }
             for (var i = 0; i < target.node.childNodes.length; i++) {
                 var node = target.node.childNodes[i];
