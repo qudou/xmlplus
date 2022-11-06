@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.7.17
+ * xmlplus.js v1.7.18
  * https://xmlplus.cn
  * (c) 2017-2022 qudou
  * Released under the MIT license
@@ -29,7 +29,7 @@ var vdoc, rdoc;
 
 var XPath, DOMParser_, XMLSerializer_, NodeElementAPI;
 var Manager = [HtmlManager(),CompManager(),,TextManager(),TextManager(),,,,TextManager(),,];
-var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", defer: "", cfgs: {}, attrs: {}, class: {}, bind: {} }, fun: new Function };
+var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", defer: "", cfgs: {}, attrs: {}, bind: {} }, fun: new Function };
 var isReady;
 
 // isHTML contains isSVG
@@ -206,7 +206,35 @@ var $ = {
         if ( isGuid )
             return Store[id] && Store[id].api;
         return inBrowser ? (Global[id] || rdoc.getElementById(id)) : null;
-    }
+    },
+    exports: (function () {
+        function fromObject(target) {
+            var obj = {};
+            for(let k in target) {
+                if(target[k].push) // 这里有风险
+                    obj[k] = fromArray(target[k]);
+                else if (typeof target[k] == "object")
+                    obj[k] = fromObject(target[k])
+                else obj[k] = target[k]
+            }
+            return obj;
+        }
+        function fromArray(target) {
+            let i, arr = [];
+            for (i = 0; i < target.length; i++) {
+                if(target[i].push)
+                    arr.push(fromArray(target[i]))
+                else if (typeof target[i] == "object")
+                    arr.push(fromObject(target[i]))
+                else arr.push(target[i])
+            }
+            return arr;
+        }
+        return target => {
+            if (target.push) return fromArray(target);
+            return typeof target == "object" ? fromObject(target) : target;
+        };
+    }())
 };
 
 var ph = (function () {
@@ -454,52 +482,7 @@ var hp = {
     })()
 };
 
-// It is used to establish the mapping between the bound object and the data proxy.
-// Binds[guid] = {hook: hook, proxy: proxy, key: key}
-var Binds = {};
-
 var bd = {
-    onbind: function (e) {
-        let uid = e.target.guid()
-        let bind = Binds[uid];
-        if ($.isPlainObject(bind)) {
-            let i = e.target.elem(),
-                n = i.nodeName;
-            let v = Store[uid].env.value;
-            if (v && v[bind.key])
-                return bind.proxy[bind.key] = v[bind.key];
-            let get = bd.Getters[n] || bd.Getters[`${n}-${i.getAttribute("type")}`] || bd.Getters["OTHERS"];;
-            bind.proxy[bind.key] = get(i, [e.target]);
-        }
-    },
-    export: (function () {
-        function fromObject(target) {
-            var obj = {};
-            for(let k in target) {
-                if(target[k].push)
-                    obj[k] = fromArray(target[k]);
-                else if (typeof target[k] == "object")
-                    obj[k] = fromObject(target[k])
-                else obj[k] = target[k]
-            }
-            return obj;
-        }
-        function fromArray(target) {
-            let i, arr = [];
-            for (i = 0; i < target.length; i++) {
-                if(target[i].push)
-                    arr.push(fromArray(target[i]))
-                else if (typeof target[i] == "object")
-                    arr.push(fromObject(target[i]))
-                else arr.push(target[i])
-            }
-            return arr;
-        }
-        return target => {
-            if (target.push) return fromArray(target);
-            return typeof target == "object" ? fromObject(target) : target;
-        };
-    }()),
     isLiteral: function (value) {
         return $.isNumeric(value) || $.type(value) == "string" || $.type(value) == "boolean";
     },
@@ -531,7 +514,7 @@ var bd = {
             binds[key] = binds[key] || [];
             objects[key] = value;
             let views = view.fdr.sys[view.map.bind[key] || key];
-            if (!views) {
+            if (!views || typeof views == "string") {
                 binds[key].push(bd.BindNormal(view, key));
                 return proxy[key] = value;
             }
@@ -544,12 +527,11 @@ var bd = {
                 });
             } else if ($.isPlainObject(value)) {
                 views.forEach(view => {
-                    view.api.trigger("beforeBind", [value]);
                     binds[key].push(bd.bindObject(view));
                 });
             } else if (bd.isLiteral(value)) {
                 views.forEach(view => {
-                    binds[key].push(bd.bindLiteral(view, proxy, key));
+                    binds[key].push(bd.bindLiteral(view, key));
                 });
             } else {
                 $.error(`Type error: ${value}`);
@@ -578,53 +560,37 @@ var bd = {
         }
         return {get: ()=>{return proxy}, set: setter, del: delter, unbind: unbind};
     },
-    bindLiteral: function (view, proxy, key) {
-        let realKey = (view.fdr ? view.map.bind : view.env.map.bind)[key] || key;
-        let targets = getTargets(view);
-        if (targets.length == 0)
-            return bd.BindNormal(view, key);
-        targets.forEach(i => Binds[i.node.uid] = {proxy: proxy, key: key});
-        function getTargets(view) {
-            if (!view.fdr) return [view];
-            let targets = view.fdr.sys[realKey];
-            if (!targets) return [];
-            if ($.isSystemObject(targets))
-                targets = [targets];
-            let result = [];
-            targets.forEach(i => {
-                let tmp = Store[i.guid()]
-                result = result.concat(tmp.fdr ? getTargets(tmp) : [tmp]);
-            });
-            return result;
-        }
-        function operator(target, e) {
-            return bd[target][e.nodeName] || bd[target][`${e.nodeName}-${e.getAttribute("type")}`] || bd[target]["OTHERS"];
-        }
+    bindLiteral: function (view, key) {
+		let elem = view.elem();
+		let type = 0;
+		switch(elem.nodeName) {
+			case "PROGRESS":
+			case "SELECT":
+			case "OPTION":
+			case "TEXTAREA":
+				type =  1;
+				break;
+			case "INPUT":
+				let at = elem.getAttribute("type");
+				type = (at == "range" || at == "text" ? 1 : 2);
+		}
         function getter() {
-            let e = targets[0].elem();
-            let v = targets[0].env.value;
-            if (v && v.hasOwnProperty(key))
-                return v[key];
-            return operator("Getters", e)(e, targets);
+            let v = view.fdr ? view.value : view.env.value;
+            if (v && $.isFunction(v[key]))
+                return v[key]();
+			return type == 1 ? elem.value : (type ? elem.checked : view.api.text());
         }
         function setter(value) {
-            targets.forEach(target => {
-                let e = target.elem();
-                let v = target.env.value;
-                if (v && v.hasOwnProperty(key))
-                    return v[key] = value;
-                operator("Setters", e)(e, value, target);
-            });
+			let v = view.fdr ? view.value : view.env.value;
+			if (v && $.isFunction(v[key]))
+			    return v[key](value);
+			type == 1 ? (elem.value = value) : (type ? (elem.checked = value) : view.api.text(value));
         }
         function delter() {
-            unbind();
-            that.api.remove();
+            view.api.remove();
         }
         function unbind() {
-            targets.forEach(item => {
-                delete Binds[item.node.uid];
-            });
-            targets.splice(0);
+            // nothing to do
         }
         return {get: getter, set: setter, del: delter, unbind: unbind};
     },
@@ -632,11 +598,11 @@ var bd = {
         let tmpValue;
         let v = view.value;
         function getter() {
-            return v && v.hasOwnProperty(key) ? v[key] : tmpValue;
+            return v && $.isFunction(v[key]) ? v[key]() : tmpValue;
         }
         function setter(value) {
-            if (v && v.hasOwnProperty(key))
-                return v[key] = value;
+            if (v && $.isFunction(v[key]))
+                return v[key](value);
             tmpValue = value;
         }
         function dump() {}
@@ -667,7 +633,7 @@ var bd = {
         let [views, list, empty] = [[], new List, []];
         let proxy = new Proxy(list, {get: getter, set: setter, deleteProperty: delter});
         function push(value) {
-            let view = holder.before(render.cloneNode(false), {data: value});
+            let view = holder.before(render.cloneNode(false));
             views.push(view);
             empty.push.apply(list, [view.bind(value)])
             return true;
@@ -676,7 +642,7 @@ var bd = {
             if (!list.length)
                 return undefined;
             let i = list.length - 1;
-            let item = bd.export(list[i].model);
+            let item = $.exports(list[i].model);
             delete proxy[i];
             return item;
         }
@@ -693,50 +659,16 @@ var bd = {
             list[propKey].model = value;
             return true;
         }
-        function delter(target, propKey) {
+        function delter(target, propKey, receiver) {
+			if (!views[propKey])
+				return Reflect.get(target, propKey, receiver);
             views[propKey].remove();
             views.splice(propKey,1);
             empty.splice.apply(list, [propKey,1]);
             return true;
         }
         return proxy;
-    },
-    Getters: (function () {
-        function textbox(firstElem) {
-            return firstElem.value;
-        }
-        function checkbox(firstElem) {
-            return firstElem.checked;
-        }
-        function radio(firstElem, targets) {
-            let i, e;
-            for (i = 0; i < targets.length; i++) {
-                e = targets[i].elem();
-                if (e.checked) return e.value;
-            }
-        }
-        function others(firstElem) {
-            return firstElem.textContent;
-        }
-        return {"INPUT-radio": radio, "INPUT-checkbox": checkbox, "INPUT-range": textbox, "PROGRESS": textbox, 
-                "INPUT-text": textbox, "TEXTAREA": textbox, "SELECT": textbox, "OTHERS": others};
-    }()),
-    Setters: (function () {
-        function textbox(elem, value) {
-            elem.value = value;
-        }
-        function checkbox(elem, value) {
-            elem.checked = value;
-        }
-        function radio(elem, value) {
-            elem.checked = (elem.value == value);
-        }
-        function others(elem, value, target) {
-            return target.api.text(value);
-        }
-        return {"INPUT-radio": radio, "INPUT-checkbox": checkbox, "INPUT-range": textbox, "PROGRESS": textbox, 
-                "INPUT-text": textbox,"TEXTAREA": textbox, "SELECT": textbox, "OTHERS": others};
-    }())
+    }
 };
 
 $.extend(hp, (function () {
@@ -900,8 +832,9 @@ var MessageModuleAPI = (function () {
             if (target.fdr) {
                 var filter = target.map.msgFilter;
                 if (filter && filter.test(type) && target != that)
-                    return;
-                iterate(Store[Store[uid].xml.lastChild.uid]);
+                    return true;
+                if (iterate(Store[Store[uid].xml.lastChild.uid]) == false)
+					return false;
             } else {
 				var cancel;
                 var targets = table[uid] && table[uid] || {};
@@ -909,16 +842,18 @@ var MessageModuleAPI = (function () {
                     var e = {type: type, target: that.api, currentTarget: item.watcher.api};
 					e.stopImmediateNotification = ()=> e.cancelImmediate = true;
 					e.stopNotification = ()=> e.cancel = true;
-                    item.fn.apply(that.api, [e].concat(data));
+                    item.fn.apply(e.currentTarget, [e].concat(data));
 					if (e.cancelImmediate)
 						return !(cancel = true);
 					e.cancel && (cancel = e.cancel);
                 });
-				if (cancel) return;
+				if (cancel) return false;
             }
             for (var i = 0; i < target.node.childNodes.length; i++) {
                 var node = target.node.childNodes[i];
-                node.nodeType == 1 && iterate(Store[node.uid]);
+                if (node.nodeType == 1)
+					if (iterate(Store[node.uid]) == false)
+						return false;
             }
         }(this));
         return this;
@@ -1053,7 +988,7 @@ var EventModuleAPI = (function () {
     function eventHandler(event) {
         let target = event.target;
         let cancelBubble = false;
-        while (target.xmlTarget) {
+        while (target && target.xmlTarget) {
             let uid = target.xmlTarget.uid;
             let items =(eventTable[uid] || {})[event.type] || [];
             for (let i = 0; i < items.length; i++) {
@@ -1358,14 +1293,13 @@ var CommonElementAPI = {
                 return Reflect.get(target, propKey, receiver);
             if (propKey == "model")
                 return model.get();
-            if (propKey == "export")
-                return () => bd.export(proxy.model);
             if (propKey == "unbind")
                 return unbind;
         }
         function setter(target, propKey, value) {
             if (!proxy || propKey !== "model")
                 return Reflect.set(target, propKey, value);
+			view.api.trigger("$/before/bind", [value], false);
             if (model) {
                 // nothing to do.
             } else if ($.isArray(value)) {
@@ -1373,12 +1307,12 @@ var CommonElementAPI = {
             } else if ($.isPlainObject(value)) {
                 if (!view.fdr)
                     $.error("a PlainObject is not allow to bind a htmltag!");
-                view.api.trigger("beforeBind", [value]);
                 model = bd.bindObject(view);
             } else if (bd.isLiteral(value)) {
-                model = bd.bindLiteral(view, proxy, propKey);
+                model = bd.bindLiteral(view, propKey);
             }
             model.set(value);
+			view.api.trigger("$/after/bind", [value, proxy.model], false);
             return true;
         }
         function unbind() {
@@ -1739,23 +1673,6 @@ function StyleManager() {
         style.appendChild(cssText(ins));
         return parent.appendChild(style);
     }
-    function mapClasses(env, node, elem) {
-        var klass = [],
-            id = node.getAttribute("id");
-        if ( id && env.map.class[id] )
-            klass = env.map.class[id].split(' ');
-        klass.forEach(function (item) {
-            var path = ph.fullPath(env.dir, item);
-            var re = ph.split(path);
-            var basename = re.basename;
-            var s = ph.split(re.dir);
-            re = Library[s.dir] && Library[s.dir][s.basename];
-            if (re) {
-                 basename = basename.replace('#', env.aid + re.cid);
-                 hp.addClass(elem, basename);
-            }
-        });
-    }
     function create(ins) {
         var key = ins.env.aid + ins.cid;
         if ( table[key] ) {
@@ -1763,7 +1680,6 @@ function StyleManager() {
         } else if ( ins.css ) {
             table[key] = { count: 1, style: newStyle(ins), ins: ins };
         }
-        mapClasses(ins.env, ins.node, ins.elem());
         var id = ins.node.getAttribute("id");
         if ( id && ins.env.css.indexOf("#" + id) != -1 ) {
             hp.addClass(ins.elem(), ins.env.aid + ins.env.cid + id);
@@ -2027,8 +1943,7 @@ function startup(xml, parent, param) {
     fragment = rdoc.createDocumentFragment();
     instance = parseEnvXML(env, fragment, env.xml.lastChild);
     parent.appendChild(fragment);
-    instance = $.extend(hp.create(instance).api, {style: env.smr.style});
-    return instance.on("input", bd.onbind);
+    return $.extend(hp.create(instance).api, {style: env.smr.style});
 }
 
 (function () {

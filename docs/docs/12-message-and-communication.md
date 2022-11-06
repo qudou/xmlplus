@@ -27,7 +27,7 @@ Index: {
 }
 ```
 
-侦听一个消息时，在侦听器中可以获取派发消息的对象引用。如下面的示例，`e.target`、`this` 和 `sys.index` 同属于一个对象的引用。
+侦听一个消息时，在侦听器中可以获取派发消息的对象引用。如下面的示例，`e.target` 和 `sys.index` 同属于一个对象的引用。
 
 ```js
 // 12-02
@@ -37,14 +37,14 @@ Index: {
           </div>",
     fun: function (sys, items, opts) {
         sys.foo.watch("msg", function (e) {
-            console.log(e.target == this, this == sys.index); // true true
+            console.log(e.target == sys.index); // true
         });
         sys.index.notify("msg");
     }
 }
 ```
 
-侦听一个消息时，在侦听器中还可以获取侦听消息的对象引用，如下面的示例，`e.currentTarget` 与 `sys.foo` 同属于一个对象的引用。
+侦听一个消息时，在侦听器中还可以获取侦听消息的对象引用，如下面的示例，`e.currentTarget`、`this` 与 `sys.foo` 同属于一个对象的引用。
 
 ```js
 // 12-03
@@ -54,7 +54,7 @@ Index: {
           </div>",
     fun: function (sys, items, opts) {
         sys.foo.watch("msg", function (e) {
-            console.log(e.currentTarget == sys.foo); // true
+            console.log(e.currentTarget == this, this == sys.foo); // true true
         });
         sys.index.notify("msg");
     }

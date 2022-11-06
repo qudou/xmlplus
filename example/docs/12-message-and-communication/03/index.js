@@ -6,7 +6,7 @@ xmlplus("xp", function (xp, $_) {
                   </div>",
             fun: function (sys, items, opts) {
                 sys.foo.watch("msg", function(e) {
-                    console.log(e.currentTarget == sys.foo); // true
+                    console.log(e.currentTarget == this, this == sys.foo); // true true
                 });
                 sys.index.notify("msg");
             }
