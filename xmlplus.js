@@ -491,9 +491,10 @@ var bd = {
         let proxy = new bd.ObjectProxy(objects, binds);
         function setter(target) {
             let props = Object.getOwnPropertyNames(target);
-            if (!$.isEmptyObject(objects))
-                return $.each(props, (i,key) => proxy[key] = target[key]);
-            $.each(props, (i,key) => bind(target, key));
+			$.each(props, (i,key) => {
+				objects.hasOwnProperty(key) || bind(target[key], key);
+				proxy[key] = objects[key] = target[key];
+			});
         }
         function delter() {
             for (let k in proxy)
@@ -509,15 +510,11 @@ var bd = {
                 delete binds[key];
             });
         }
-        function bind(target, key) {
-            let value = target[key];
+        function bind(value, key) {
             binds[key] = binds[key] || [];
-            objects[key] = value;
             let views = view.fdr.sys[view.map.bind[key] || key];
-            if (!views || typeof views == "string") {
-                binds[key].push(bd.BindNormal(view, key));
-                return proxy[key] = value;
-            }
+            if (!views || typeof views == "string")
+                return binds[key].push(bd.BindNormal(view, key));
             if ($.isSystemObject(views))
                 views = [views];
             views = views.map(v => {return Store[v.guid()]});
@@ -536,7 +533,6 @@ var bd = {
             } else {
                 $.error(`Type error: ${value}`);
             }
-            proxy[key] = value;
         }
         return {get: ()=>{return proxy}, set: setter, del: delter, unbind: unbind};
     },
@@ -838,7 +834,7 @@ var MessageModuleAPI = (function () {
             } else {
 				var cancel;
                 var targets = table[uid] && table[uid] || {};
-				xp.each(targets[type], (key, item) => {
+				$.each(targets[type], (key, item) => {
                     var e = {type: type, target: that.api, currentTarget: item.watcher.api};
 					e.stopImmediateNotification = ()=> e.cancelImmediate = true;
 					e.stopNotification = ()=> e.cancel = true;
@@ -999,7 +995,7 @@ var EventModuleAPI = (function () {
                 }
                 e.cancelBubble && (cancelBubble = true);
             }
-            if (cancelBubble || !event.bubbles || event.bubble_ == false) 
+            if (cancelBubble || event.bubbles === false || event.bubble_ === false) 
                 break;
             target = target.parentNode;
         }

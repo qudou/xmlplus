@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.7.12
+ * xmlplus.js v1.7.18
  * https://xmlplus.cn
  * (c) 2017-2022 qudou
  * Released under the MIT license
@@ -29,8 +29,7 @@ var vdoc, rdoc;
 
 var XPath, DOMParser_, XMLSerializer_, NodeElementAPI;
 var Manager = [HtmlManager(),CompManager(),,TextManager(),TextManager(),,,,TextManager(),,];
-var Formater = { "int": parseInt, "float": parseFloat, "bool": new Function("v","return v==true || v=='true';") };
-var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", defer: "", cfgs: {}, attrs: {}, format: {}, class: {} }, fun: new Function };
+var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", defer: "", cfgs: {}, attrs: {}, bind: {} }, fun: new Function };
 var isReady;
 
 // isHTML contains isSVG
@@ -203,17 +202,39 @@ var $ = {
         s.dir = s.dir.substr(2);
         return Library[s.dir] && Library[s.dir][s.basename] || false;
     },
-    messages: function (obj) {
-        if (!$.isSystemObject(obj))
-            $.error("invalid input, expected a SystemObject");
-        var item = Store[obj.guid()];
-        return item && item.ctr.messages() || [];
-    },
     getElementById: function (id, isGuid) {
         if ( isGuid )
             return Store[id] && Store[id].api;
         return inBrowser ? (Global[id] || rdoc.getElementById(id)) : null;
-    }
+    },
+    exports: (function () {
+        function fromObject(target) {
+            var obj = {};
+            for(let k in target) {
+                if(target[k].push) // 这里有风险
+                    obj[k] = fromArray(target[k]);
+                else if (typeof target[k] == "object")
+                    obj[k] = fromObject(target[k])
+                else obj[k] = target[k]
+            }
+            return obj;
+        }
+        function fromArray(target) {
+            let i, arr = [];
+            for (i = 0; i < target.length; i++) {
+                if(target[i].push)
+                    arr.push(fromArray(target[i]))
+                else if (typeof target[i] == "object")
+                    arr.push(fromObject(target[i]))
+                else arr.push(target[i])
+            }
+            return arr;
+        }
+        return target => {
+            if (target.push) return fromArray(target);
+            return typeof target == "object" ? fromObject(target) : target;
+        };
+    }())
 };
 
 var ph = (function () {
@@ -382,9 +403,11 @@ var hp = {
         return this.ele || Store[this.xml.lastChild.uid].elem();
     },
     appendTo: function () {
-        if ( this.ele ) return this.ele;
+        if (this.ele) return this.ele;
         var target = this.fdr.sys[this.map.appendTo];
-        return target && target.elem() || Store[this.xml.lastChild.uid].elem();
+        if (!target)
+            return Store[this.xml.lastChild.uid].elem()
+        return Store[target.guid()].appendTo();
     },
     createElement: (function() {
         var buffer = {};
@@ -459,84 +482,19 @@ var hp = {
     })()
 };
 
-// It is used to establish the mapping between the bound object and the data proxy.
-// Binds[guid] = {hook: hook, proxy: proxy, key: key}
-var Binds = {};
-
 var bd = {
-    onbind: function (e) {
-        let uid = e.target.guid()
-        let bind = Binds[uid];
-        if ($.isPlainObject(bind)) {
-            let i = e.target.elem(),
-                n = i.nodeName;
-            let v = Store[uid].env.value;
-            let get = v && v[bind.hook.get] || bd.Getters[n] || bd.Getters[`${n}-${i.getAttribute("type")}`] || bd.Getters["OTHERS"];;
-            bind.proxy[bind.key] = get(i, [e.target]);
-        }
-    },
-    export: (function () {
-        function fromObject(target) {
-            var obj = {};
-            for(let k in target) {
-                if(target[k].push)
-                    obj[k] = fromArray(target[k]);
-                else if (typeof target[k] == "object")
-                    obj[k] = fromObject(target[k])
-                else obj[k] = target[k]
-            }
-            return obj;
-        }
-        function fromArray(target) {
-            let i, arr = [];
-            for (i = 0; i < target.length; i++) {
-                if(target[i].push)
-                    arr.push(fromArray(target[i]))
-                else if (typeof target[i] == "object")
-                    arr.push(fromObject(target[i]))
-                else arr.push(target[i])
-            }
-            return arr;
-        }
-        return target => {
-            if (target.push) return fromArray(target);
-            return typeof target == "object" ? fromObject(target) : target;
-        };
-    }()),
     isLiteral: function (value) {
         return $.isNumeric(value) || $.type(value) == "string" || $.type(value) == "boolean";
     },
-    bindObject: function (that) {
+    bindObject: function (view) {
         let objects = {}, binds = {};
-        let bind = that.map.bind || {};
         let proxy = new bd.ObjectProxy(objects, binds);
         function setter(target) {
             let props = Object.getOwnPropertyNames(target);
-            if (!$.isEmptyObject(objects))
-                return $.each(props, (i,key) => proxy[key] = target[key]);
-            $.each(props, (i,key) => {
-                let value = target[key];
-                binds[key] ||= [];
-                objects[key] = value;
-                let views = that.fdr.sys[bind[key] && bind[key].skey || key];
-                if (!views) {
-                    binds[key].push(bd.BindNormal());
-                    return proxy[key] = target[key];
-                }
-                if ($.isSystemObject(views))
-                    views = [views];
-                views = views.map(v => {return Store[v.guid()]});
-                if ($.isArray(value)) {
-                    views.forEach(v => binds[key].push(bd.bindArray(v)));
-                } else if ($.isPlainObject(value)) {
-                    views.forEach(v => binds[key].push(bd.bindObject(v)));
-                } else if (bd.isLiteral(value)) {
-                    views.forEach(v => binds[key].push(bd.bindLiteral(v, proxy, key)));
-                } else {
-                    $.error(`Type error: ${value}`);
-                }
-                proxy[key] = target[key];
-            });
+			$.each(props, (i,key) => {
+				objects.hasOwnProperty(key) || bind(target[key], key);
+				proxy[key] = objects[key] = target[key];
+			});
         }
         function delter() {
             for (let k in proxy)
@@ -552,12 +510,36 @@ var bd = {
                 delete binds[key];
             });
         }
+        function bind(value, key) {
+            binds[key] = binds[key] || [];
+            let views = view.fdr.sys[view.map.bind[key] || key];
+            if (!views || typeof views == "string")
+                return binds[key].push(bd.BindNormal(view, key));
+            if ($.isSystemObject(views))
+                views = [views];
+            views = views.map(v => {return Store[v.guid()]});
+            if ($.isArray(value)) {
+                views.forEach(view => {
+                    binds[key].push(bd.bindArray(view));
+                });
+            } else if ($.isPlainObject(value)) {
+                views.forEach(view => {
+                    binds[key].push(bd.bindObject(view));
+                });
+            } else if (bd.isLiteral(value)) {
+                views.forEach(view => {
+                    binds[key].push(bd.bindLiteral(view, key));
+                });
+            } else {
+                $.error(`Type error: ${value}`);
+            }
+        }
         return {get: ()=>{return proxy}, set: setter, del: delter, unbind: unbind};
     },
-    bindArray: function (that) {
-        let render = that.node.cloneNode(false);
+    bindArray: function (view) {
+        let render = view.node.cloneNode(false);
         render.removeAttribute("id");
-        let proxy = bd.ArrayProxy(that.api.hide(), render);
+        let proxy = bd.ArrayProxy(view.api.hide(), render);
         function setter(v) {
             for (let i in v)
                 proxy[i] = v[i];
@@ -566,7 +548,7 @@ var bd = {
         }
         function delter() {
             unbind();
-            that.api.remove();
+            view.api.remove();
         }
         function unbind() {
             while (proxy.length)
@@ -574,60 +556,49 @@ var bd = {
         }
         return {get: ()=>{return proxy}, set: setter, del: delter, unbind: unbind};
     },
-    bindLiteral: function (that, proxy, key) {
-        let hook = (that.env.map.bind ||= {})[key] || {};
-        let targets = getTargets(that);
-        if (targets.length == 0)
-            return bd.BindNormal();
-        targets.forEach(i => Binds[i.node.uid] = {hook: hook, proxy: proxy, key: key});
-        function getTargets(that) {
-            if (!that.fdr) return [that];
-            let targets = that.fdr.sys[hook.skey || key];
-            if (!targets) return [];
-            if ($.isSystemObject(targets))
-                targets = [targets];
-            let result = [];
-            targets.forEach(i => {
-                let tmp = Store[i.guid()]
-                result = result.concat(tmp.fdr ? getTargets(tmp) : [tmp]);
-            });
-            return result;
-        }
-        function getOperator(target, e) {
-            return bd[target][e.nodeName] || bd[target][`${e.nodeName}-${e.getAttribute("type")}`] || bd[target]["OTHERS"];
-        }
+    bindLiteral: function (view, key) {
+		let elem = view.elem();
+		let type = 0;
+		switch(elem.nodeName) {
+			case "PROGRESS":
+			case "SELECT":
+			case "OPTION":
+			case "TEXTAREA":
+				type =  1;
+				break;
+			case "INPUT":
+				let at = elem.getAttribute("type");
+				type = (at == "range" || at == "text" ? 1 : 2);
+		}
         function getter() {
-            let e = targets[0].elem();
-            let v = targets[0].env.value;
-            let get = v && v[hook.get] || getOperator("Getters", e);
-            return get(e, targets);
+            let v = view.fdr ? view.value : view.env.value;
+            if (v && $.isFunction(v[key]))
+                return v[key]();
+			return type == 1 ? elem.value : (type ? elem.checked : view.api.text());
         }
         function setter(value) {
-            targets.forEach(target => {
-                let e = target.elem();
-                let v = target.env.value;
-                let set = v && v[hook.set] || getOperator("Setters", e);
-                set(e, value, target);
-            });
+			let v = view.fdr ? view.value : view.env.value;
+			if (v && $.isFunction(v[key]))
+			    return v[key](value);
+			type == 1 ? (elem.value = value) : (type ? (elem.checked = value) : view.api.text(value));
         }
         function delter() {
-            unbind();
-            that.api.remove();
+            view.api.remove();
         }
         function unbind() {
-            targets.forEach(item => {
-                delete Binds[item.node.uid];
-            });
-            targets.splice(0);
+            // nothing to do
         }
         return {get: getter, set: setter, del: delter, unbind: unbind};
     },
-    BindNormal: function () {
+    BindNormal: function (view, key) {
         let tmpValue;
+        let v = view.value;
         function getter() {
-            return tmpValue;
+            return v && $.isFunction(v[key]) ? v[key]() : tmpValue;
         }
         function setter(value) {
+            if (v && $.isFunction(v[key]))
+                return v[key](value);
             tmpValue = value;
         }
         function dump() {}
@@ -667,7 +638,7 @@ var bd = {
             if (!list.length)
                 return undefined;
             let i = list.length - 1;
-            let item = bd.export(list[i].model);
+            let item = $.exports(list[i].model);
             delete proxy[i];
             return item;
         }
@@ -684,50 +655,16 @@ var bd = {
             list[propKey].model = value;
             return true;
         }
-        function delter(target, propKey) {
+        function delter(target, propKey, receiver) {
+			if (!views[propKey])
+				return Reflect.get(target, propKey, receiver);
             views[propKey].remove();
             views.splice(propKey,1);
             empty.splice.apply(list, [propKey,1]);
             return true;
         }
         return proxy;
-    },
-    Getters: (function () {
-        function textbox(firstElem) {
-            return firstElem.value;
-        }
-        function checkbox(firstElem) {
-            return firstElem.checked;
-        }
-        function radio(firstElem, targets) {
-            let i, e;
-            for (i = 0; i < targets.length; i++) {
-                e = targets[i].elem();
-                if (e.checked) return e.value;
-            }
-        }
-        function others(firstElem) {
-            return firstElem.textContent;
-        }
-        return {"INPUT-radio": radio, "INPUT-checkbox": checkbox, "INPUT-range": textbox, "PROGRESS": textbox, 
-                "INPUT-text": textbox, "TEXTAREA": textbox, "SELECT": textbox, "OTHERS": others};
-    }()),
-    Setters: (function () {
-        function textbox(elem, value) {
-            elem.value = value;
-        }
-        function checkbox(elem, value) {
-            elem.checked = value;
-        }
-        function radio(elem, value) {
-            elem.checked = (elem.value == value);
-        }
-        function others(elem, value, target) {
-            return target.api.text(value);
-        }
-        return {"INPUT-radio": radio, "INPUT-checkbox": checkbox, "INPUT-range": textbox, "PROGRESS": textbox, 
-                "INPUT-text": textbox,"TEXTAREA": textbox, "SELECT": textbox, "OTHERS": others};
-    }())
+    }
 };
 
 $.extend(hp, (function () {
@@ -737,7 +674,7 @@ $.extend(hp, (function () {
         ["opt","cfg","map","ali"].forEach(function (k) {
             $.isPlainObject(obj[k]) || $.error("invalid " + k + " expected a plainObject");
         });
-        ["format","cfgs","attrs"].forEach(function (k) {
+        ["cfgs","attrs"].forEach(function (k) {
             $.isPlainObject(obj.map[k]) || $.error("invalid " + k + " in map, expected a plainObject");
         });
         typeof obj.map.defer == "string" || $.error("invalid defer in map, expected a string");
@@ -758,10 +695,7 @@ $.extend(hp, (function () {
         }
     }
     function initialize(obj) {
-        var i, formats = {}, map = obj.map;
-        for ( i in map.format )
-            Formater[i] && (formats[i] = obj.map.format[i].split(' '));
-        map.format = formats;
+        var map = obj.map;
         resetInput(map.attrs), resetInput(map.cfgs);
         map.defer = map.defer ? map.defer.split(' ') : [];
         map.share = map.share ? map.share.split(' ') : [];
@@ -841,7 +775,7 @@ var Collection = (function () {
         values: function () {
             var result = new Collection;
             for ( var i = 0; i < this.length; i++ )
-                result.push(this[i].value());
+                result.push(this[i].val());
             return result;
         }
     };
@@ -850,74 +784,98 @@ var Collection = (function () {
     return fn;
 }());
 
-var Communication = function () {
+var MessageModuleAPI = (function () {
     var table = {};
-    function watch(type, fn, priority) {
-        var list = table[type] = table[type] || [],
-            priority = $.isNumeric(priority) ? priority : -Infinity,
-            target = { source: this, fn: fn, priority: priority };
-        var i = 0, len = list.length;
-        for ( ; i < len; i++ )
-            if ( priority > list[i].priority ) {
-                list.splice(i, 0, target);
-                break;
-            }
-        list.length == len && list.push(target);
+    function watch(type, fn) {
+        if (typeof fn !== "function") 
+            $.error("invalid handler, expected a function");
+        var uid = this.elem().xmlTarget.uid;
+        table[uid] = table[uid] || {};
+        table[uid][type] = table[uid][type] || [];
+        table[uid][type].push({watcher: this, fn: fn});
         return this;
     }
-    function glance(type, fn, priority) {
+    function glance(type, fn) {
         function callback(e) {
-            e.currentTarget.unwatch(type, callback);
+            this.unwatch(type, callback);
             fn.apply(this, [].slice.call(arguments));
         }
-        return this.api.watch(type, callback, priority);
+        return this.api.watch(type, callback);
     }
     function unwatch(type, fn) {
-        var key, buf;
-        if ( type == undefined ) {
-            for ( key in table )
-              unwatch.call(this, key);
-        } else if ( typeof type == "function" ) {
-            for ( key in table )
-              unwatch.call(this, key, type);
-        } else if ( fn == undefined ) {
-            buf = [].slice.call(table[type] || []);
-            for ( key in buf )
-              if ( buf[key].source == this )
-                table[type].splice(table[type].indexOf(buf[key]), 1);
+        var item = table[this.elem().xmlTarget.uid] || {};
+        if (type == undefined) {
+            for (type in item)
+                unwatch.call(this, type);
+            return this;
+        }
+        if (!item[type]) return this;
+        var buf = [].slice.call(item[type]);
+        if (typeof fn == "function") {
+            for (var k in buf)
+                if (fn == buf[k].fn)
+                    item[type].splice(item[type].indexOf(buf[k]), 1);
         } else {
-            buf = [].slice.call(table[type] || []);
-            for ( key in buf )
-              if ( buf[key].source == this && buf[key].fn == fn )
-                table[type].splice(table[type].indexOf(buf[key]), 1);
+            delete item[type];
         }
         return this;
     }
     function notify(type, data) {
-        if ( !table[type] ) return;
+        var that = this;
         data = data == null ? [] : ($.isArray(data) ? data : [data]);
-        var i = 0, buf = [].slice.call(table[type]);
-        for ( ; i < buf.length; i++ ) {
-            var obj = [{type: type, target: this.api, currentTarget: buf[i].source.api}].concat(data);
-            if (buf[i].fn.apply(this.api, obj) === false)
-                return this;
-        }
+        (function iterate(target) {
+            var uid = target.uid;
+            if (target.fdr) {
+                var filter = target.map.msgFilter;
+                if (filter && filter.test(type) && target != that)
+                    return true;
+                if (iterate(Store[Store[uid].xml.lastChild.uid]) == false)
+					return false;
+            } else {
+				var cancel;
+                var targets = table[uid] && table[uid] || {};
+				$.each(targets[type], (key, item) => {
+                    var e = {type: type, target: that.api, currentTarget: item.watcher.api};
+					e.stopImmediateNotification = ()=> e.cancelImmediate = true;
+					e.stopNotification = ()=> e.cancel = true;
+                    item.fn.apply(e.currentTarget, [e].concat(data));
+					if (e.cancelImmediate)
+						return !(cancel = true);
+					e.cancel && (cancel = e.cancel);
+                });
+				if (cancel) return false;
+            }
+            for (var i = 0; i < target.node.childNodes.length; i++) {
+                var node = target.node.childNodes[i];
+                if (node.nodeType == 1)
+					if (iterate(Store[node.uid]) == false)
+						return false;
+            }
+        }(this));
         return this;
     }
-    function remove(item) {
-        for ( var type in table ) {
-            var i, array = [];
-            for ( i = 0; i < table[type].length; i++ )
-                if ( table[type][i].source != item )
-                    array.push(table[type][i]);
-            table[type] = array;
-        }
+    function remove(target) {
+        delete table[target.uid];
     }
     function messages() {
-        return Object.keys(table);
+        var result = {};
+        (function iterate(target) {
+            var uid = target.uid;
+            if (target.fdr)
+                iterate(Store[Store[uid].xml.lastChild.uid]);
+            else if (table[uid]) {
+                for (var key in table[uid])
+                    result[key] = 1;
+            }
+            for (var i = 0; i < target.node.childNodes.length; i++) {
+                var node = target.node.childNodes[i];
+                node.nodeType == 1 && iterate(Store[node.uid]);
+            }
+        }(this));
+        return Object.keys(result);
     }
     return { watch: watch, glance: glance, unwatch: unwatch, notify: notify, remove: remove, messages: messages };
-};
+}());
 
 var EventModuleAPI = (function () {
     var eventTable = {},
@@ -933,7 +891,8 @@ var EventModuleAPI = (function () {
         if (typeof selector == "function")
             fn = selector, selector = undefined;
         assert(type, selector, fn);
-        var uid = this.uid, listener = this.api;
+        var uid = this.elem().xmlTarget.uid;
+        var listener = this.api;
         function handler(event) {
             var e = createProxy(event, listener);
             if (!selector)
@@ -946,7 +905,7 @@ var EventModuleAPI = (function () {
         }
         eventTable[uid] = eventTable[uid] || {};
         eventTable[uid][type] = eventTable[uid][type] || [];
-        eventTable[uid][type].push({ selector: selector, fn: fn, handler: handler});
+        eventTable[uid][type].push({selector: selector, fn: fn, handler: handler});
         if (!listeners[type]) {
             listeners[type] = type;
             rdoc.addEventListener(type, eventHandler)
@@ -968,7 +927,7 @@ var EventModuleAPI = (function () {
         return this.api.on(type, selector, fn);
     }
     function off(type, selector, fn) {
-        var k, item = eventTable[this.uid] || {};
+        var k, item = eventTable[this.elem().xmlTarget.uid] || {};
         if ( type == undefined ) {
             for ( type in item )
                 off.call(this, type);
@@ -993,15 +952,16 @@ var EventModuleAPI = (function () {
         }
         return this;
     }
-    function trigger(type, data) {
+    function trigger(type, data, bubble) {
         var event = Event(type, true);
         event.xmlTarget = Store[this.uid];
+        event.bubble_ = bubble == false ? false : true;
         event.data = data == null ? [] : ($.isArray(data) ? data : [data]);
         this.elem().dispatchEvent(event);
         return this;
     }
-    function remove(item) {
-        delete eventTable[item.uid];
+    function remove(target) {
+        delete eventTable[target.uid];
     }
     function Event(type, bubble) {
         var canBubble = !(bubble === false),
@@ -1022,12 +982,11 @@ var EventModuleAPI = (function () {
         return proxy;
     }
     function eventHandler(event) {
-        let target = event.target.xmlTarget;
-        if (!target) return;
-        let node = target.node;
+        let target = event.target;
         let cancelBubble = false;
-        while (node.uid) {
-            let items =(eventTable[node.uid] || {})[event.type] || [];
+        while (target && target.xmlTarget) {
+            let uid = target.xmlTarget.uid;
+            let items =(eventTable[uid] || {})[event.type] || [];
             for (let i = 0; i < items.length; i++) {
                 let e = items[i].handler(event);
                 if (e.cancelImmediateBubble) {
@@ -1036,9 +995,9 @@ var EventModuleAPI = (function () {
                 }
                 e.cancelBubble && (cancelBubble = true);
             }
-            if (cancelBubble) break;
-            let tnode = node.parentNode;
-            node = tnode.uid ? tnode : (Store[node.uid].env.node || {});
+            if (cancelBubble || !event.bubbles || event.bubble_ == false) 
+                break;
+            target = target.parentNode;
         }
     }
     return { on: on, once: once, off: off, trigger: trigger, remove: remove };
@@ -1113,6 +1072,15 @@ var CommonElementAPI = {
         elem.setAttribute("class", result.join(" "));
         return this;
     },
+    hasClass: function(value) {
+        var elem = this.elem();
+        value = value || '';
+        var env = this.env;
+        value = value.replace(/#/g, env.aid + env.cid);
+        if (value.length == 0) 
+            return false;
+        return new RegExp(' ' + value + ' ').test(' ' + elem.getAttribute("class") + ' ');
+    },
     contains: function (obj) {
         if ( !obj ) return false;
         var target = this.elem(),
@@ -1122,22 +1090,6 @@ var CommonElementAPI = {
             elem = elem.parentNode;
         } while (elem);
         return false;
-    },
-    notify: function (type, data) {
-        return this.ctr.notify.call(this, type, data);
-    },
-    watch: function (type, fn, priority) {
-        if ( typeof fn != "function" )
-            $.error("invalid callback, expected a function");
-        return this.ctr.watch.call(this, type, fn, priority);
-    },
-    glance: function (type, fn, priority) {
-        if ( typeof fn != "function" )
-            $.error("invalid callback, expected a function");
-        return this.ctr.glance.call(this, type, fn, priority);
-    },
-    unwatch: function (type, fn) {
-        return this.ctr.unwatch.call(this, type, fn);
     },
     append: function (target, options, parent) {
         parent = parent || this.appendTo();
@@ -1337,14 +1289,13 @@ var CommonElementAPI = {
                 return Reflect.get(target, propKey, receiver);
             if (propKey == "model")
                 return model.get();
-            if (propKey == "export")
-                return () => bd.export(proxy.model);
             if (propKey == "unbind")
                 return unbind;
         }
         function setter(target, propKey, value) {
             if (!proxy || propKey !== "model")
                 return Reflect.set(target, propKey, value);
+			view.api.trigger("$/before/bind", [value], false);
             if (model) {
                 // nothing to do.
             } else if ($.isArray(value)) {
@@ -1353,9 +1304,11 @@ var CommonElementAPI = {
                 if (!view.fdr)
                     $.error("a PlainObject is not allow to bind a htmltag!");
                 model = bd.bindObject(view);
-            } else if (bd.isLiteral(value))
-                model = bd.bindLiteral(view, proxy, propKey);
+            } else if (bd.isLiteral(value)) {
+                model = bd.bindLiteral(view, propKey);
+            }
             model.set(value);
+			view.api.trigger("$/after/bind", [value, proxy.model], false);
             return true;
         }
         function unbind() {
@@ -1406,12 +1359,28 @@ var ClientElementAPI = {
         elem.style.width = parseFloat(value) + "px";
         return this;
     },
+    outerWidth: function (includeMargins) {
+        var elem = this.elem();
+        if (includeMargins) {
+            var styles = getComputedStyle(elem, null);
+            return elem.offsetWidth + parseFloat(styles.getPropertyValue('margin-right')) + parseFloat(styles.getPropertyValue('margin-left'));
+        }
+        return elem.offsetWidth;
+    },
     height: function (value) {
         var elem = this.elem();
         if (value === undefined)
             return elem.getBoundingClientRect().height;
         elem.style.height = parseFloat(value) + "px";
         return this;
+    },
+    outerHeight: function (includeMargins) {
+        var elem = this.elem();
+        if (includeMargins) {
+            var styles = getComputedStyle(elem, null);
+            return elem.offsetHeight + parseFloat(styles.getPropertyValue('margin-bottom')) + parseFloat(styles.getPropertyValue('margin-top'));
+        }
+        return elem.offsetHeight;
     },
     offset: function (coordinates) {
         var elem = this.elem();
@@ -1593,7 +1562,7 @@ function HtmlManager() {
             resetAttrs(env, node, aliasMatch(env, node));
         o.ele = hp.createElement(node, parent);
         o.api = node.defer ? hp.build(o, DeferElementAPI) : o.back;
-        o.ctr = env.ctr, o.env = env, o.node = node, node.uid = o.uid, o.ele.xmlTarget = o;
+        o.env = env, o.node = node, node.uid = o.uid, o.ele.xmlTarget = o;
         return Store[o.uid] = o;
     }
     function recycle(item) {
@@ -1604,7 +1573,7 @@ function HtmlManager() {
             Manager[o.typ].recycle(o);
         }
         delete Store[item.uid];
-        item.ctr.remove(item);
+        MessageModuleAPI.remove(item);
         item.env.smr.remove(item);
         EventModuleAPI.remove(item);
         table[item.node.nodeName].push(item);
@@ -1616,7 +1585,6 @@ function HtmlManager() {
             Manager[o.typ].chenv(env, o);
         }
         item.env = env;
-        item.ctr = env.ctr;
     }
     return { create: create, recycle: recycle, chenv: chenv };
 }
@@ -1646,7 +1614,6 @@ function CompManager() {
         o.map = $.extend(true, {}, w.map);
         o.opt = $.extend(true, {}, w.opt);
         o.cfg = $.extend(true, {}, w.cfg);
-        o.ctr = o.map.msgscope ? Communication() : env.ctr;
         // aid: appid, cid: classid
         o.dir = w.dir, o.css = w.css, o.ali = w.ali, o.fun = w.fun, o.cid = w.cid;
         o.smr = env.smr, o.env = env, o.node = node, o.aid = env.aid, node.uid = o.uid;
@@ -1673,7 +1640,7 @@ function CompManager() {
         }
         Manager[deep.typ].recycle(deep);
         delete Store[item.uid];
-        item.ctr.remove(item);
+        MessageModuleAPI.remove(item);
         item.smr.remove(item);
         EventModuleAPI.remove(item);
         table.push(item);
@@ -1685,7 +1652,6 @@ function CompManager() {
             Manager[o.typ].chenv(env, o);
         }
         item.env = env;
-        item.msgscope || (item.ctr = env.ctr);
     }
     return { create: create, recycle: recycle, chenv: chenv };
 }
@@ -1703,23 +1669,6 @@ function StyleManager() {
         style.appendChild(cssText(ins));
         return parent.appendChild(style);
     }
-    function mapClasses(env, node, elem) {
-        var klass = [],
-            id = node.getAttribute("id");
-        if ( id && env.map.class[id] )
-            klass = env.map.class[id].split(' ');
-        klass.forEach(function (item) {
-            var path = ph.fullPath(env.dir, item);
-            var re = ph.split(path);
-            var basename = re.basename;
-            var s = ph.split(re.dir);
-            re = Library[s.dir] && Library[s.dir][s.basename];
-            if (re) {
-                 basename = basename.replace('#', env.aid + re.cid);
-                 hp.addClass(elem, basename);
-            }
-        });
-    }
     function create(ins) {
         var key = ins.env.aid + ins.cid;
         if ( table[key] ) {
@@ -1727,7 +1676,6 @@ function StyleManager() {
         } else if ( ins.css ) {
             table[key] = { count: 1, style: newStyle(ins), ins: ins };
         }
-        mapClasses(ins.env, ins.node, ins.elem());
         var id = ins.node.getAttribute("id");
         if ( id && ins.env.css.indexOf("#" + id) != -1 ) {
             hp.addClass(ins.elem(), ins.env.aid + ins.env.cid + id);
@@ -1869,13 +1817,6 @@ function resetOptions(env, ins, exprs) {
         o = ins.node.attributes[i];
         o.prefix || (ins.opt[o.name] = o.value);
     }
-    for ( i in ins.map.format ) {
-        list = ins.map.format[i];
-        for ( k = 0; k < list.length; k++ ) {
-            o = ins.opt[list[k]];
-            o && (ins.opt[list[k]] = Formater[i](o));
-        }
-    }
 }
 
 // Here, the component is parsed recursively.
@@ -1988,7 +1929,6 @@ function startup(xml, parent, param) {
     }
     env.fdr = Finder(env);
     env.smr = StyleManager();
-    env.ctr = Communication();
     env.aid = inBrowser ? $.guid() : "";
     env.api = hp.build(env, NodeElementAPI);
     if ( $.isPlainObject(param) ) {
@@ -1999,8 +1939,7 @@ function startup(xml, parent, param) {
     fragment = rdoc.createDocumentFragment();
     instance = parseEnvXML(env, fragment, env.xml.lastChild);
     parent.appendChild(fragment);
-    instance = $.extend(hp.create(instance).api, {style: env.smr.style});
-    return instance.on("input", bd.onbind);
+    return $.extend(hp.create(instance).api, {style: env.smr.style});
 }
 
 (function () {
@@ -2010,7 +1949,7 @@ function startup(xml, parent, param) {
         XMLSerializer_ = XMLSerializer;
         rdoc = document;
         vdoc = $.parseXML("<void/>");
-        NodeElementAPI = $.extend(ClientElementAPI, EventModuleAPI, CommonElementAPI);
+        NodeElementAPI = $.extend(ClientElementAPI, EventModuleAPI, MessageModuleAPI, CommonElementAPI);
         window.xmlplus = window.xp = $.extend(xmlplus, $);
         if ( typeof define === "function" && define.amd )
             define( "xmlplus", [], new Function("return xmlplus;"));
@@ -2027,7 +1966,7 @@ function startup(xml, parent, param) {
         XMLSerializer_ = require("exmldom").XMLSerializer;
         vdoc = $.parseXML("<body/>");
         rdoc = $.parseXML("<body/>");
-        NodeElementAPI = $.extend(ServerElementAPI, EventModuleAPI, CommonElementAPI);
+        NodeElementAPI = $.extend(ServerElementAPI, EventModuleAPI, MessageModuleAPI, CommonElementAPI);
         module.exports = $.extend(xmlplus, $);
     }
     CopyElementAPI = $.extend({}, NodeElementAPI, CopyElementAPI);
