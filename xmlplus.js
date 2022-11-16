@@ -491,10 +491,10 @@ var bd = {
         let proxy = new bd.ObjectProxy(objects, binds);
         function setter(target) {
             let props = Object.getOwnPropertyNames(target);
-			$.each(props, (i,key) => {
-				objects.hasOwnProperty(key) || bind(target[key], key);
-				proxy[key] = objects[key] = target[key];
-			});
+            $.each(props, (i,key) => {
+                objects.hasOwnProperty(key) || bind(target[key], key);
+                proxy[key] = objects[key] = target[key];
+            });
         }
         function delter() {
             for (let k in proxy)
@@ -557,30 +557,30 @@ var bd = {
         return {get: ()=>{return proxy}, set: setter, del: delter, unbind: unbind};
     },
     bindLiteral: function (view, key) {
-		let elem = view.elem();
-		let type = 0;
-		switch(elem.nodeName) {
-			case "PROGRESS":
-			case "SELECT":
-			case "OPTION":
-			case "TEXTAREA":
-				type =  1;
-				break;
-			case "INPUT":
-				let at = elem.getAttribute("type");
-				type = (at == "range" || at == "text" ? 1 : 2);
-		}
+        let elem = view.elem();
+        let type = 0;
+        switch(elem.nodeName) {
+            case "PROGRESS":
+            case "SELECT":
+            case "OPTION":
+            case "TEXTAREA":
+                type =  1;
+                break;
+            case "INPUT":
+                let at = elem.getAttribute("type");
+                type = (at == "range" || at == "text" ? 1 : 2);
+        }
         function getter() {
             let v = view.fdr ? view.value : view.env.value;
             if (v && $.isFunction(v[key]))
                 return v[key]();
-			return type == 1 ? elem.value : (type ? elem.checked : view.api.text());
+            return type == 1 ? elem.value : (type ? elem.checked : view.api.text());
         }
         function setter(value) {
-			let v = view.fdr ? view.value : view.env.value;
-			if (v && $.isFunction(v[key]))
-			    return v[key](value);
-			type == 1 ? (elem.value = value) : (type ? (elem.checked = value) : view.api.text(value));
+            let v = view.fdr ? view.value : view.env.value;
+            if (v && $.isFunction(v[key]))
+                return v[key](value);
+            type == 1 ? (elem.value = value) : (type ? (elem.checked = value) : view.api.text(value));
         }
         function delter() {
             view.api.remove();
@@ -656,8 +656,8 @@ var bd = {
             return true;
         }
         function delter(target, propKey, receiver) {
-			if (!views[propKey])
-				return Reflect.get(target, propKey, receiver);
+            if (!views[propKey])
+                return Reflect.get(target, propKey, receiver);
             views[propKey].remove();
             views.splice(propKey,1);
             empty.splice.apply(list, [propKey,1]);
@@ -830,26 +830,26 @@ var MessageModuleAPI = (function () {
                 if (filter && filter.test(type) && target != that)
                     return true;
                 if (iterate(Store[Store[uid].xml.lastChild.uid]) == false)
-					return false;
+                    return false;
             } else {
-				var cancel;
+                var cancel;
                 var targets = table[uid] && table[uid] || {};
-				$.each(targets[type], (key, item) => {
+                $.each(targets[type], (key, item) => {
                     var e = {type: type, target: that.api, currentTarget: item.watcher.api};
-					e.stopImmediateNotification = ()=> e.cancelImmediate = true;
-					e.stopNotification = ()=> e.cancel = true;
+                    e.stopImmediateNotification = ()=> e.cancelImmediate = true;
+                    e.stopNotification = ()=> e.cancel = true;
                     item.fn.apply(e.currentTarget, [e].concat(data));
-					if (e.cancelImmediate)
-						return !(cancel = true);
-					e.cancel && (cancel = e.cancel);
+                    if (e.cancelImmediate)
+                        return !(cancel = true);
+                    e.cancel && (cancel = e.cancel);
                 });
-				if (cancel) return false;
+                if (cancel) return false;
             }
             for (var i = 0; i < target.node.childNodes.length; i++) {
                 var node = target.node.childNodes[i];
                 if (node.nodeType == 1)
-					if (iterate(Store[node.uid]) == false)
-						return false;
+                    if (iterate(Store[node.uid]) == false)
+                        return false;
             }
         }(this));
         return this;
@@ -1295,7 +1295,7 @@ var CommonElementAPI = {
         function setter(target, propKey, value) {
             if (!proxy || propKey !== "model")
                 return Reflect.set(target, propKey, value);
-			view.api.trigger("$/before/bind", [value], false);
+            view.api.trigger("$/before/bind", [value], false);
             if (model) {
                 // nothing to do.
             } else if ($.isArray(value)) {
@@ -1308,7 +1308,7 @@ var CommonElementAPI = {
                 model = bd.bindLiteral(view, propKey);
             }
             model.set(value);
-			view.api.trigger("$/after/bind", [value, proxy.model], false);
+            view.api.trigger("$/after/bind", [value, proxy.model], false);
             return true;
         }
         function unbind() {
