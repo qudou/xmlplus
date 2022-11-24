@@ -80,17 +80,18 @@ Index: {
 // 15-04
 Index: {
     xml: "<div id='index'>\
-             <span id='foo'>foo</span>\
-             <button id='bar'>bar</button>\
+             <button id='foo'>foo</span>\
           </div>",
-    map: { defer: "foo" },
     fun: function (sys, items, opts) {
-        sys.bar.once("click", sys.foo.show);
+        sys.foo.once("click", () => sys.index.append("Bar"));
     }
+},
+Bar: {
+    xml: "<button id='bar'>bar</button>"
 }
 ```
 
-上面的示例来自 [延迟实例化](/docs#延迟实例化)，该示例中，组件对象 `foo` 被设计成延迟实例化的。当然这个示例较为简单，你可以尝试把组件对象 `foo` 替换成复杂的，需要初始化较长时长的组件对象以观察延迟实例化特性的功效。
+该示例中，组件 Bar 只有当用户点击 foo 时才会实例化。当然这个示例较为简单，你可以尝试把组件 `Bar` 替换成复杂的，需要初始化较长时长的组件对象以观察延迟实例化特性的功效。
 
 更近一步，你可以利用 `require.js` 等工具动态获取组件包并导入系统，然后实例化相关的组件对象。此方案适用于体积较大的应用，它能按需分块加载组件集，使得应用的初始化快速进行。
 
