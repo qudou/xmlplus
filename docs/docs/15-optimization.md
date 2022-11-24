@@ -7,7 +7,7 @@
 对于未命名的组件对象，默认不会对其生成系统对象和值对象。对于某些对象，如果仅在样式项中使用，那么可以通过一些小技巧以避免对相关的组件对象命名。请看下面的示例。
 
 ```js
-// 16-01
+// 15-01
 Index: {
     css: "#index button { color: blue; }",
     xml: "<div id='index'>\
@@ -32,7 +32,7 @@ document.createDocumentFragment()
 使用文档碎片特性可以明显地提升应用的性能，因为只需一次屏幕的刷新，就可以完成页面的显示。然而，当动态添加组件对象时，系统默认不使用文档碎片，但我们可以手动使用该功能，请看下面的示例。
 
 ```js
-// 16-02
+// 15-02
 Index: {
     xml: "<div id='index'>\
             <button id='btn'>append</button>\
@@ -53,7 +53,7 @@ Index: {
 除了 `append` 系统函数外，系统函数 `before`，也可以进行类似操作，只是稍微麻烦一点，请参考下面示例：
 
 ```js
-// 16-03
+// 15-03
 Index: {
     xml: "<div id='index'>\
             <button id='btn'>before</button>\
@@ -77,7 +77,7 @@ Index: {
 如果你的应用足够复杂，不妨考虑将部分组件对象延迟实例化。这在大型应用中，它能明显地提升应用的用户体验。
 
 ```js
-// 16-04
+// 15-04
 Index: {
     xml: "<div id='index'>\
              <span id='foo'>foo</span>\
@@ -99,7 +99,7 @@ Index: {
 下面通过一个简单的示例来说明如何通过复用已创建的组件对象来提升应用的性能。下面给出的是两个组件，其中组件 Item 是 HTML 元素 `li` 的简单封装。列表组件 `List` 接收一个数组作为数据源并创建列表子项。
 
 ```js
-// 16-05
+// 15-05
 List: {
     xml: "<ul id='list'/>",
     fun: function (sys, items, opts) {
@@ -121,7 +121,7 @@ Item: {
 注意，函数 `setValue` 中的两个 `for` 语句。其中第一个 `for` 语句会尝试复用已创建的组件对象，只有当未存在已创建对象时才新建一个。第二个 `for` 语句则隐藏剩余未利用的组件对象，而不是将其移除。下面是一个应用示例。
 
 ```js
-// 16-06
+// 15-06
 Index: {
     xml: "<List id='list'/>",
     fun: function (sys, items, opts) {

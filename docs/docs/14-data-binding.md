@@ -11,7 +11,7 @@
 下面示例中，由 `div` 元素创建的组件对象 `index` 绑定了一个字符串：`"hello, world"`。
 
 ```js
-// 15-01
+// 14-01
 Index: {
     xml: "<div id='index'/>",
     fun: function (sys, items, opts) {
@@ -25,7 +25,7 @@ Index: {
 现在我们来看下自定义组件对象如何绑定字面量。
 
 ```js
-// 15-02
+// 14-02
 Index: {
     xml: "<Input id='index' type='text'/>",
     fun: function (sys, items, opts) {
@@ -42,7 +42,7 @@ Input: {
 此示例 `input` 元素对象命恰好名为 `model`。但假定上述的 `Input` 组件对象其内部的 `input` 元素对象的名称是 `foo`，那我们又该如果描述绑定的目标对象呢？请看下面的示例：
 
 ```js
-// 15-03
+// 14-03
 Index: {
     xml: "<Input id='index' type='text'/>",
     fun: function (sys, items, opts) {
@@ -62,7 +62,7 @@ Input: {
 类型为普通对象的数据请与自定义组件对象相绑定，下面是一个简单的示例：
 
 ```js
-// 15-04
+// 14-04
 Index: {
     xml: "<input id='index' type='text'/>",
     fun: function (sys, items, opts) {
@@ -74,7 +74,7 @@ Index: {
 该示例中，绑定数据包含一个键为 `index`，值为 `"hello, world"` 的键值对。所以，若想成功绑定，被绑定的组件对象中必需有个称作 `index` 的命名对象。注意，这里的被绑定对象是 `this`，与前一个示例有所不同。该示例中的键值对绑定的是个体对象，当然也可以是集体对象，请看下面的示例：
 
 ```js
-// 15-05
+// 14-05
 Index: {
     xml: "<div id='index'>\
             <input id='text1' type='text'/>\
@@ -92,7 +92,7 @@ Index: {
 下面我们来个更复杂的例子，绑定的数据对象包含两个键值对，每个键值对各绑定两个组件对象。
 
 ```js
-// 15-06
+// 14-06
 Index: {
     xml: "<div id='index'>\
             <input type='text'/>\
@@ -110,7 +110,7 @@ Index: {
 下面再给出一个联动表单的示例。这里将单选按钮列表与菜单列表绑定到同一个数据对象，它们中的任何一方改变，都会导致另一方的选中项发生变更。
 
 ```js
-// 15-07
+// 14-07
 Index: {
     xml: "<div id='index'>\
             <input type='radio' name='n' value='USA'/>\
@@ -132,7 +132,7 @@ Index: {
 这种情况下，作为被绑定的组件对象成为数据的渲染器。当执行绑定后，系统会为数组中的每一个子项生成一个与渲染器类型相同的组件对象，并将数据与该对象绑定。请看下面的示例：
 
 ```js
-// 15-08
+// 14-08
 Index: {
     xml: "<div id='index'>\
             <input id='input' type='text'/>\
@@ -148,7 +148,7 @@ Index: {
 数组中的元素除了可以为字面量，还可以是普通对象或者数组，这将形成递归绑定。请参考下面的示例：
 
 ```js
-// 15-09
+// 14-09
 Index: {
     xml: "<div id='index'>\
             <Input id='text' type='text'/>\
@@ -169,7 +169,7 @@ Input {
 上面讲的是如何将组件对象与数据进行绑定，现在我们反过来，看下如何将它们解绑。请看下面的示例：
 
 ```js
-// 15-10
+// 14-10
 Index: {
     xml: "<div id='index'>\
             <span/>\
@@ -190,7 +190,7 @@ Index: {
 系统对于被绑定的 HTML 元素对象，有默认的取值与赋值操作。当然，你可以自定义取值与赋值函数以覆盖默认行为。请看下面的示例：
 
 ```js
-// 15-11
+// 14-11
 Index: {
     xml: "<input id='index' type='text'/>",
     fun: function (sys, items, opts) {
@@ -211,7 +211,7 @@ Index: {
 通过绑定结果的 `model` 对象进行相应操作，我们可以对被绑定对象进行间接处理。请看下面的示例：
 
 ```js
-// 15-12
+// 14-12
 Index: {
     xml: "<input id='index' type='text'/>",
     fun: function (sys, items, opts) {
@@ -247,7 +247,7 @@ ret.model = "hello, welcome"
 上面操作的是字面量，现在来看下怎么对绑定数据类型为数组的返回代理执行操作。请看下面的示例：
 
 ```js
-// 15-13
+// 14-13
 Index: {
     xml: "<div id='index'>\
             <input id='text' type='text'/>\

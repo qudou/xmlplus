@@ -29,7 +29,7 @@ var vdoc, rdoc;
 
 var XPath, DOMParser_, XMLSerializer_, NodeElementAPI;
 var Manager = [HtmlManager(),CompManager(),,TextManager(),TextManager(),,,,TextManager(),,];
-var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", defer: "", cfgs: {}, attrs: {}, bind: {} }, fun: new Function };
+var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", cfgs: {}, attrs: {}, bind: {} }, fun: new Function };
 var isReady;
 
 // isHTML contains isSVG
@@ -368,33 +368,19 @@ var hp = {
         var ret = this.fn.apply(this.data, [].slice.call(arguments));
         return ret == this.data ? this.api : ret;
     },
-    build: (function() {
-        function exportAll() {
-            var table = [], objects = [];
-            return function ( data, object ) {
-                var api = {},
-                    k = objects.indexOf(object),
-                    keys = table[k] || (objects.push(object) && table[table.push(Object.keys(object))-1]);
-                for ( k = 0; k < keys.length; k++ )
-                    api[keys[k]] = hp.callback.bind({fn: object[keys[k]], data: data, api: api});
-                return api;
-            };
-        }
-        function onDemand(data, object) {
-            var api = {};
-            var proxy = new Proxy(object, {
-                get(target, propKey, receiver) {
-                    if (object[propKey] === undefined)
-                        return Reflect.get(target, propKey, receiver);
-                    if (!api.hasOwnProperty(propKey))
-                        api[propKey] = hp.callback.bind({fn: object[propKey], data: data, api: proxy});
-                    return api[propKey];
-                },
-            });
-            return proxy;
-        }
-        return inBrowser && !('Proxy' in window) ? exportAll() : onDemand;
-    }()),
+    build: function (data, object) {
+        var api = {};
+        var proxy = new Proxy(object, {
+            get(target, propKey, receiver) {
+                if (object[propKey] === undefined)
+                    return Reflect.get(target, propKey, receiver);
+                if (!api.hasOwnProperty(propKey))
+                    api[propKey] = hp.callback.bind({fn: object[propKey], data: data, api: proxy});
+                return api[propKey];
+            },
+        });
+        return proxy;
+    },
     create: function (item) {
         item.api || (item.api = item.back = hp.build(item, item.typ > 1 ? TextElementAPI : NodeElementAPI));
         return item;
@@ -677,7 +663,6 @@ $.extend(hp, (function () {
         ["cfgs","attrs"].forEach(function (k) {
             $.isPlainObject(obj.map[k]) || $.error("invalid " + k + " in map, expected a plainObject");
         });
-        typeof obj.map.defer == "string" || $.error("invalid defer in map, expected a string");
         typeof obj.map.share == "string" || $.error("invalid share in map, expected a string");
         typeof obj.xml == "string" || typeof obj.xml == "undefined" || $.error("invalid xml, expected a undefined value or a string");
     }
@@ -697,7 +682,6 @@ $.extend(hp, (function () {
     function initialize(obj) {
         var map = obj.map;
         resetInput(map.attrs), resetInput(map.cfgs);
-        map.defer = map.defer ? map.defer.split(' ') : [];
         map.share = map.share ? map.share.split(' ') : [];
         var root = obj.dir.split('/')[0];
         obj.xml = $.parseXML(obj.xml || "<void/>");
@@ -1480,16 +1464,6 @@ var TextElementAPI = (function () {
     return api;
 }());
 
-var DeferElementAPI = {
-    show: function () {
-        var defer = this.node.defer;
-        if ( defer.loaded )
-            $.error("the node has been loaded");
-        defer.loaded = true;
-        return this.api.replace(defer);
-    }
-};
-
 var ShareElementAPI = {
     remove: function () {
         var k = this.dir + "/" + this.node.localName;
@@ -1558,10 +1532,9 @@ function HtmlManager() {
     function create(env, node, parent) {
         var k = node.nodeName,
             o = (table[k] || (table[k] = [])).pop() || HtmlElement(node, parent);
-        if (!node.defer)
-            resetAttrs(env, node, aliasMatch(env, node));
+        resetAttrs(env, node, aliasMatch(env, node));
         o.ele = hp.createElement(node, parent);
-        o.api = node.defer ? hp.build(o, DeferElementAPI) : o.back;
+        o.api = o.back;
         o.env = env, o.node = node, node.uid = o.uid, o.ele.xmlTarget = o;
         return Store[o.uid] = o;
     }
@@ -1752,25 +1725,6 @@ function Finder(env) {
     return { sys: sys, items: items, refresh: refresh };
 }
 
-function setDeferNode(env, node) {
-    var index = -1, temp, k, newNode = node;
-    for ( k in env.ali ) {
-        temp = env.map.defer.indexOf(k);
-        if ( temp != -1 && hp.nodeIsMatch(env.xml, env.ali[k], newNode) ) { 
-            index = temp;
-            break;
-        }
-    }
-    var id = newNode.getAttribute("id");
-    if ( index != -1 || (id && env.map.defer.indexOf(id) != -1) ) {
-        newNode = vdoc.createElement("void");
-        id && newNode.setAttribute("id", id);
-        node.parentNode.replaceChild(newNode, node);
-        newNode.defer = node;
-    }
-    return newNode;
-}
-
 function aliasMatch(env, node) {
     var k, exprs = {};
     for ( k in env.ali )
@@ -1827,8 +1781,7 @@ function parseEnvXML(env, parent, node) {
                 return Manager[node.nodeType].create(env, node, parent);
             $.error("create failed, invalid node");
         }
-        var i, ins,
-            node = node.loaded ? node : setDeferNode(env, node);
+        var i, ins;
         if ( isHTML[node.nodeName] ) {
             ins = Manager[0].create(env, node, parent);
             for ( i = 0; i < node.childNodes.length; i++ )
@@ -1970,7 +1923,6 @@ function startup(xml, parent, param) {
         module.exports = $.extend(xmlplus, $);
     }
     CopyElementAPI = $.extend({}, NodeElementAPI, CopyElementAPI);
-    DeferElementAPI = $.extend({}, NodeElementAPI, DeferElementAPI);
     ShareElementAPI = $.extend({}, NodeElementAPI, ShareElementAPI);
 }());
 
