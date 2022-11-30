@@ -757,23 +757,26 @@ let MessageModuleAPI = (function () {
 }());
 
 let EventModuleAPI = (function () {
-    var eventTable = {},
+    let eventTable = {},
         listeners = {},
         ignoreProps = /^([A-Z]|returnValue$|layer[XY]$|keyLocation$)/,
         specialEvents={ click: "MouseEvents", mousedown: "MouseEvents", mouseup: "MouseEvents", mousemove: "MouseEvents" };
     function assert(type, selector, fn) {
-        typeof type == "string" || $.error("invalid type, expected a string");
-        typeof fn == "function" || $.error("invalid handler, expected a function");
-        selector == undefined || typeof selector == "string" || $.error("invalid selector, expected a string");
+        if ($.type(type) != "string")
+            throw Error("Invalid type, expected a string");
+        if (!$.isFunction(fn))
+            throw Error("Invalid handler, expected a function");
+        if (selector !== undefined && $.type(selector) != "string")
+            throw Error("Invalid selector, expected a string");
     }
     function on(type, selector, fn) {
-        if (typeof selector == "function")
+        if ($.isFunction(selector))
             fn = selector, selector = undefined;
-        assert(type, selector, fn);
-        var uid = this.elem().xmlTarget.uid;
-        var listener = this.api;
+        xmlplus.release || assert(type, selector, fn);
+        let uid = this.elem().xmlTarget.uid,
+            listener = this.api;
         function handler(event) {
-            var e = createProxy(event, listener);
+            let e = createProxy(event, listener);
             if (!selector)
                 return fn.apply(listener, [e].concat(event.data)), e;
             listener.find(selector).forEach(function(item) {
@@ -792,13 +795,13 @@ let EventModuleAPI = (function () {
         return this;
     }
     function once(type, selector, fn) {
-        var realCallback;
-        if ( typeof fn == "function" )
+        let realCallback;
+        if ($.isFunction(fn))
             realCallback = fn, fn = callback;
-        else if ( typeof selector == "function" )
+        else if ($.isFunction(selector))
             realCallback = selector, selector = callback;
         else 
-            $.error("invalid handler, expected a function");
+            throw Error("Invalid handler, expected a function");
         function callback(e) {
             e.currentTarget.off(type, callback);
             realCallback.apply(this, [].slice.call(arguments));
@@ -806,33 +809,33 @@ let EventModuleAPI = (function () {
         return this.api.on(type, selector, fn);
     }
     function off(type, selector, fn) {
-        var k, item = eventTable[this.elem().xmlTarget.uid] || {};
-        if ( type == undefined ) {
-            for ( type in item )
+        let k, item = eventTable[this.elem().xmlTarget.uid] || {};
+        if (type === undefined) {
+            for (type in item)
                 off.call(this, type);
             return this;
         }
-        if ( !item[type] ) return this;
-        var buf = [].slice.call(item[type]);
-        if ( typeof selector == "function" ) {
-            for ( k in buf )
-                if ( selector == buf[k].fn )
+        if (!item[type]) return this;
+        let buf = [].slice.call(item[type]);
+        if ($.isFunction(selector)) {
+            for (k in buf)
+                if (selector == buf[k].fn)
                     item[type].splice(item[type].indexOf(buf[k]), 1);
-        } else if ( selector == undefined ) {
+        } else if (selector === undefined) {
             item[type].splice(0);
-        } else if ( typeof fn == "function" ) {
-            for ( k in buf )
-                if ( fn == buf[k].fn && selector == buf[k].selector )
+        } else if ($.isFunction(fn)) {
+            for (k in buf)
+                if (fn == buf[k].fn && selector == buf[k].selector)
                     item[type].splice(item[type].indexOf(buf[k]), 1);
         } else { // typeof selector == "string" only
-            for ( k in buf )
-                if ( selector == buf[k].selector )
+            for (k in buf)
+                if (selector == buf[k].selector)
                     item[type].splice(item[type].indexOf(buf[k]), 1);
         }
         return this;
     }
     function trigger(type, data, bubble) {
-        var event = Event(type, true);
+        let event = Event(type, true);
         event.xmlTarget = Store[this.uid];
         event.bubble_ = bubble == false ? false : true;
         event.data = data == null ? [] : ($.isArray(data) ? data : [data]);
@@ -843,14 +846,14 @@ let EventModuleAPI = (function () {
         delete eventTable[target.uid];
     }
     function Event(type, bubble) {
-        var canBubble = !(bubble === false),
+        let canBubble = !(bubble === false),
             event = rdoc.createEvent(specialEvents[type] || "Events");
         event.initEvent(type, canBubble, true);
         return event;
     }
     function createProxy(event, listener) {
-        var proxy = { originalEvent: event };
-        for ( var key in event )
+        let proxy = { originalEvent: event };
+        for (let key in event)
             if ( !ignoreProps.test(key) && event[key] !== undefined)
                 proxy[key] = event[key];
         proxy.currentTarget = listener;
@@ -861,11 +864,11 @@ let EventModuleAPI = (function () {
         return proxy;
     }
     function eventHandler(event) {
-        let target = event.target;
-        let cancelBubble = false;
+        let target = event.target,
+            cancelBubble = false;
         while (target && target.xmlTarget) {
-            let uid = target.xmlTarget.uid;
-            let items =(eventTable[uid] || {})[event.type] || [];
+            let uid = target.xmlTarget.uid,
+                items =(eventTable[uid] || {})[event.type] || [];
             for (let i = 0; i < items.length; i++) {
                 let e = items[i].handler(event);
                 if (e.cancelImmediateBubble) {
