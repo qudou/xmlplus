@@ -1330,9 +1330,9 @@ let ServerElementAPI = {
 };
 
 let TextElementAPI = (function () {
-    var api = {};
-    ["before","replace","prev","next","guid","toString"].forEach(function(k) {
-        api[k] = CommonElementAPI[k];
+    let api = {};
+    ["before","replace","prev","next","guid","toString"].forEach(key => {
+        api[key] = CommonElementAPI[key];
     });
     api.text = function (value) {
         if (value == undefined)
@@ -1371,7 +1371,7 @@ let CopyElementAPI = {
 
 let TextElement = (function() {
     let types = [,,,"TextNode","CDATASection",,,,"Comment"];
-    return function ( node, parent ) {
+    return (node, parent) => {
         let o = { uid: $.guid() };
         o.typ = node.nodeType;
         o.ele = rdoc["create" + types[o.typ]](node.nodeValue);
@@ -1380,7 +1380,7 @@ let TextElement = (function() {
 }());
 
 function HtmlElement(node, parent) {
-    var o = { typ: 0, elem: hp.elem, uid: $.guid() };
+    let o = { typ: 0, elem: hp.elem, uid: $.guid() };
     o.appendTo = hp.appendTo;
     return o;
 }
@@ -1426,7 +1426,7 @@ function HtmlManager() {
     function recycle(item) {
         let i = 0, o,
             c = XPath.select("./*", item.node); 
-        for ( ; i < c.length; i++ ) {
+        for (; i < c.length; i++) {
             o = Store[c[i].uid];
             Manager[o.typ].recycle(o);
         }
@@ -1438,7 +1438,7 @@ function HtmlManager() {
     }
     function chenv(env, item) {
         let i = 0, o, c = item.node.childNodes;
-        for ( ; i < c.length; i++ ) {
+        for (; i < c.length; i++) {
             o = Store[c[i].uid];
             Manager[o.typ].chenv(env, o);
         }
@@ -1455,7 +1455,7 @@ function setComponent(env, ins) {
         ins.xml.replaceChild(vdoc.createElement("void"), ins.xml.lastChild);
         ins.api = hp.build(ins, CopyElementAPI);
         share.copys.push(ins);
-        ins.fun = function () {return share.ins.value;};
+        ins.fun = () => { return share.ins.value };
     } else {
         ins.api = hp.build(ins, ShareElementAPI);
         share.ins = ins, share.copys = [];
@@ -1467,7 +1467,7 @@ function CompManager() {
     let table = [];
     function create(env, node, parent) {
         let w = PM.component(env.dir, node);
-        if ( !w ) return;
+        if (!w) return;
         let o = table.pop() || CompElement(node, parent);
         o.map = $.extend(true, {}, w.map);
         o.opt = $.extend(true, {}, w.opt);
@@ -1480,10 +1480,12 @@ function CompManager() {
         resetConfigs(env, node, exprs);
         resetOptions(env, o, exprs);
         o.share = $.extend({}, env.share);
-        o.map.share.forEach(function( item ) {
+        o.map.share.forEach(item => {
             let p = ph.fullPath(o.dir, item),
                 s = ph.split(p);
-            Library[s.dir] && Library[s.dir][s.basename] ? (o.share[p] = {}) : $.error("shared object " + p + " not found");
+            if (Library[s.dir] && Library[s.dir][s.basename])
+                return o.share[p] = {};
+            throw Error(`Shared object ${p} not found`);
         });
         o.xml = w.xml.cloneNode(true);
         return Store[o.uid] = setComponent(env, o);
@@ -1492,7 +1494,7 @@ function CompManager() {
         let i = 0, o, 
             c = XPath.select("./*", item.node),
             deep = Store[item.xml.lastChild.uid];
-        for ( ; i < c.length; i++ ) {
+        for (; i < c.length; i++) {
             o = Store[c[i].uid];
             Manager[o.typ].recycle(o);
         }
@@ -1505,7 +1507,7 @@ function CompManager() {
     }
     function chenv(env, item) {
         let i = 0, o, c = item.node.childNodes;
-        for ( ; i < c.length; i++ ) {
+        for (; i < c.length; i++) {
             o = Store[c[i].uid];
             Manager[o.typ].chenv(env, o);
         }
@@ -1670,51 +1672,51 @@ function PackageManager() {
 
 function Finder(env) {
     function assert(expr, context) {
-        if ( typeof expr != "string" )
-            $.error("invalid expression, expected a css selector");
-        if ( context == undefined )
+        if (typeof expr != "string")
+            throw Error("Invalid expression, expected a string");
+        if (context === undefined)
             return env.xml;
-        if ( $.isSystemObject(context) )
+        if ($.isSystemObject(context))
             return Store[context.guid()].node;
-        $.error("invalid context, expected a InnerObject");
+        throw Error("Invalid context, expected a SystemObject");
     }
     function sys(expr, context) {
-        var context = assert(expr, context),
-            result = new Collection,
+        context = assert(expr, context);
+        let result = new Collection,
             list = XPath.select(expr, context);
-        for ( var i = 0; i < list.length; i++ )
+        for (let i = 0; i < list.length; i++)
             result.push(hp.create(Store[list[i].uid]).api);
         return result;
     }
     function items(expr, context) {
-        var context = assert(expr, context),
-            result = new Collection,
+        context = assert(expr, context);
+        let result = new Collection,
             list = XPath.select(expr, context);
-        for ( var i = 0; i < list.length; i++ )
+        for (let i = 0; i < list.length; i++)
             result.push(Store[list[i].uid].value);
         return result;
     }
     function refresh() {
-        for ( var i in items ) {
+        for (let i in items) {
             delete sys[i];
             delete items[i];
         }
-        for ( var i in env.ali ) {
+        for (let i in env.ali) {
             sys[i] = sys(env.ali[i]);
             items[i] = new Collection;
-            for ( var k = 0; k < sys[i].length; k++ )
+            for (let k = 0; k < sys[i].length; k++)
                 items[i].push(sys[i][k].val());
             sys[i].call("addClass", env.aid + env.cid + i);
         }
         (function parse(node) {
-            var id = node.getAttribute("id");
+            let id = node.getAttribute("id");
             if (id) {
-                var item = hp.create(Store[node.uid]);
+                let item = hp.create(Store[node.uid]);
                 sys[id] = item.api;
                 items[id] = item.value;
             }
-            var i, kids = node.childNodes;
-            for ( i = 0; i < kids.length; i++  )
+            let i, kids = node.childNodes;
+            for (i = 0; i < kids.length; i++)
                 kids[i].nodeType == 1 && parse(kids[i]);
         }(env.xml.lastChild));
     }
@@ -1722,48 +1724,48 @@ function Finder(env) {
 }
 
 function aliasMatch(env, node) {
-    var k, exprs = {};
-    for ( k in env.ali )
-        if ( hp.nodeIsMatch(env.xml, env.ali[k], node) )
+    let k, exprs = {};
+    for (k in env.ali)
+        if (hp.nodeIsMatch(env.xml, env.ali[k], node))
             exprs[k] = 1;
     return exprs;
 }
 
 function resetAttrs(env, node, exprs) {
-    var k, attrs = {},
+    let k, attrs = {},
         id = node.getAttribute("id");
-    for ( k in exprs )
+    for (k in exprs)
         $.extend(attrs, env.map.attrs[k]);
-    if ( id && env.map.attrs[id] )
+    if (id && env.map.attrs[id])
         attrs = $.extend(attrs, env.map.attrs[id]);
-    for ( k in attrs ) {
-        if ( env.opt[k] != null )
+    for (k in attrs) {
+        if (env.opt[k] != null)
             node.setAttribute(attrs[k], env.opt[k]);
     }
 }
 
 function resetConfigs(env, node, exprs) {
-    var k, cfgs = {},
+    let k, cfgs = {},
         id = node.getAttribute("id");
-    for ( k in exprs )
+    for (k in exprs)
         $.extend(cfgs, env.map.cfgs[k]);
-    if ( id && env.map.cfgs[id] )
+    if (id && env.map.cfgs[id])
         cfgs = $.extend(cfgs, env.map.cfgs[id]);
-    for ( k in cfgs ) {
+    for (k in cfgs) {
         env.cfg[id] = env.cfg[id] || {};
-        if ( env.opt[k] != null )
+        if (env.opt[k] != null)
             env.cfg[id][cfgs[k]] = env.opt[k];
     }
 }
 
 function resetOptions(env, ins, exprs) {
-    var i, k, o, list,
+    let i, k, o, list,
         id = ins.node.getAttribute("id");
-    for ( k in exprs )
+    for (k in exprs)
         $.extend(ins.opt, env.cfg[k]);
-    if ( id && env.cfg[id] )
+    if (id && env.cfg[id])
         $.extend(ins.opt, env.cfg[id]);
-    for ( i = 0; i < ins.node.attributes.length; i++ ) {
+    for (i = 0; i < ins.node.attributes.length; i++) {
         o = ins.node.attributes[i];
         o.prefix || (ins.opt[o.name] = o.value);
     }
