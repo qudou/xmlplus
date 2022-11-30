@@ -72,9 +72,6 @@ let $ = {
             return intToABC(counter++);
         };
     }()),
-    error: function (message) {
-        throw new Error(message);
-    },
     ready: function (callback) {
         rdoc.addEventListener('DOMContentLoaded', callback);
     },
@@ -296,11 +293,11 @@ let hp = {
     },
     parseToXML: function (input, dir) {
         if ( input == null )
-            $.error("invalid input, expected a string a xml node");
+            throw Error("Invalid input, expected a string or a xml node");
         if ( input.ownerDocument )
             return input;
         if ( typeof input != "string" )
-            $.error("invalid input, expected a string or a xml node");
+            throw Error("invalid input, expected a string or a xml node");
         if ( isHTML[input] )
             return vdoc.createElement(input);
         if ( input.charAt(0) == '<' ) try {
@@ -486,7 +483,7 @@ let bd = {
                     binds[key].push(bd.bindLiteral(view, key));
                 });
             } else {
-                $.error(`Type error: ${value}`);
+                throw Error(`Type error: ${value}`);
             }
         }
         return {get: ()=>{return proxy}, set: setter, del: delter, unbind: unbind};
@@ -606,7 +603,7 @@ let bd = {
             if (propKey == list.length)
                 return push(value);
             if (!views[propKey])
-                $.error(`prop name ${propKey} does not exist.`);
+                throw Error(`prop name ${propKey} does not exist.`);
             list[propKey].model = value;
             return true;
         }
@@ -644,7 +641,7 @@ let Collection = (function () {
         },
         call: function (fnName) {
             if ( typeof fnName != "string" )
-                $.error("invalid function name, expected a string");
+                throw Error("Invalid function name, expected a string");
             var args = slice.call(arguments).slice(1);
             for ( var i = 0; i < this.length; i++ )
                 if( typeof this[i][fnName] == "function" )
@@ -1178,7 +1175,7 @@ let CommonElementAPI = {
                 model = bd.bindArray(view);
             } else if ($.isPlainObject(value)) {
                 if (!view.fdr)
-                    $.error("a PlainObject is not allow to bind a htmltag!");
+                    throw Error("a PlainObject is not allow to bind a htmltag!");
                 model = bd.bindObject(view);
             } else if (bd.isLiteral(value)) {
                 model = bd.bindLiteral(view, propKey);
