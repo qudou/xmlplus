@@ -6,36 +6,34 @@
  */
  (function (inBrowser, undefined) {
 "use strict";
-  var ELEMENT_NODE                = 1;
-//var ATTRIBUTE_NODE              = 2;
-//var TEXT_NODE                   = 3;
-//var CDATA_SECTION_NODE          = 4;
-//var ENTITY_REFERENCE_NODE       = 5;
-//var ENTITY_NODE                 = 6;
-//var PROCESSING_INSTRUCTION_NODE = 7;
-//var COMMENT_NODE                = 8;
-//var DOCUMENT_NODE               = 9;
-  var DOCUMENT_TYPE_NODE          = 10;
-//var DOCUMENT_FRAGMENT_NODE      = 11;
-//var NOTATION_NODE               = 12;
+  const ELEMENT_NODE                = 1;
+//const ATTRIBUTE_NODE              = 2;
+//const TEXT_NODE                   = 3;
+//const CDATA_SECTION_NODE          = 4;
+//const ENTITY_REFERENCE_NODE       = 5;
+//const ENTITY_NODE                 = 6;
+//const PROCESSING_INSTRUCTION_NODE = 7;
+//const COMMENT_NODE                = 8;
+//const DOCUMENT_NODE               = 9;
+  const DOCUMENT_TYPE_NODE          = 10;
+//const DOCUMENT_FRAGMENT_NODE      = 11;
+//const NOTATION_NODE               = 12;
 
-var WELL = /#(?=([^}])+?{)/ig;
-var svgns = "http://www.w3.org/2000/svg";
-var htmlns = "http://www.w3.org/1999/xhtml";
-var xlinkns = "http://www.w3.org/1999/xlink";
+const svgns = "http://www.w3.org/2000/svg";
+const htmlns = "http://www.w3.org/1999/xhtml";
+const xlinkns = "http://www.w3.org/1999/xlink";
 
 // vdoc is for virtual DOM, and rdoc is for real DOM.
-var vdoc, rdoc;
+let vdoc, rdoc;
 
-var XPath, DOMParser_, XMLSerializer_, NodeElementAPI;
-var Manager = [HtmlManager(),CompManager(),,TextManager(),TextManager(),,,,TextManager(),,];
-var Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", cfgs: {}, attrs: {}, bind: {} }, fun: new Function };
-var isReady;
+let XPath, DOMParser_, XMLSerializer_, NodeElementAPI;
+let Manager = [HtmlManager(),CompManager(),,TextManager(),TextManager(),,,,TextManager(),,];
+let Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", cfgs: {}, attrs: {}, bind: {} }, fun: new Function };
 
 // isHTML contains isSVG
-var isSVG = {}, isHTML = {};
+const isSVG = {}, isHTML = {};
 (function () {
-    var i = -1, k = -1,
+    let i = -1, k = -1,
         s = "animate animateMotion animateTransform circle clipPath cursor defs desc discard ellipse feBlend feColorMatrix feComponentTransfer feComposite feConvolveMatrix feDiffuseLighting feDisplacementMap feDistantLight feDropShadow feFlood feFuncA feFuncB feFuncG feFuncR feGaussianBlur feImage feMerge feMergeNode feMorphology feOffset fePointLight feSpecularLighting feSpotLight feTile feTurbulence filter foreignObject g hatch hatchpath image line linearGradient marker mask mesh meshpatch meshrow metadata mpath path pattern polygon polyline radialGradient rect set solidcolor stop svg switch symbol text textPath tspan unknown use view".split(" "),
         h = "a abbr acronym address applet area article aside audio b base basefont bdi bdo big blockquote body br button canvas caption center cite code col colgroup command datalist dd del details dfn dialog dir div dl dt em embed fieldset figcaption figure font footer form frame frameset h1 h2 h3 h4 h5 h6 head header hr html i iframe img input ins kbd keygen label legend li link main map mark menu menuitem meta meter nav noframes noscript object ol optgroup option output p param pre progress q rp rt rtc ruby s samp script section select small source span strike strong style sub summary sup table tbody td textarea tfoot th thead time title tr track tt u ul var video wbr xmp void".split(" ");
     while (h[++k]) isHTML[h[k]] = 1;
@@ -43,20 +41,20 @@ var isSVG = {}, isHTML = {};
 }());
 
 // The Source is used to help implement the inheritance of components, and then it is no longer used.
-var Source = {};
+let Source = {};
 
 // The Library contains the set of components imported by the imports function.
 // The components are initialized by the system
 // It contains two levels: the first is the component space and the second is the component name.
 // eg. Library["//xp"][Input] = {};
-var Library = {};
+let Library = {};
 
 // The Store establishes the mapping from component instance uid to component instance.
-var Store = {};
+let Store = {};
 
 // The Global stores the application objects created by the '$.startup' function. 
 // You can access the objects through the function '$.getElementById'.
-var Global = {};
+let Global = {};
 
 var $ = {
     startup: startup,
@@ -79,11 +77,7 @@ var $ = {
         throw new Error(message);
     },
     ready: function (callback) {
-        if ( isReady ) return callback($);
-        var t = setInterval(function() {
-            if ( isReady )
-                clearInterval(t), callback($);
-        }, 0);
+		rdoc.addEventListener('DOMContentLoaded', callback);
     },
     type: (function () {
         var i, class2type = {},
@@ -175,16 +169,16 @@ var $ = {
         return target;
     },
     parseXML: function (data) {
-        var xml;
-        if ( !data || typeof data !== "string" )
-            return null;
+        let xml;
+        if (!data || typeof data !== "string")
+            throw Error("Invalid data, expected a string");
         try {
-            xml = ( new DOMParser_() ).parseFromString( data, "text/xml" );
-        } catch ( e ) {
+            xml = (new DOMParser_()).parseFromString(data, "text/xml");
+        } catch (e) {
             xml = undefined;
         }
-        if ( !xml || xml.getElementsByTagName( "parsererror" ).length )
-            $.error( "Invalid XML: " + data );
+        if (!xml || xml.getElementsByTagName( "parsererror" ).length)
+            throw Error("Invalid XML: " + data);
         return xml;
     },
     serialize: function (node) {
@@ -443,29 +437,7 @@ var hp = {
             id && (Global[id] = val) && val.attr("id", id);
             node.parentNode.replaceChild(node.parentNode.lastChild, node);
         }
-    },
-    ready: inBrowser && (function () {
-        var fn = [], d = document,
-            ie = !!(window.attachEvent && !window.opera),
-            wk = /webkit\/(\d+)/i.test(navigator.userAgent) && (RegExp.$1 < 525),
-            run = function () { for (var i = 0; i < fn.length; i++) fn[i](); };
-        return function ( f ) {
-            if ( !ie && !wk && d.addEventListener )
-                return d.addEventListener('DOMContentLoaded', f, false);
-            if (fn.push(f) > 1) return;
-            if ( ie ) {
-                (function ff() {
-                    try { d.documentElement.doScroll('left'); run(); }
-                    catch (err) { setTimeout(ff, 0); }
-                })();
-            } else if ( wk ) {
-                var t = setInterval(function () {
-                    if (/^(loaded|complete)$/.test(d.readyState))
-                        clearInterval(t), run();
-                }, 0);
-            }
-        };
-    })()
+    }
 };
 
 var bd = {
@@ -992,8 +964,8 @@ var CommonElementAPI = {
         return this.elem();
     },
     text: function (value) {
-        var elem = this.elem();
-        if ( value === undefined )
+        let elem = this.elem();
+        if (value === undefined)
             return elem.textContent;
         if ( elem.childNodes.length == 1 && elem.lastChild.nodeType ) {
             this.node.data = elem.lastChild.data = value + "";
@@ -1004,7 +976,7 @@ var CommonElementAPI = {
         return this;
     },
     prop: function (name, value) {
-        if ( value === undefined )
+        if (value === undefined)
             return this.elem()[name];
         this.elem()[name] = value;
         return this;
@@ -1014,80 +986,74 @@ var CommonElementAPI = {
         return this;
     },
     attr: function (name, value) {
-        var elem = this.elem();
-        if ( typeof name !== "string" )
-            $.error("invalid attribute name, expected a string");
-        if ( value === undefined )
+        let elem = this.elem();
+        if (value === undefined)
             return elem.getAttribute(name);
-        if ( typeof value === "string" ) {
-            elem.setAttribute(name, value);
-            return this;
-        }
-        $.error("invalid attribute value, expected a string");
+        elem.setAttribute(name, value + '');
+        return this;
     },
     removeAttr: function (name) {
         this.elem().removeAttribute(name);
         return this;
     },
     addClass: function (value, ctx) {
-        var elem = this.elem(),
-            ctx = (ctx && Store[ctx.guid()] || this).env,
+        ctx = (ctx && Store[ctx.guid()] || this).env;
+        let elem = this.elem(),
             klass = elem.getAttribute("class"),
-            input = value.replace(/#/g, ctx.aid + ctx.cid).split(/\s+/),
+            input = (value + '').replace(/#/g, ctx.aid + ctx.cid).split(/\s+/),
             result = klass ? klass.split(/\s+/) : [];
-        for ( var i = 0; i < input.length; i++ )
-            if ( result.indexOf(input[i]) < 0 )
+        for (let i = 0; i < input.length; i++)
+            if (result.indexOf(input[i]) < 0)
                 result.push(input[i]);
-        elem.setAttribute("class", result.join(" "));
+        elem.setAttribute("class", result.join(' '));
         return this;
     },
     removeClass: function (value, ctx) {
-        var elem = this.elem();
-        if ( value === undefined )
+        let elem = this.elem();
+        if (value === undefined)
             return elem.setAttribute("class", ""), this;
-        var ctx = (ctx && Store[ctx.guid()] || this).env,
-            klass = elem.getAttribute("class"),
-            input = value.replace(/#/g, ctx.aid + ctx.cid).split(/\s+/),
+        ctx = (ctx && Store[ctx.guid()] || this).env;
+        let klass = elem.getAttribute("class"),
+            input = (value + '').replace(/#/g, ctx.aid + ctx.cid).split(/\s+/),
             result = klass ? klass.split(/\s+/) : [];
-        for ( var i = 0; i < input.length; i++ ) {
-            var k = result.indexOf(input[i]);
+        for (let k, i = 0; i < input.length; i++ ) {
+            k = result.indexOf(input[i]);
             k >= 0 && result.splice(k, 1);
         }
         elem.setAttribute("class", result.join(" "));
         return this;
     },
     hasClass: function(value) {
-        var elem = this.elem();
-        value = value || '';
-        var env = this.env;
-        value = value.replace(/#/g, env.aid + env.cid);
+        let elem = this.elem(),
+            env = this.env;
+        value = (value + '').replace(/#/g, env.aid + env.cid);
         if (value.length == 0) 
             return false;
         return new RegExp(' ' + value + ' ').test(' ' + elem.getAttribute("class") + ' ');
     },
     contains: function (obj) {
-        if ( !obj ) return false;
-        var target = this.elem(),
+        if (!obj) return false;
+        let target = this.elem(),
             elem = $.isSystemObject(obj) && obj.elem() || obj;
         do {
-            if ( elem == target ) return true;
+            if (elem == target) return true;
             elem = elem.parentNode;
         } while (elem);
         return false;
     },
     append: function (target, options, parent) {
         parent = parent || this.appendTo();
-        if ( $.isSystemObject(target) ) {
-            if ( target.contains(this.api) )
-                $.error("attempt to append a target which contains current");
-            var src = Store[target.guid()],
+        if ($.isSystemObject(target)) {
+            if (target.contains(this.api))
+                throw Error("attempt to append a object which contains current node!");
+            let src = Store[target.guid()],
                 srcEnv = src.env,
                 srcParent = src.elem().parentNode,
                 isTop = srcEnv.xml.lastChild == src.node;
             parent.appendChild(src.elem());
             this.node.appendChild(src.node);
             Manager[src.typ].chenv(this.env, src);
-            if ( isTop ) {
+            if (isTop) {
                 srcEnv.xml.appendChild(vdoc.createElement("void"));
                 parseEnvXML(srcEnv, srcParent, srcEnv.xml.lastChild);
             }
@@ -1096,7 +1062,7 @@ var CommonElementAPI = {
             return target;
         }
         target = hp.parseToXML(target, this.env.dir);
-        if ( target.nodeType == ELEMENT_NODE && $.isPlainObject(options) ) {
+        if (target.nodeType == ELEMENT_NODE && $.isPlainObject(options)) {
             target.getAttribute("id") || target.setAttribute("id", $.guid());
             this.env.cfg[target.getAttribute("id")] = options;
         }
@@ -1106,20 +1072,20 @@ var CommonElementAPI = {
         return hp.create(Store[this.node.lastChild.uid]).api;
     },
     before: function (target, options, elem) {
-        if ( this.node == this.env.xml.lastChild )
-            $.error("insert before document node is not allow");
+        if (this.node == this.env.xml.lastChild)
+            throw Error("insert before document node is not allowed");
         elem = elem || this.elem();
-        if ( $.isSystemObject(target) ) {
-            if ( target.contains(this.api) )
-                $.error("attempt to insert a target which contains current");
-            var src = Store[target.guid()],
+        if ($.isSystemObject(target)) {
+            if (target.contains(this.api))
+                throw Error("attempt to insert a object which contains current node");
+            let src = Store[target.guid()],
                 srcEnv = src.env,
                 srcParent = src.elem().parentNode,
                 isTop = srcEnv.xml.lastChild == src.node;
             this.node.parentNode.insertBefore(src.node, this.node);
             elem.parentNode.insertBefore(src.elem(), elem);
             Manager[src.typ].chenv(this.env, src);
-            if ( isTop ) {
+            if (isTop) {
                 srcEnv.xml.appendChild(vdoc.createElement("void"));
                 parseEnvXML(srcEnv, srcParent, srcEnv.xml.lastChild);
             }
@@ -1132,18 +1098,18 @@ var CommonElementAPI = {
             target.getAttribute("id") || target.setAttribute("id", $.guid());
             this.env.cfg[target.getAttribute("id")] = options;
         }
-        var newNode = this.node.parentNode.insertBefore(target, this.node);
+        let newNode = this.node.parentNode.insertBefore(target, this.node);
         parseEnvXML(this.env, elem, newNode);
         elem.parentNode.insertBefore(elem.lastChild, elem);
         target.nodeType == ELEMENT_NODE && target.hasAttribute("id") && this.env.fdr.refresh();
         return hp.create(Store[this.node.previousSibling.uid]).api;
     },
     replace: function (target, options) {
-        var elem = this.elem();
-        if ( $.isSystemObject(target) ) {
+        let elem = this.elem();
+        if ($.isSystemObject(target)) {
             if ( target.contains(this.api) )
-                $.error("attempt to replace a target which contains current");
-            var src = Store[target.guid()],
+                throw Error("attempt to replace a object which contains current node");
+            let src = Store[target.guid()],
                 srcEnv = src.env,
                 srcParent = src.elem().parentNode,
                 isTop = srcEnv.xml.lastChild == src.node;
@@ -1151,7 +1117,7 @@ var CommonElementAPI = {
             this.node.parentNode.replaceChild(src.node, this.node);
             this.node = src.node;
             Manager[src.typ].chenv(this.env, src);
-            if ( isTop ) {
+            if (isTop) {
                 srcEnv.xml.appendChild(vdoc.createElement("void"));
                 parseEnvXML(srcEnv, srcParent, srcEnv.xml.lastChild);
             }
@@ -1161,7 +1127,7 @@ var CommonElementAPI = {
             return target;
         }
         target = hp.parseToXML(target, this.env.dir);
-        if ( target.nodeType == ELEMENT_NODE && $.isPlainObject(options) ) {
+        if (target.nodeType == ELEMENT_NODE && $.isPlainObject(options)) {
             target.getAttribute("id") || target.setAttribute("id", $.guid());
             this.env.cfg[target.getAttribute("id")] = options;
         }
@@ -1174,10 +1140,10 @@ var CommonElementAPI = {
         return hp.create(Store[target.uid]).api;
     },
     remove: function () {
-        if ( this.env.xml.lastChild == this.node ) {
+        if (this.env.xml.lastChild == this.node) {
             this.api.replace("void");
         } else {
-            var elem = this.elem();
+            let elem = this.elem();
             elem.parentNode.removeChild(elem);
             this.node.parentNode.removeChild(this.node);
             this.node.nodeType == ELEMENT_NODE && this.node.hasAttribute("id") && this.env.fdr.refresh();
@@ -1188,55 +1154,55 @@ var CommonElementAPI = {
         return this.env.fdr.sys(expr, this.api);
     },
     get: function (index, nodeType) {
-        var nodeType = nodeType || ELEMENT_NODE,
-            next = this.node.firstChild,
+        nodeType = nodeType || ELEMENT_NODE;
+        let next = this.node.firstChild,
             count = -1;
-        while ( next ) {
-            if ( next.nodeType == nodeType && ++count == index )
+        while (next) {
+            if (next.nodeType == nodeType && ++count == index)
                 break;
             next = next.nextSibling;
         }
         return next && hp.create(Store[next.uid]).api;
     },
     first: function (nodeType) {
-        var nodeType = nodeType || ELEMENT_NODE,
-            next = this.node.firstChild;
-        while ( next && next.nodeType != nodeType )
+        nodeType = nodeType || ELEMENT_NODE;
+        let next = this.node.firstChild;
+        while (next && next.nodeType != nodeType)
             next = next.nextSibling;
         return next && hp.create(Store[next.uid]).api;
     },
     last: function (nodeType) {
-        var nodeType = nodeType || ELEMENT_NODE,
-            prev = this.node.lastChild;
-        while ( prev && prev.nodeType != nodeType )
+        nodeType = nodeType || ELEMENT_NODE;
+        let prev = this.node.lastChild;
+        while (prev && prev.nodeType != nodeType)
             prev = prev.previousSibling;
         return prev && hp.create(Store[prev.uid]).api;
     },
     prev: function (nodeType) {
-        var nodeType = nodeType || ELEMENT_NODE,
-            prev = this.node.previousSibling;
-        while ( prev ) {
-            if ( prev.nodeType == nodeType )
+        nodeType = nodeType || ELEMENT_NODE;
+        let prev = this.node.previousSibling;
+        while (prev) {
+            if (prev.nodeType == nodeType)
                 return hp.create(Store[prev.uid]).api;
             prev = prev.previousSibling;
         }
     },
     next: function (nodeType) {
-        var nodeType = nodeType || ELEMENT_NODE,
-            next = this.node.nextSibling;
-        while ( next ) {
-            if ( next.nodeType == nodeType )
+        nodeType = nodeType || ELEMENT_NODE;
+        let next = this.node.nextSibling;
+        while (next) {
+            if (next.nodeType == nodeType)
                 return hp.create(Store[next.uid]).api;
             next = next.nextSibling;
         }
     },
     kids: function (nodeType) {
-        if ( nodeType == undefined )
+        if (nodeType == undefined)
             nodeType = ELEMENT_NODE;
-        var result = new Collection,
+        let result = new Collection,
             next = this.node.firstChild;
-        while ( next ) {
-            if ( next.nodeType == nodeType || nodeType == 0 )
+        while (next) {
+            if (next.nodeType == nodeType || nodeType == 0)
                 result.push(hp.create(Store[next.uid]).api);
             next = next.nextSibling;
         }
@@ -1259,9 +1225,9 @@ var CommonElementAPI = {
         return this.node.getAttribute("id") || this.node.uid;
     },
     serialize: function (serializeXML) {
-        var elem = serializeXML ? this.node : this.elem(),
+        let elem = serializeXML ? this.node : this.elem(),
             prev = elem.previousSibling;
-        if ( prev && prev.nodeType == DOCUMENT_TYPE_NODE )
+        if (prev && prev.nodeType == DOCUMENT_TYPE_NODE)
             elem = elem.ownerDocument;
         return $.serialize(elem);
     },
@@ -1313,22 +1279,20 @@ var CommonElementAPI = {
 
 var ClientElementAPI = {
     css: function (name, value) {
-        var elem = this.elem();
-        if ( typeof name != "string" )
-            $.error("invalid style name, expected a string");
-        if ( value == undefined ) {
-            var name = name.replace(/([A-Z])/g, "-$1").toLowerCase();
+        let elem = this.elem();
+        if (value == undefined) {
+            name = (name + '').replace(/([A-Z])/g, "-$1").toLowerCase();
             return elem.style[name] || getComputedStyle(elem, "").getPropertyValue(name);
         }
-        typeof value == "number" && (value += "");
+        typeof value == "number" && (value += '');
         elem.style[name] = value;
         return this;
     },
     show: function () {
-        var elem = this.elem(),
+        let elem = this.elem(),
             style = elem.style;
         style.display == "none" && (style.display = "")
-        if ( getComputedStyle(elem, "").display == "none" )
+        if (getComputedStyle(elem, "").display == "none")
             style.display = hp.defDisplay(elem.nodeName);
         return this;
     },
@@ -1337,45 +1301,45 @@ var ClientElementAPI = {
         return this;
     },
     width: function (value) {
-        var elem = this.elem();
+        let elem = this.elem();
         if (value === undefined)
             return elem.getBoundingClientRect().width;
         elem.style.width = parseFloat(value) + "px";
         return this;
     },
     outerWidth: function (includeMargins) {
-        var elem = this.elem();
+        let elem = this.elem();
         if (includeMargins) {
-            var styles = getComputedStyle(elem, null);
+            let styles = getComputedStyle(elem, null);
             return elem.offsetWidth + parseFloat(styles.getPropertyValue('margin-right')) + parseFloat(styles.getPropertyValue('margin-left'));
         }
         return elem.offsetWidth;
     },
     height: function (value) {
-        var elem = this.elem();
+        let elem = this.elem();
         if (value === undefined)
             return elem.getBoundingClientRect().height;
         elem.style.height = parseFloat(value) + "px";
         return this;
     },
     outerHeight: function (includeMargins) {
-        var elem = this.elem();
+        let elem = this.elem();
         if (includeMargins) {
-            var styles = getComputedStyle(elem, null);
+            let styles = getComputedStyle(elem, null);
             return elem.offsetHeight + parseFloat(styles.getPropertyValue('margin-bottom')) + parseFloat(styles.getPropertyValue('margin-top'));
         }
         return elem.offsetHeight;
     },
     offset: function (coordinates) {
-        var elem = this.elem();
-        if ( coordinates ) {
-            var parentOffset = hp.offset(hp.offsetParent(elem));
+        let elem = this.elem();
+        if (coordinates) {
+            let parentOffset = hp.offset(hp.offsetParent(elem));
             elem.style.top = coordinates.top  - parentOffset.top + "px";
             elem.style.left = coordinates.left  - parentOffset.left + "px";
             (hp.css(elem,'position') == 'static') && (elem.style.position = 'relative');
             return this;
         }
-        var obj = elem.getBoundingClientRect();
+        let obj = elem.getBoundingClientRect();
         return {
             left: obj.left + pageXOffset,
             top: obj.top + pageYOffset,
@@ -1384,7 +1348,7 @@ var ClientElementAPI = {
         };
     },
     position: function  () {
-        var elem = this.elem(),
+        let elem = this.elem(),
             offset = hp.offset(elem),
             offsetParent = hp.offsetParent(elem),
             parentOffset = hp.offset(offsetParent);
@@ -1398,17 +1362,17 @@ var ClientElementAPI = {
         };
     },
     scrollTop: function (value) {
-        var elem = this.elem(), 
+        let elem = this.elem(), 
             hasScrollTop = "scrollTop" in elem;
-        if ( value === undefined ) 
+        if (value === undefined) 
             return hasScrollTop ? elem.scrollTop : elem.pageYOffset
         hasScrollTop ? (elem.scrollTop = value) : elem.scrollTo(elem.scrollX, value);
         return this;
     },
     scrollLeft: function (value) {
-        var elem = this.elem(),
+        let elem = this.elem(),
             hasScrollLeft = "scrollLeft" in elem;
-        if ( value === undefined ) 
+        if (value === undefined)
             return hasScrollLeft ? elem.scrollLeft : elem.pageXOffset
         hasScrollLeft ? (elem.scrollLeft = value) : elem.scrollTo(value, elem.scrollY);
         return this;
@@ -1417,19 +1381,17 @@ var ClientElementAPI = {
 
 var ServerElementAPI = {
     css: function (name, value) {
-        if ( typeof name != "string" )
-            $.error("invalid style name, expected a string");
-        var table = {},
+        let table = {},
             elem = this.elem(),
             style = elem.getAttribute("style") || "",
             regexp = /(.+?):(.+?);/ig;
-        while ( regexp.test(style) )
+        while (regexp.test(style))
             table[RegExp.$1] = RegExp.$2;
-        if ( value === undefined )
+        if (value === undefined)
             return table[name];
         value == null ? (delete table[name]) : (table[name] = value);
-        var buf = [];
-        for ( var k in table )
+        let buf = [];
+        for (let k in table)
             buf.push(k, ":", table[k], ";");
         elem.setAttribute("style", buf.join(""));
         return this;
@@ -1450,7 +1412,7 @@ var TextElementAPI = (function () {
         api[k] = CommonElementAPI[k];
     });
     api.text = function (value) {
-        if ( value == undefined )
+        if (value == undefined)
             return this.ele.textContent;
         this.ele.textContent = value;
         return this;
@@ -1466,7 +1428,7 @@ var TextElementAPI = (function () {
 
 var ShareElementAPI = {
     remove: function () {
-        var k = this.dir + "/" + this.node.localName;
+        let k = this.dir + "/" + this.node.localName;
         this.env.share[k].copys.forEach(function( item ) {
             item.api.remove();
         });
@@ -1477,7 +1439,7 @@ var ShareElementAPI = {
 
 var CopyElementAPI = {
     remove: function () {
-        var k = this.dir + "/" + this.node.localName,
+        let k = this.dir + "/" + this.node.localName,
             s = this.env.share[k];
         CommonElementAPI.remove.call(this);
         s.copys.splice(s.copys.indexOf(this), 1);
@@ -1485,9 +1447,9 @@ var CopyElementAPI = {
 };
 
 var TextElement = (function() {
-    var types = [,,,"TextNode","CDATASection",,,,"Comment"];
+    let types = [,,,"TextNode","CDATASection",,,,"Comment"];
     return function ( node, parent ) {
-        var o = { uid: $.guid() };
+        let o = { uid: $.guid() };
         o.typ = node.nodeType;
         o.ele = rdoc["create" + types[o.typ]](node.nodeValue);
         return o;
@@ -1508,9 +1470,9 @@ function CompElement(node, parent) {
 }
 
 function TextManager() {
-    var table = {};
+    let table = {};
     function create( env, node, parent ) {
-        var k = node.nodeType,
+        let k = node.nodeType,
             o = (table[k] || (table[k] = [])).pop() || TextElement(node, parent);
         o.ele.textContent = node.textContent;
         o.env = env, o.node = node, node.uid = o.uid;
@@ -1528,9 +1490,9 @@ function TextManager() {
 }
 
 function HtmlManager() {
-    var table = {};
+    let table = {};
     function create(env, node, parent) {
-        var k = node.nodeName,
+        let k = node.nodeName,
             o = (table[k] || (table[k] = [])).pop() || HtmlElement(node, parent);
         resetAttrs(env, node, aliasMatch(env, node));
         o.ele = hp.createElement(node, parent);
@@ -1539,7 +1501,7 @@ function HtmlManager() {
         return Store[o.uid] = o;
     }
     function recycle(item) {
-        var i = 0, o,
+        let i = 0, o,
             c = XPath.select("./*", item.node); 
         for ( ; i < c.length; i++ ) {
             o = Store[c[i].uid];
@@ -1552,7 +1514,7 @@ function HtmlManager() {
         table[item.node.nodeName].push(item);
     }
     function chenv(env, item) {
-        var i = 0, o, c = item.node.childNodes;
+        let i = 0, o, c = item.node.childNodes;
         for ( ; i < c.length; i++ ) {
             o = Store[c[i].uid];
             Manager[o.typ].chenv(env, o);
@@ -1563,7 +1525,7 @@ function HtmlManager() {
 }
 
 function setComponent(env, ins) {
-    var share = ins.env.share[ins.dir + "/" + ins.node.localName];
+    let share = ins.env.share[ins.dir + "/" + ins.node.localName];
     if ( !share ) {
         ins.api = ins.back;
     } else if ( share.ins ) {
@@ -1579,24 +1541,24 @@ function setComponent(env, ins) {
 }
 
 function CompManager() {
-    var table = [];
+    let table = [];
     function create(env, node, parent) {
-        var w = hp.component(env.dir, node);
+        let w = hp.component(env.dir, node);
         if ( !w ) return;
-        var o = table.pop() || CompElement(node, parent);
+        let o = table.pop() || CompElement(node, parent);
         o.map = $.extend(true, {}, w.map);
         o.opt = $.extend(true, {}, w.opt);
         o.cfg = $.extend(true, {}, w.cfg);
         // aid: appid, cid: classid
         o.dir = w.dir, o.css = w.css, o.ali = w.ali, o.fun = w.fun, o.cid = w.cid;
         o.smr = env.smr, o.env = env, o.node = node, o.aid = env.aid, node.uid = o.uid;
-        var exprs = aliasMatch(env, node);
+        let exprs = aliasMatch(env, node);
         resetAttrs(env, node, exprs);
         resetConfigs(env, node, exprs);
         resetOptions(env, o, exprs);
         o.share = $.extend({}, env.share);
         o.map.share.forEach(function( item ) {
-            var p = ph.fullPath(o.dir, item),
+            let p = ph.fullPath(o.dir, item),
                 s = ph.split(p);
             Library[s.dir] && Library[s.dir][s.basename] ? (o.share[p] = {}) : $.error("shared object " + p + " not found");
         });
@@ -1604,7 +1566,7 @@ function CompManager() {
         return Store[o.uid] = setComponent(env, o);
     }
     function recycle(item) {
-        var i = 0, o, 
+        let i = 0, o, 
             c = XPath.select("./*", item.node),
             deep = Store[item.xml.lastChild.uid];
         for ( ; i < c.length; i++ ) {
@@ -1619,7 +1581,7 @@ function CompManager() {
         table.push(item);
     }
     function chenv(env, item) {
-        var i = 0, o, c = item.node.childNodes;
+        let i = 0, o, c = item.node.childNodes;
         for ( ; i < c.length; i++ ) {
             o = Store[c[i].uid];
             Manager[o.typ].chenv(env, o);
@@ -1630,32 +1592,33 @@ function CompManager() {
 }
 
 function StyleManager() {
-    var table = {},
+    let table = {},
+	    WELL = /#(?=([^}])+?{)/ig,
         parent = rdoc.body ? rdoc.getElementsByTagName("head")[0] : rdoc.createElement("void");
     function cssText(ins) {
-        var klass = ins.aid + ins.cid,
+        let klass = ins.aid + ins.cid,
             text = ins.css.replace(WELL, "." + klass).replace(/\$/ig, klass);
         return rdoc.createTextNode(text);
     }
     function newStyle(ins) {
-        var style = rdoc.createElement("style");
+        let style = rdoc.createElement("style");
         style.appendChild(cssText(ins));
         return parent.appendChild(style);
     }
     function create(ins) {
-        var key = ins.env.aid + ins.cid;
+        let key = ins.env.aid + ins.cid;
         if ( table[key] ) {
             table[key].count++;
         } else if ( ins.css ) {
             table[key] = { count: 1, style: newStyle(ins), ins: ins };
         }
-        var id = ins.node.getAttribute("id");
+        let id = ins.node.getAttribute("id");
         if ( id && ins.env.css.indexOf("#" + id) != -1 ) {
             hp.addClass(ins.elem(), ins.env.aid + ins.env.cid + id);
         }
     }
     function remove(ins) {
-        var key = ins.env.aid + ins.cid,
+        let key = ins.env.aid + ins.cid,
             item = table[key];
         if (item && --item.count == 0 ) {
             parent.removeChild(item.style);
@@ -1663,7 +1626,7 @@ function StyleManager() {
         }
     }
     function style() {
-        var i, temp = [], kids = parent.childNodes;
+        let i, temp = [], kids = parent.childNodes;
         for ( i = 0; i < kids.length; i++ )
             if ( kids[i].nodeType == 1 )
                 temp.push(kids[i].textContent);
@@ -1855,12 +1818,7 @@ function xmlplus(root, callback) {
             $.error("invalid namespace, expected a null value or a string");
         return makeTheme(root, space ? (root + "/" + space) : root);
     }
-    try {
-        callback.call(xmlplus, xmlplus, createPackage, createTheme);
-    } catch(error) {
-        isReady = -1;
-        throw error;
-    }
+    callback.call(xmlplus, xmlplus, createPackage, createTheme);
     return xmlplus;
 }
 
@@ -1896,7 +1854,7 @@ function startup(xml, parent, param) {
 }
 
 (function () {
-    if ( inBrowser ) {
+    if (inBrowser) {
         XPath = window.xpath || { select: hp.xpathQuery };
         DOMParser_ = DOMParser;
         XMLSerializer_ = XMLSerializer;
@@ -1906,11 +1864,8 @@ function startup(xml, parent, param) {
         window.xmlplus = window.xp = $.extend(xmlplus, $);
         if ( typeof define === "function" && define.amd )
             define( "xmlplus", [], new Function("return xmlplus;"));
-        hp.ready(function () {
-            if ( isReady !== -1 ) {
-                rdoc.body.getAttribute("init") == "false" || hp.parseHTML(rdoc.body);
-                isReady = true;
-            }
+        $.ready(function () {
+            rdoc.body.getAttribute("init") == "false" || hp.parseHTML(rdoc.body);
         });
     } else {
         delete $.ready;
