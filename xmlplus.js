@@ -56,17 +56,18 @@ let Store = {};
 // You can access the objects through the function '$.getElementById'.
 let Global = {};
 
-var $ = {
+let $ = {
     startup: startup,
     create: function (path, options) {
-        var widget = $.hasComponent(path);
-        if (!widget) $.error("component [" + path + "] not exists");
+        let widget = $.hasComponent(path);
+        if (!widget) 
+            throw Error(`component ${path} not exists`);
         return widget.fun(null, null, options);
     },
     guid: (function () {
-        var counter = 0;
+        let counter = 0;
         function intToABC( num ) {
-           var ch = String.fromCharCode(97 + num % 26);
+           let ch = String.fromCharCode(97 + num % 26);
            return num < 26 ? ch : intToABC(Math.floor(num / 26) - 1) + ch;
         }
         return function () {
@@ -77,10 +78,10 @@ var $ = {
         throw new Error(message);
     },
     ready: function (callback) {
-		rdoc.addEventListener('DOMContentLoaded', callback);
+        rdoc.addEventListener('DOMContentLoaded', callback);
     },
     type: (function () {
-        var i, class2type = {},
+        let i, class2type = {},
             types = "Boolean Number String Function AsyncFunction Array Date RegExp Object Error".split(" ");
         for ( i = 0; i < types.length; i++ )
             class2type[ "[object " + types[i] + "]" ] = types[i].toLowerCase();
@@ -95,38 +96,36 @@ var $ = {
         return obj != null && obj == obj.window;
     },
     isFunction: function (obj) {
-        var type = $.type(obj);
+        let type = $.type(obj);
         return type == "function" || type == "asyncfunction";
     },
     isNumeric: function (obj) {
-        var type = $.type( obj );
+        let type = $.type( obj );
         return ( type === "number" || type === "string" ) && !isNaN( obj - parseFloat( obj ) );
     },
     isPlainObject: function (obj) {
         return $.type(obj) == "object" && !$.isWindow(obj) && Object.getPrototypeOf(obj) == Object.prototype;
     },
     isEmptyObject: function (obj) {
-        var name;
-        for ( name in obj ) return false;
+        for (let name in obj) return false;
         return true;
     },
     isSystemObject: function (obj) {
         return obj && typeof obj.guid == "function" && !!Store[obj.guid()];
     },
     each: function (objs, callback) {
-        var i, key;
-        if ( hp.likeArray( objs ) ) {
-            for ( i = 0; i < objs.length; i++ )
-                if ( callback.call(objs[i], i, objs[i]) === false ) break;
-        } else for ( key in objs ) {
-            if ( callback.call(objs[key], key, objs[key] ) === false ) break;
+        if (hp.likeArray(objs) ) {
+            for (let i = 0; i < objs.length; i++ )
+                if (callback.call(objs[i], i, objs[i]) === false) break;
+        } else for (let key in objs ) {
+            if (callback.call(objs[key], key, objs[key]) === false) break;
         }
         return objs;
     },
     extend: function () {
         // This function is modified from jQuery.
         // https://jquery.com/
-        var options, name, src, copy, copyIsArray, clone,
+        let options, name, src, copy, copyIsArray, clone,
             target = arguments[ 0 ] || {},
             i = 1,
             length = arguments.length,
@@ -188,24 +187,24 @@ var $ = {
         return !!Library[space];
     },
     hasComponent: function (path) {
-        if ( typeof path != "string" ) 
+        if (typeof path != "string") 
             return false;
-        if ( isHTML[path] )
+        if (isHTML[path])
             return true;
-        var s = ph.split(path);
+        let s = ph.split(path);
         s.dir = s.dir.substr(2);
         return Library[s.dir] && Library[s.dir][s.basename] || false;
     },
     getElementById: function (id, isGuid) {
-        if ( isGuid )
+        if (isGuid)
             return Store[id] && Store[id].api;
         return inBrowser ? (Global[id] || rdoc.getElementById(id)) : null;
     },
     exports: (function () {
         function fromObject(target) {
-            var obj = {};
+            let obj = {};
             for(let k in target) {
-                if(target[k].push) // 这里有风险
+                if (target[k].push) // 这里有风险
                     obj[k] = fromArray(target[k]);
                 else if (typeof target[k] == "object")
                     obj[k] = fromObject(target[k])
@@ -216,7 +215,7 @@ var $ = {
         function fromArray(target) {
             let i, arr = [];
             for (i = 0; i < target.length; i++) {
-                if(target[i].push)
+                if (target[i].push)
                     arr.push(fromArray(target[i]))
                 else if (typeof target[i] == "object")
                     arr.push(fromObject(target[i]))
@@ -231,12 +230,12 @@ var $ = {
     }())
 };
 
-var ph = (function () {
-    var table = {};
+let ph = (function () {
+    let table = {};
     function normalizeArray(parts, allowAboveRoot) {
-        var i = parts.length - 1, up = 0;
-        for ( ; i >= 0; i-- ) {
-            var last = parts[i];
+        let i = parts.length - 1, up = 0;
+        for (; i >= 0; i--) {
+            let last = parts[i];
             if (last === '.')
                 parts.splice(i, 1);
             else if (last === '..')
@@ -244,14 +243,14 @@ var ph = (function () {
             else if (up)
                 parts.splice(i, 1), up--;
         }
-        if ( allowAboveRoot )
+        if (allowAboveRoot)
             for ( ; up--; up )
                 parts.unshift('..');
         return parts;
     }
     function filter(xs) {
-        var i = 0, res = [];
-        for ( ; i < xs.length; i++ )
+        let i = 0, res = [];
+        for (; i < xs.length; i++)
             xs[i] && res.push(xs[i]);
         return res;
     }
@@ -259,7 +258,7 @@ var ph = (function () {
         return path.charAt(0) === '/';
     }
     function normalize(path) {
-        var absolute = isAbsolute(path),
+        let absolute = isAbsolute(path),
             trailingSlash = path.substr(-1) === '/';
         path = normalizeArray(filter(path.split('/')), !absolute).join('/');
         if (!path && !absolute)
@@ -269,33 +268,33 @@ var ph = (function () {
         return (absolute ? '/' : '') + path;
     }
     function join(part1, part2) {
-        var paths = [part1,part2];
+        let paths = [part1,part2];
         return normalize(filter(paths).join('/'));
     }
     function split(path) {
-        var i = path.lastIndexOf('/');
+        let i = path.lastIndexOf('/');
         return { dir: path.substring(0, i), basename: path.substr(i+1).toLowerCase() };
     }
     // (dir/foo, ..) => dir, (dir, ./bar) => dir/bar
     function fullPath(dir, patt) {
-        var key = dir + patt;
-        if ( table[key] )
+        let key = dir + patt;
+        if (table[key])
             return table[key];
-        if ( patt.substr(0, 2) == "//" )
+        if (patt.substr(0, 2) == "//")
             return table[key] = patt.substr(2);
         return table[key] = isAbsolute(patt) ? join(dir.split('/')[0], patt.slice(1)) : join(dir, patt);
     }
     return { split: split, fullPath: fullPath };
 }());
 
-var hp = {
+let hp = {
     likeArray: function (obj) {
-        var length = !!obj && "length" in obj && obj.length,
+        let length = !!obj && "length" in obj && obj.length,
             type = $.type( obj );
-        if ( type === "function" || $.isWindow( obj ) )
+        if (type === "function" || $.isWindow(obj))
             return false;
         return type === "array" || length === 0 ||
-            typeof length === "number" && length > 0 && ( length - 1 ) in obj;
+            typeof length === "number" && length > 0 && (length - 1) in obj;
     },
     parseToXML: function (input, dir) {
         if ( input == null )
@@ -319,9 +318,9 @@ var hp = {
         return vdoc.createTextNode(input);
     },
     defDisplay: (function () {
-        var elemDisplay = {};
+        let elemDisplay = {};
         return function ( nodeName ) {
-            var elem, display;
+            let elem, display;
             if (!elemDisplay[nodeName]) {
                 elem = rdoc.createElement(nodeName);
                 rdoc.body.appendChild(elem);
@@ -334,13 +333,13 @@ var hp = {
         };
     }()),
     offsetParent: function (elem) {
-        var parent = elem.offsetParent;
+        let parent = elem.offsetParent;
         while ( parent && hp.css(parent, "position") == "static" )
             parent = parent.offsetParent;
         return parent || rdoc.documentElement; 
     },
     offset: function (elem) {
-        var obj = elem.getBoundingClientRect();
+        let obj = elem.getBoundingClientRect();
         return {
             left: obj.left + pageXOffset,
             top: obj.top + pageYOffset
@@ -350,21 +349,21 @@ var hp = {
         return elem.style[name] || getComputedStyle(elem, "").getPropertyValue(name);
     },
     addClass: function (elem, value) {
-        var klass = elem.getAttribute("class"),
+        let klass = elem.getAttribute("class"),
             input = value.split(/\s+/),
             result = klass ? klass.split(/\s+/) : [];
-        for ( var i = 0; i < input.length; i++ )
-            if ( result.indexOf(input[i]) < 0 )
+        for (let i = 0; i < input.length; i++)
+            if (result.indexOf(input[i]) < 0)
                 result.push(input[i]);
         elem.setAttribute("class", result.join(" "));
     },
     callback: function () {
-        var ret = this.fn.apply(this.data, [].slice.call(arguments));
+        let ret = this.fn.apply(this.data, [].slice.call(arguments));
         return ret == this.data ? this.api : ret;
     },
     build: function (data, object) {
-        var api = {};
-        var proxy = new Proxy(object, {
+        let api = {};
+        let proxy = new Proxy(object, {
             get(target, propKey, receiver) {
                 if (object[propKey] === undefined)
                     return Reflect.get(target, propKey, receiver);
@@ -384,55 +383,55 @@ var hp = {
     },
     appendTo: function () {
         if (this.ele) return this.ele;
-        var target = this.fdr.sys[this.map.appendTo];
+        let target = this.fdr.sys[this.map.appendTo];
         if (!target)
             return Store[this.xml.lastChild.uid].elem()
         return Store[target.guid()].appendTo();
     },
     createElement: (function() {
-        var buffer = {};
-        return function ( node, parent ) {
-            var nodeName = node.nodeName;
+        let buffer = {};
+        return function (node, parent) {
+            let nodeName = node.nodeName;
             buffer[nodeName] || (buffer[nodeName] = rdoc.createElementNS(isSVG[nodeName] ? svgns : (isHTML[nodeName] ? htmlns : node.namespaceURI), nodeName));
-            var elem = buffer[nodeName].cloneNode();
+            let elem = buffer[nodeName].cloneNode();
             parent.appendChild(elem);
-            for ( var i = 0; i < node.attributes.length; i++ ) {
-                var attr = node.attributes[i];
-                if ( attr.prefix == "xlink" )
+            for (let i = 0; i < node.attributes.length; i++) {
+                let attr = node.attributes[i];
+                if (attr.prefix == "xlink")
                     elem.setAttributeNS(xlinkns, attr.nodeName, attr.nodeValue);
-                if (  attr.nodeName != "id" && (!isHTML[nodeName] || !attr.prefix) )
+                if (attr.nodeName != "id" && (!isHTML[nodeName] || !attr.prefix))
                     elem.setAttribute(attr.nodeName, attr.nodeValue);
             }
             return elem;
         };
     }()),
     nodeIsMatch: function (xml, expr, node) {
-        var i = XPath.select(expr, xml);
+        let i = XPath.select(expr, xml);
         return [].slice.call(i).indexOf(node) != -1
     },
     xpathQuery: (function() {
-        var exprs = {};
+        let exprs = {};
         return function (expr, xml) {
-            var nodes = [];
+            let nodes = [];
             if (!exprs[expr])
                 exprs[expr] = (new XPathEvaluator).createExpression(expr);
-            var result = exprs[expr].evaluate(xml, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-            if ( result )
-                for ( var i = 0, len = result.snapshotLength; i < len; i++)
+            let result = exprs[expr].evaluate(xml, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
+            if (result)
+                for (let i = 0, len = result.snapshotLength; i < len; i++)
                     nodes.push(result.snapshotItem(i));
             return nodes;
         }
     }()),
     parseHTML: function parse(node) {
-        if ( node.nodeType != ELEMENT_NODE ) return;
-        if ( isHTML[node.nodeName.toLowerCase()] ) {
-            for ( var k in node.childNodes )
+        if (node.nodeType != ELEMENT_NODE) return;
+        if (isHTML[node.nodeName.toLowerCase()]) {
+            for (let k in node.childNodes)
                 parse(node.childNodes[k]);
         } else {
-            var xml = $.serialize(node).replace(/(<\/?\w:)((\w|\d)+)/ig, function (s, prefix, localName) {
+            let xml = $.serialize(node).replace(/(<\/?\w:)((\w|\d)+)/ig, function (s, prefix, localName) {
                 return prefix.toLowerCase() + localName;
             });
-            var id = node.getAttribute("id"),
+            let id = node.getAttribute("id"),
                 val = startup(xml, node.parentNode);
             id && (Global[id] = val) && val.attr("id", id);
             node.parentNode.replaceChild(node.parentNode.lastChild, node);
@@ -440,7 +439,7 @@ var hp = {
     }
 };
 
-var bd = {
+let bd = {
     isLiteral: function (value) {
         return $.isNumeric(value) || $.type(value) == "string" || $.type(value) == "boolean";
     },
@@ -699,7 +698,7 @@ $.extend(hp, (function () {
     return { imports: imports, source: source, extend: extend, component: component };
 }()));
 
-var Collection = (function () {
+let Collection = (function () {
     var emptyArray = [],
         fn = new Function,
         slice = emptyArray.slice,
@@ -740,7 +739,7 @@ var Collection = (function () {
     return fn;
 }());
 
-var MessageModuleAPI = (function () {
+let MessageModuleAPI = (function () {
     var table = {};
     function watch(type, fn) {
         if (typeof fn !== "function") 
@@ -833,7 +832,7 @@ var MessageModuleAPI = (function () {
     return { watch: watch, glance: glance, unwatch: unwatch, notify: notify, remove: remove, messages: messages };
 }());
 
-var EventModuleAPI = (function () {
+let EventModuleAPI = (function () {
     var eventTable = {},
         listeners = {},
         ignoreProps = /^([A-Z]|returnValue$|layer[XY]$|keyLocation$)/,
@@ -959,7 +958,7 @@ var EventModuleAPI = (function () {
     return { on: on, once: once, off: off, trigger: trigger, remove: remove };
 }());
 
-var CommonElementAPI = {
+let CommonElementAPI = {
     elem: function elem() {
         return this.elem();
     },
@@ -1277,7 +1276,7 @@ var CommonElementAPI = {
     }
 };
 
-var ClientElementAPI = {
+let ClientElementAPI = {
     css: function (name, value) {
         let elem = this.elem();
         if (value == undefined) {
@@ -1379,7 +1378,7 @@ var ClientElementAPI = {
     }
 };
 
-var ServerElementAPI = {
+let ServerElementAPI = {
     css: function (name, value) {
         let table = {},
             elem = this.elem(),
@@ -1406,7 +1405,7 @@ var ServerElementAPI = {
     }
 };
 
-var TextElementAPI = (function () {
+let TextElementAPI = (function () {
     var api = {};
     ["before","replace","prev","next","guid","toString"].forEach(function(k) {
         api[k] = CommonElementAPI[k];
@@ -1426,7 +1425,7 @@ var TextElementAPI = (function () {
     return api;
 }());
 
-var ShareElementAPI = {
+let ShareElementAPI = {
     remove: function () {
         let k = this.dir + "/" + this.node.localName;
         this.env.share[k].copys.forEach(function( item ) {
@@ -1437,7 +1436,7 @@ var ShareElementAPI = {
     }
 };
 
-var CopyElementAPI = {
+let CopyElementAPI = {
     remove: function () {
         let k = this.dir + "/" + this.node.localName,
             s = this.env.share[k];
@@ -1446,7 +1445,7 @@ var CopyElementAPI = {
     }
 };
 
-var TextElement = (function() {
+let TextElement = (function() {
     let types = [,,,"TextNode","CDATASection",,,,"Comment"];
     return function ( node, parent ) {
         let o = { uid: $.guid() };
@@ -1593,7 +1592,7 @@ function CompManager() {
 
 function StyleManager() {
     let table = {},
-	    WELL = /#(?=([^}])+?{)/ig,
+        WELL = /#(?=([^}])+?{)/ig,
         parent = rdoc.body ? rdoc.getElementsByTagName("head")[0] : rdoc.createElement("void");
     function cssText(ins) {
         let klass = ins.aid + ins.cid,
@@ -1772,7 +1771,7 @@ function parseEnvXML(env, parent, node) {
 
 // In order to implement the inheritance of components,
 // this global array is used to store the inherited components temporarily
-var Extends = [];
+let Extends = [];
 
 function makePackage(root, space) {
     if ( !Library[space] ) {
