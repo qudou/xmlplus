@@ -2,12 +2,11 @@
 <html>
     <head>
         <script src="../../../../xmlplus.js"></script>
+        <script>
+			console.log(xp.hasNamespace(null));         // false
+			console.log(xp.hasNamespace("div"));        // false
+			console.log(xp.hasNamespace("//xp/Index")); // true 或者 false，这取决于实际的应用
+		</script>
     </head>
-    <body>
-        <h1 id="h1">hello,world</h1>
-    </body>
-    <script>
-        // <h1 xmlns="http://www.w3.org/1999/xhtml" id="h1">hello,world</h1>
-        console.log(xp.serialize(document.getElementById("h1")));
-    </script>
+    <body></body>
 </html>

@@ -3,8 +3,12 @@
     <head>
         <script src="../../../../xmlplus.js"></script>
         <script>
-			var result = xp.extend({key1: "hello"},{key2: "world"});
-			console.log(result); // {key1: "hello, key2: "world"};
+			xp.each(['a','b','c'], function (index, value) {
+				console.log(index, value);
+			});
+			xp.each({a:1,b:2,c:3}, function (key, value) {
+				console.log(key, value);
+			});
 		</script>
     </head>
     <body></body>

@@ -2,9 +2,15 @@
 <html>
     <head>
         <script src="../../../../xmlplus.js"></script>
-        <script>
-			xp.error("this is an error");
-		</script>
+        <script src="index.js"></script>
     </head>
-    <body></body>
+    <body>
+        <h1>hello, world</h1>
+        <i:Calendar xmlns:i='//xp'>custom</i:Calendar>
+        <script>
+            xp.ready(function () {
+                console.log("DOM is ready.")
+            });
+        </script>
+    </body>
 </html>

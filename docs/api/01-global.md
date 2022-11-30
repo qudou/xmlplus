@@ -72,21 +72,6 @@ guid()
 console.log(xp.guid()); // 一个标识符字符串
 ```
 
-## error
-
-```js
-error(message)
-```
-
-- `message` : `String` 要抛出的异常消息
-
-该函数用于抛出异常消息。该函数实际封装的内容如下 `throw new Error(message)`。
-
-```js
-// 01-04
-xp.error("this is an error");
-```
-
 ## ready
 
 ```js
@@ -98,9 +83,9 @@ ready(handler)
 该函数用于在 DOM 完全加载时执行指定的函数，该函数仅在浏览器端可见。这里指的 DOM 是广义的 DOM，它包含了我们的自定义组件。请看下面的一个 HTML 文件的 body 中的内容：
 
 ```html
-<!-- 01-05 -->
+<!-- 01-04 -->
 <h1>hello, world</h1>
-<Calendar xmlns='//xp'>custom</Calendar>
+<i:Calendar xmlns:i='//xp'>custom</i:Calendar>
 <script>
   xp.ready(function () {
       console.log("DOM is ready.")
@@ -121,7 +106,7 @@ type(obj)
 该函数用于确定 JavaScript 内置对象的类型，并返回小写形式的类型名称。该函数来源于新近版本的 jQuery，如需更详细的内容请参考 [jQuery.type](http://api.jquery.com/jQuery.type/)。
 
 ```js
-// 01-06
+// 01-05
 console.log(xp.type("undefined")); // "undefined"
 console.log(xp.type(true));        // "boolean"
 console.log(xp.type(3));           // "number"
@@ -138,7 +123,7 @@ isWindow(obj)
 该函数用于确定给定对象是否为窗体。
 
 ```js
-// 01-07
+// 01-06
 console.log(xp.isWindow(window)); // true
 ```
 
@@ -153,7 +138,7 @@ isArray(obj)
 该函数用于确定给定对象是否为数组。
 
 ```js
-// 01-08
+// 01-07
 console.log(xp.isArray([])); // true
 console.log(xp.isArray({})); // false
 ```
@@ -169,7 +154,7 @@ isFunction(obj)
 该函数用于确定给定对象是否为函数。
 
 ```js
-// 01-09
+// 01-08
 console.log(xp.isFunction(xp));  // true
 console.log(xp.isFunction({}));  // false
 ```
@@ -185,7 +170,7 @@ isNumeric(value)
 确定给定参数是否可以看作一个 JavaScript 数值。
 
 ```js
-// 01-10
+// 01-09
 console.log(xp.isNumeric(3));   // true
 console.log(xp.isNumeric("3")); // true
 console.log(xp.isNumeric({}));  // false
@@ -202,7 +187,7 @@ isPlainObject(object)
 检查对象是否是普通对象（使用 `{}` 或 `new Object` 创建）。
 
 ```js
-// 01-11
+// 01-10
 console.log(xp.isPlainObject({}));   // true
 console.log(xp.isPlainObject("3"));  // false
 console.log(xp.isPlainObject([]));   // false
@@ -219,7 +204,7 @@ isEmptyObject(object)
 检查指定对象是否为空（即不包含可枚举的属性）。
 
 ```js
-// 01-12
+// 01-11
 console.log(xp.isEmptyObject({}));            // true
 console.log(xp.isEmptyObject({key: "key"}));  // false
 console.log(xp.isEmptyObject([]));            // true
@@ -236,7 +221,7 @@ isSystemObject(obj)
 检查对象是否为系统对象。
 
 ```js
-// 01-13
+// 01-12
 Example: {
     xml: "<h1 id='example'>hello, world</h1>",
     fun: function (sys, items, opts) {
@@ -261,7 +246,7 @@ extend([deep,]target[,object1][,objectN])
 将两个或多个对象的内容合并到第一个对象中。该函数来源于新近版本的 jQuery，如需更详细的内容请参考 [jQuery.extend](http://api.jquery.com/jQuery.extend/)。
 
 ```js
-// 01-14
+// 01-13
 var result = xp.extend({key1: "hello"},{key2: "world"});
 console.log(result); // {key1: "hello, key2: "world"};
 ```
@@ -278,7 +263,7 @@ each(object,callback)
 一个通用的迭代器函数，可以用来无缝地迭代对象和数组。其中，对于具有 length 属性的数组和数组类对象（例如函数的 arguments 对象），则通过数字索引（从 0 到长度 length - 1）进行迭代。而其他对象则通过它们的命名属性进行迭代。
 
 ```js
-// 01-15
+// 01-14
 xp.each(['a','b','c'], function (index, value) {
     console.log(index, value);
 });
@@ -298,7 +283,7 @@ parseXML(data)
 此函数将给定的字符串解析为 XML 文档。在浏览器端并且未引用 xmldom，那么该函数使用浏览器的本地解析功能来创建有效的 XML 文档，否则将使用 xmldom 的解析功能来创建。
 
 ```js
-// 01-16
+// 01-15
 var xml = "<title>Title</title>";
 var xmlDoc = xp.parseXML(xml);
 console.log(xmlDoc.lastChild.nodeName); // title
@@ -316,7 +301,7 @@ serialize(node)
 序列化指定的 DOM 节点，序列化后的结果包含节点的子级。
 
 ```js
-// 01-17
+// 01-16
 // <h1 xmlns="http://www.w3.org/1999/xhtml" id="h1">hello,world</h1>
 console.log(xp.serialize(document.getElementById("h1")));
 ```
@@ -333,7 +318,7 @@ hasNamespace(object)
 判定当前系统是否包含给定的命名空间，如果包含则返回 `true`，否则返回 `false`。
 
 ```js
-// 01-18
+// 01-17
 console.log(xp.hasNamespace(null));         // false
 console.log(xp.hasNamespace("div"));        // false
 console.log(xp.hasNamespace("//xp/Index")); // true 或者 false，这取决于实际的应用
@@ -351,7 +336,7 @@ hasComponent(object)
 判定当前系统中是否包含给定的组件，如果不包含则返回 `false`；如果是 HTML 标签，则返回 `true`；否则返回组件的 JSON 描述。
 
 ```js
-// 01-19
+// 01-18
 console.log(xp.hasComponent(null));         // false
 console.log(xp.hasComponent("div"));        // true
 console.log(xp.hasComponent("//xp/Index")); // false 或者一个组件的 JSON 描述，这取决于实际的应用
@@ -370,7 +355,7 @@ getElementById(id[,isGuid])
 由给定的标识符获取相关对象。这需要分三种情况来看。如果 `isGuid` 为 `true`，那么将返回系统对象。请参考下面的示例。
 
 ```js
-// 01-21
+// 01-19
 Example: {
     xml: "<div id='example'/>",
     fun: function (sys, items, opts) {
@@ -383,7 +368,7 @@ Example: {
 如果不提供 `isGuid` 参数，并且当前 HTML 文档中存在 `id` 值为给定值的元素，那么将返回 HTML 元素，这等效于浏览器自带的 `document.getElementById`。请参考下面的示例。
 
 ```html
-// 01-21
+// 01-20
 <html>
     <head>
         <script src="xmlplus.js"></script>
@@ -400,7 +385,7 @@ Example: {
 如果不提供 `isGuid` 参数，并且当前 HTML 文档中存在 `id` 值为给定值的自定义组件对象描述，那么将返回系统对象。请参考下面的示例。
 
 ```html
-// 01-22
+// 01-21
 <html>
     <head>
         <script src="xmlplus.js"></script>

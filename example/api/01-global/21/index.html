@@ -2,9 +2,17 @@
 <html>
     <head>
         <script src="../../../../xmlplus.js"></script>
-        <script src="index.js"></script>
+        <script>
+			xmlplus("xp", function (xp, $_, t) {
+				$_().imports({
+					Index: {}
+				});
+			}).ready(function() {
+				console.log(xp.getElementById("index")); // SystemObject
+			});
+		</script>
     </head>
     <body>
-        <i:Example xmlns:i="//xp"></i:Example>
+        <i:Index id="index" xmlns:i='//xp'></i:Index>
     </body>
 </html>

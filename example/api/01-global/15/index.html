@@ -3,12 +3,9 @@
     <head>
         <script src="../../../../xmlplus.js"></script>
         <script>
-			xp.each(['a','b','c'], function (index, value) {
-				console.log(index, value);
-			});
-			xp.each({a:1,b:2,c:3}, function (key, value) {
-				console.log(key, value);
-			});
+			var xml = "<title>Title</title>";
+			var xmlDoc = xp.parseXML(xml);
+			console.log(xmlDoc.lastChild.nodeName); // title
 		</script>
     </head>
     <body></body>

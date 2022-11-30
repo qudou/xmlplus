@@ -2,15 +2,11 @@
 <html>
     <head>
         <script src="../../../../xmlplus.js"></script>
-        <script src="index.js"></script>
-    </head>
-    <body>
-        <h1>hello, world</h1>
-        <Calendar xmlns='//xp'>custom</Calendar>
         <script>
-            xp.ready(function () {
-                console.log("DOM is ready.")
-            });
-        </script>
-    </body>
+			console.log(xp.type(undefined));   // undefined
+			console.log(xp.type(true));        // boolean
+			console.log(xp.type(3));           // number
+		</script>
+    </head>
+    <body></body>
 </html>

@@ -2,11 +2,12 @@
 <html>
     <head>
         <script src="../../../../xmlplus.js"></script>
-        <script>
-			var xml = "<title>Title</title>";
-			var xmlDoc = xp.parseXML(xml);
-			console.log(xmlDoc.lastChild.nodeName); // title
-		</script>
     </head>
-    <body></body>
+    <body>
+        <h1 id="h1">hello,world</h1>
+    </body>
+    <script>
+        // <h1 xmlns="http://www.w3.org/1999/xhtml" id="h1">hello,world</h1>
+        console.log(xp.serialize(document.getElementById("h1")));
+    </script>
 </html>
