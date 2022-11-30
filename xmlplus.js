@@ -27,8 +27,9 @@ const xlinkns = "http://www.w3.org/1999/xlink";
 let vdoc, rdoc;
 
 let XPath, DOMParser_, XMLSerializer_, NodeElementAPI;
-let Manager = [HtmlManager(),CompManager(),,TextManager(),TextManager(),,,,TextManager(),,];
-let Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", cfgs: {}, attrs: {}, bind: {} }, fun: new Function };
+const Manager = [HtmlManager(),CompManager(),,TextManager(),TextManager(),,,,TextManager(),,];
+const PM = PackageManager();
+const Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", cfgs: {}, attrs: {}, bind: {} }, fun: new Function };
 
 // isHTML contains isSVG
 const isSVG = {}, isHTML = {};
@@ -40,10 +41,7 @@ const isSVG = {}, isHTML = {};
     while (s[++i]) isSVG[s[i]] = isHTML[s[i]] = 1;
 }());
 
-// The Source is used to help implement the inheritance of components, and then it is no longer used.
-let Source = {};
-
-// The Library contains the set of components imported by the imports function.
+// The Library contains the components imported by the imports function.
 // The components are initialized by the system
 // It contains two levels: the first is the component space and the second is the component name.
 // eg. Library["//xp"][Input] = {};
@@ -310,9 +308,9 @@ let hp = {
         } catch (e) {
             return vdoc.createTextNode(input);
         }
-        var i = input.lastIndexOf('/'),
-            dir = ph.fullPath(dir || "", input.substring(0, i) || "."),
-            basename = input.substr(i+1);
+        let i = input.lastIndexOf('/');
+        dir = ph.fullPath(dir || "", input.substring(0, i) || ".");
+        let basename = input.substr(i+1);
         if ( Library[dir] && Library[dir][basename.toLowerCase()] )
             return vdoc.createElementNS("//" + dir, 'i:' + basename);
         return vdoc.createTextNode(input);
@@ -624,80 +622,6 @@ let bd = {
     }
 };
 
-$.extend(hp, (function () {
-    function assert(obj) {
-        typeof obj.css == "string" || $.error("invalid css, expected a string");
-        typeof obj.fun == "function" || $.error("invalid fun, expected a function");
-        ["opt","cfg","map","ali"].forEach(function (k) {
-            $.isPlainObject(obj[k]) || $.error("invalid " + k + " expected a plainObject");
-        });
-        ["cfgs","attrs"].forEach(function (k) {
-            $.isPlainObject(obj.map[k]) || $.error("invalid " + k + " in map, expected a plainObject");
-        });
-        typeof obj.map.share == "string" || $.error("invalid share in map, expected a string");
-        typeof obj.xml == "string" || typeof obj.xml == "undefined" || $.error("invalid xml, expected a undefined value or a string");
-    }
-    function resetInput(item) {
-        for ( var key in item ) {
-            if ( typeof item[key] != "string" ) 
-                continue;
-            var i, tmp, buf = {},
-                list = item[key].split(' ');
-            for ( i = 0; i < list.length; i++ ) {
-                tmp = list[i].split("->");
-                buf[tmp[0]] = tmp[1] || tmp[0];
-            }
-            item[key] = buf;
-        }
-    }
-    function initialize(obj) {
-        var map = obj.map;
-        resetInput(map.attrs), resetInput(map.cfgs);
-        map.share = map.share ? map.share.split(' ') : [];
-        var root = obj.dir.split('/')[0];
-        obj.xml = $.parseXML(obj.xml || "<void/>");
-    }
-    function imports(obj, name, space) {
-        Source[space][name] = obj;
-        Library[space][name] = obj = $.extend(true, {}, Template, obj);
-        $.release || assert(obj);
-        Library[space][name] || console.warn(space + "/" + name + " already exists");
-        obj.dir = space;
-        obj.cid = $.guid();
-        initialize(obj);
-    }
-    function source(dir, patt) {
-        var s = ph.split(ph.fullPath(dir, patt));
-        return Source[s.dir] && Source[s.dir][s.basename];
-    }
-    function component(dir, node) {
-        var p = ph.fullPath(dir, node.namespaceURI || "");
-        return Library[p] && Library[p][node.localName.toLowerCase()];
-    }
-    function extend(target, source) {
-        var result = {},
-            extend = target.map.extend;
-        result.xml = target.xml || source.xml;
-        ["opt","cfg","map"].forEach(function (key) {
-            result[key] = (extend[key] == "r") ? target[key] : $.extend({}, source[key], target[key]);
-        });
-        if ( extend.fun == "r" || !source.fun ) {
-            result.fun = target.fun;
-        } else if ( !target.fun ) {
-            result.fun = source.fun;
-        } else {
-            result.fun = function (sys, items, opts) {
-                var foo = source.fun.call(this, sys, items, opts);
-                var bar = target.fun.call(this, sys, items, opts);
-                return bar ? $.extend(foo, bar) : foo;
-            };
-        }
-        result.css = (extend.css == "r") ? target.css : (source.css || '') + (target.css || '');
-        return result;
-    }
-    return { imports: imports, source: source, extend: extend, component: component };
-}()));
-
 let Collection = (function () {
     var emptyArray = [],
         fn = new Function,
@@ -740,11 +664,11 @@ let Collection = (function () {
 }());
 
 let MessageModuleAPI = (function () {
-    var table = {};
+    let table = {};
     function watch(type, fn) {
         if (typeof fn !== "function") 
-            $.error("invalid handler, expected a function");
-        var uid = this.elem().xmlTarget.uid;
+            throw Error("Invalid handler, expected a function");
+        let uid = this.elem().xmlTarget.uid;
         table[uid] = table[uid] || {};
         table[uid][type] = table[uid][type] || [];
         table[uid][type].push({watcher: this, fn: fn});
@@ -758,16 +682,16 @@ let MessageModuleAPI = (function () {
         return this.api.watch(type, callback);
     }
     function unwatch(type, fn) {
-        var item = table[this.elem().xmlTarget.uid] || {};
+        let item = table[this.elem().xmlTarget.uid] || {};
         if (type == undefined) {
             for (type in item)
                 unwatch.call(this, type);
             return this;
         }
         if (!item[type]) return this;
-        var buf = [].slice.call(item[type]);
+        let buf = [].slice.call(item[type]);
         if (typeof fn == "function") {
-            for (var k in buf)
+            for (let k in buf)
                 if (fn == buf[k].fn)
                     item[type].splice(item[type].indexOf(buf[k]), 1);
         } else {
@@ -776,21 +700,21 @@ let MessageModuleAPI = (function () {
         return this;
     }
     function notify(type, data) {
-        var that = this;
+        let that = this;
         data = data == null ? [] : ($.isArray(data) ? data : [data]);
         (function iterate(target) {
-            var uid = target.uid;
+            let uid = target.uid;
             if (target.fdr) {
-                var filter = target.map.msgFilter;
+                let filter = target.map.msgFilter;
                 if (filter && filter.test(type) && target != that)
                     return true;
                 if (iterate(Store[Store[uid].xml.lastChild.uid]) == false)
                     return false;
             } else {
-                var cancel;
-                var targets = table[uid] && table[uid] || {};
+                let cancel;
+                let targets = table[uid] && table[uid] || {};
                 $.each(targets[type], (key, item) => {
-                    var e = {type: type, target: that.api, currentTarget: item.watcher.api};
+                    let e = {type: type, target: that.api, currentTarget: item.watcher.api};
                     e.stopImmediateNotification = ()=> e.cancelImmediate = true;
                     e.stopNotification = ()=> e.cancel = true;
                     item.fn.apply(e.currentTarget, [e].concat(data));
@@ -800,8 +724,8 @@ let MessageModuleAPI = (function () {
                 });
                 if (cancel) return false;
             }
-            for (var i = 0; i < target.node.childNodes.length; i++) {
-                var node = target.node.childNodes[i];
+            for (let i = 0; i < target.node.childNodes.length; i++) {
+                let node = target.node.childNodes[i];
                 if (node.nodeType == 1)
                     if (iterate(Store[node.uid]) == false)
                         return false;
@@ -813,17 +737,17 @@ let MessageModuleAPI = (function () {
         delete table[target.uid];
     }
     function messages() {
-        var result = {};
+        let result = {};
         (function iterate(target) {
-            var uid = target.uid;
+            let uid = target.uid;
             if (target.fdr)
                 iterate(Store[Store[uid].xml.lastChild.uid]);
             else if (table[uid]) {
-                for (var key in table[uid])
+                for (let key in table[uid])
                     result[key] = 1;
             }
-            for (var i = 0; i < target.node.childNodes.length; i++) {
-                var node = target.node.childNodes[i];
+            for (let i = 0; i < target.node.childNodes.length; i++) {
+                let node = target.node.childNodes[i];
                 node.nodeType == 1 && iterate(Store[node.uid]);
             }
         }(this));
@@ -1525,9 +1449,9 @@ function HtmlManager() {
 
 function setComponent(env, ins) {
     let share = ins.env.share[ins.dir + "/" + ins.node.localName];
-    if ( !share ) {
+    if (!share) {
         ins.api = ins.back;
-    } else if ( share.ins ) {
+    } else if (share.ins) {
         ins.xml.replaceChild(vdoc.createElement("void"), ins.xml.lastChild);
         ins.api = hp.build(ins, CopyElementAPI);
         share.copys.push(ins);
@@ -1542,7 +1466,7 @@ function setComponent(env, ins) {
 function CompManager() {
     let table = [];
     function create(env, node, parent) {
-        let w = hp.component(env.dir, node);
+        let w = PM.component(env.dir, node);
         if ( !w ) return;
         let o = table.pop() || CompElement(node, parent);
         o.map = $.extend(true, {}, w.map);
@@ -1606,32 +1530,142 @@ function StyleManager() {
     }
     function create(ins) {
         let key = ins.env.aid + ins.cid;
-        if ( table[key] ) {
+        if (table[key]) {
             table[key].count++;
-        } else if ( ins.css ) {
+        } else if (ins.css) {
             table[key] = { count: 1, style: newStyle(ins), ins: ins };
         }
         let id = ins.node.getAttribute("id");
-        if ( id && ins.env.css.indexOf("#" + id) != -1 ) {
+        if (id && ins.env.css.indexOf("#" + id) != -1) {
             hp.addClass(ins.elem(), ins.env.aid + ins.env.cid + id);
         }
     }
     function remove(ins) {
         let key = ins.env.aid + ins.cid,
             item = table[key];
-        if (item && --item.count == 0 ) {
+        if (item && --item.count == 0) {
             parent.removeChild(item.style);
             delete table[key];
         }
     }
     function style() {
         let i, temp = [], kids = parent.childNodes;
-        for ( i = 0; i < kids.length; i++ )
-            if ( kids[i].nodeType == 1 )
+        for (i = 0; i < kids.length; i++)
+            if (kids[i].nodeType == 1)
                 temp.push(kids[i].textContent);
         return temp.join("");
     }
     return { create: create, remove: remove, style: style };
+}
+
+function PackageManager() {
+    // This array is used to store the inherited components temporarily.
+    let Extends = [];
+    // The Source is used to help implement the inheritance of components.
+    let Source = {};
+    function assert(obj) {
+        if ($.type(obj.css) != "string")
+            throw Error("Invalid css, expected a string");
+        if (!$.isFunction(obj.fun)) 
+            throw Error("Invalid fun, expected a function");
+        ["opt","cfg","map","ali"].forEach(key => {
+            if (!$.isPlainObject(obj[key]))
+                throw Error(`Invalid ${key} expected a plainObject`);
+        });
+        ["cfgs","attrs"].forEach(key => {
+            if (!$.isPlainObject(obj.map[key])) 
+                throw Error(`Invalid ${key} in map, expected a plainObject`);
+        });
+        if ($.type(obj.map.share) != "string") 
+            throw Error("Invalid share in map, expected a string");
+        if ($.type(obj.xml) != "string" && obj.xml !== undefined) 
+            throw Error("Invalid xml, expected a undefined value or a string");
+    }
+    function resetInput(item) {
+        for (let key in item) {
+            if (typeof item[key] != "string") 
+                continue;
+            let i, tmp, buf = {},
+                list = item[key].split(' ');
+            for (i = 0; i < list.length; i++) {
+                tmp = list[i].split("->");
+                buf[tmp[0]] = tmp[1] || tmp[0];
+            }
+            item[key] = buf;
+        }
+    }
+    function init(obj, name, space) {
+        Source[space][name] = obj;
+        Library[space][name] = obj = $.extend(true, {}, Template, obj);
+        xmlplus.release || assert(obj);
+        Library[space][name] || console.warn(space + "/" + name + " already exists");
+        obj.dir = space;
+        obj.cid = $.guid();
+        // initialize
+        let map = obj.map;
+        resetInput(map.attrs), resetInput(map.cfgs);
+        map.share = map.share ? map.share.split(' ') : [];
+        let root = obj.dir.split('/')[0];
+        obj.xml = $.parseXML(obj.xml || "<void/>");
+    }
+    function source(dir, patt) {
+        let s = ph.split(ph.fullPath(dir, patt));
+        return Source[s.dir] && Source[s.dir][s.basename];
+    }
+    function component(dir, node) {
+        let p = ph.fullPath(dir, node.namespaceURI || "");
+        return Library[p] && Library[p][node.localName.toLowerCase()];
+    }
+    function extend(target, source) {
+        let result = {},
+            extend = target.map.extend;
+        result.xml = target.xml || source.xml;
+        ["opt","cfg","map"].forEach(key => {
+            result[key] = (extend[key] == "r") ? target[key] : $.extend({}, source[key], target[key]);
+        });
+        if (extend.fun == "r" || !source.fun) {
+            result.fun = target.fun;
+        } else if (!target.fun) {
+            result.fun = source.fun;
+        } else {
+            result.fun = function (sys, items, opts) {
+                let foo = source.fun.call(this, sys, items, opts);
+                let bar = target.fun.call(this, sys, items, opts);
+                return bar ? $.extend(foo, bar) : foo;
+            };
+        }
+        result.css = (extend.css == "r") ? target.css : (source.css || '') + (target.css || '');
+        return result;
+    }
+    function imports(items, space) {
+        if (!$.isPlainObject(items))
+            throw Error("Invalid components, expected a plainObject");
+        for (let name in items) {
+            let map = items[name].map,
+                iname = name.toLowerCase();
+            if (map && map.extend && $.type(map.extend.from) == "string") {
+                Extends.push({name: iname, space: space, src: items[name] });
+            } else {
+                init(items[name], iname, space);
+            }
+        }
+        [].slice.call(Extends).forEach(item => {
+            let target = source(item.space, item.src.map.extend.from);
+            if (target) {
+                Extends.splice(Extends.indexOf(item), 1);
+                init(extend(item.src, target), item.name, item.space);
+            }
+        });
+        return this;
+    }
+    function makePackage(root, space) {
+        if (!Library[space]) {
+            Source[space] = {};
+            Library[space] = {};
+        }
+        return { imports: items => { return imports(items, space) } };
+    }
+    return { make: makePackage, component: component };
 }
 
 function Finder(env) {
@@ -1738,10 +1772,10 @@ function resetOptions(env, ins, exprs) {
 // Here, the component is parsed recursively.
 function parseEnvXML(env, parent, node) {
     function iterate( node, parent ) {
-        if ( node.nodeType > 1 ) {
-            if ( Manager[node.nodeType] )
+        if (node.nodeType > 1) {
+            if (Manager[node.nodeType])
                 return Manager[node.nodeType].create(env, node, parent);
-            $.error("create failed, invalid node");
+            throw Error("Create failed, invalid node");
         }
         var i, ins;
         if ( isHTML[node.nodeName] ) {
@@ -1758,7 +1792,7 @@ function parseEnvXML(env, parent, node) {
             env.smr.create(ins);
             ins.value = ins.fun.call(ins.api, ins.fdr.sys, ins.fdr.items, ins.opt);
         } else {
-            $.release || console.warn($.serialize(node) + " not found");
+            xmlplus.release || console.warn($.serialize(node) + " not found");
             ins = Manager[0].create(env, node, parent);
             for ( i = 0; i < node.childNodes.length; i++ )
                 iterate(node.childNodes[i], ins.ele);
@@ -1769,85 +1803,46 @@ function parseEnvXML(env, parent, node) {
     return iterate(node, parent);
 }
 
-// In order to implement the inheritance of components,
-// this global array is used to store the inherited components temporarily
-let Extends = [];
-
-function makePackage(root, space) {
-    if ( !Library[space] ) {
-        Source[space] = {};
-        Library[space] = {};
-    }
-    function imports(components) {
-        if ( !$.isPlainObject(components) )
-            $.error("invalid components, expected a plainObject");
-        for ( var name in components ) {
-            var map = components[name].map,
-                iname = name.toLowerCase();
-            if ( map && map.extend && $.type(map.extend.from) == "string" ) {
-                Extends.push({name: iname, space: space, src: components[name] });
-            } else {
-                hp.imports(components[name], iname, space);
-            }
-        }
-        [].slice.call(Extends).forEach(function (item) {
-            var target = hp.source(item.space, item.src.map.extend.from);
-            if ( target ) {
-                Extends.splice(Extends.indexOf(item), 1);
-                hp.imports(hp.extend(item.src, target), item.name, item.space);
-            }
-        });
-        return this;
-    }
-    return { imports: imports };
-}
-
 function xmlplus(root, callback) {
-    if ( $.type(root) != "string" || root.indexOf('/') > -1 )
-        $.error("invalid root, expected a string");
-    if ( !$.isFunction(callback) )
-        $.error("invalid callback, expected a function");
+    if ($.type(root) != "string" || root.indexOf('/') > -1)
+        throw Error("Invalid root, expected a string which not contains '/'");
+    if (!$.isFunction(callback))
+        throw Error("Invalid callback, expected a function");
     function createPackage(space) {
-        if ( $.type(space) != "string" && space != null )
-            $.error("invalid namespace, expected a null value or a string");
-        return makePackage(root, space ? (root + "/" + space) : root);
+        if ($.type(space) != "string" && space != null)
+            throw Error("Invalid namespace, expected a null value or a string");
+        return PM.make(root, space ? (root + "/" + space) : root);
     }
-    function createTheme(space) {
-        if ( $.type(space) != "string" && space != null )
-            $.error("invalid namespace, expected a null value or a string");
-        return makeTheme(root, space ? (root + "/" + space) : root);
-    }
-    callback.call(xmlplus, xmlplus, createPackage, createTheme);
+    callback.call(xmlplus, xmlplus, createPackage);
     return xmlplus;
 }
 
 // The entry function, which will be assigned to xmlplus.
 function startup(xml, parent, param) {
-    var instance, fragment,
-        env = $.extend(true, {xml: hp.parseToXML(xml), cid: $.guid(), share: {}, dir: ""}, Template);
-    if ( env.xml.nodeType !== ELEMENT_NODE )
-        $.error("target type must be ELEMENT_NODE");
-    if ( $.isPlainObject(parent) ) {
+    let env = $.extend(true, {xml: hp.parseToXML(xml), cid: $.guid(), share: {}, dir: ""}, Template);
+    if (env.xml.nodeType !== ELEMENT_NODE)
+        throw Error("Target type must be ELEMENT_NODE");
+    if ($.isPlainObject(parent)) {
         param = parent;
         parent = rdoc.body || rdoc.lastChild;
-    } else if ( parent === undefined ) {
+    } else if (parent === undefined) {
         parent = rdoc.body || rdoc.lastChild;
-    } else if ( typeof parent == "string" ) {
-        parent =  rdoc.getElementById(parent);
+    } else if (typeof parent == "string") {
+        parent = rdoc.getElementById(parent);
         if (!parent)
-            $.error("parent element " + parent + " not found");
+            throw Error(`Parent element ${parent} not found`);
     }
     env.fdr = Finder(env);
     env.smr = StyleManager();
     env.aid = inBrowser ? $.guid() : "";
     env.api = hp.build(env, NodeElementAPI);
-    if ( $.isPlainObject(param) ) {
+    if ($.isPlainObject(param)) {
         env.xml.getAttribute("id") || env.xml.setAttribute("id", $.guid());
         env.cfg[env.xml.getAttribute("id")] = param;
     }
     env.xml = env.xml.parentNode || vdoc.cloneNode().appendChild(env.xml).parentNode;
-    fragment = rdoc.createDocumentFragment();
-    instance = parseEnvXML(env, fragment, env.xml.lastChild);
+    let fragment = rdoc.createDocumentFragment();
+    let instance = parseEnvXML(env, fragment, env.xml.lastChild);
     parent.appendChild(fragment);
     return $.extend(hp.create(instance).api, {style: env.smr.style});
 }
@@ -1861,9 +1856,9 @@ function startup(xml, parent, param) {
         vdoc = $.parseXML("<void/>");
         NodeElementAPI = $.extend(ClientElementAPI, EventModuleAPI, MessageModuleAPI, CommonElementAPI);
         window.xmlplus = window.xp = $.extend(xmlplus, $);
-        if ( typeof define === "function" && define.amd )
-            define( "xmlplus", [], new Function("return xmlplus;"));
-        $.ready(function () {
+        if (typeof define === "function" && define.amd)
+            define("xmlplus", [], () => { return xmlplus });
+        $.ready(() => {
             rdoc.body.getAttribute("init") == "false" || hp.parseHTML(rdoc.body);
         });
     } else {
