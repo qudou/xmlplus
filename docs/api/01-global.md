@@ -33,8 +33,8 @@ create(path[,options])
 ```
 
 - `path` : `String` 组件的绝对路径
-- `options` : `Anything` 为目标组件提供初始输入值
-- `Returns` : `Anything` 实例化出的组件对象
+- `options` : `AnyType` 为目标组件提供初始输入值
+- `Returns` : `AnyType` 实例化出的组件对象
 
 该函数是一个用于创建轻量的组件对象的函数，它只是简单地调用组件的函数项来返回所需的对象。
 
@@ -65,7 +65,7 @@ guid()
 
 - `Returns` : `String` 获取到的标识符
 
-获取系统内唯一的全局标识符。该标识符的生成规则如下：刚开始是 `a,b,c...z`，然后是 `aa,ab,ac...az`，以此类推。该标识符最先会由系统内部使用，所以你获取到的一般不会是从 `a` 开始的标识符。
+获取系统内唯一的全局标识符。该标识符的生成规则如下：刚开始是 `a,b,...z`，然后是 `aa,ab,...az`，以此类推。该标识符最先会由系统内部使用，所以你获取到的标识符一般不是从 `a` 开始。
 
 ```js
 // 01-03
@@ -75,10 +75,10 @@ console.log(xp.guid()); // 一个标识符字符串
 ## ready
 
 ```js
-ready(handler)
+ready(callback)
 ```
 
-- `handler` : `Function` 在 DOM 准备就绪后执行的函数
+- `callback` : `Function` 在 DOM 准备就绪后执行的函数
 
 该函数用于在 DOM 完全加载时执行指定的函数，该函数仅在浏览器端可见。这里指的 DOM 是广义的 DOM，它包含了我们的自定义组件。请看下面的一个 HTML 文件的 body 中的内容：
 
@@ -101,9 +101,9 @@ ready(handler)
 type(obj)
 ```
 
-- `obj` : `Anything`
+- `obj` : `AnyType`
 
-该函数用于确定 JavaScript 内置对象的类型，并返回小写形式的类型名称。该函数来源于新近版本的 jQuery，如需更详细的内容请参考 [jQuery.type](http://api.jquery.com/jQuery.type/)。
+该函数用于确定 JavaScript 内置对象的类型，并返回小写形式的类型名称。该函数源于新近版本的 jQuery，如需更详细的内容请参考 [jQuery.type](http://api.jquery.com/jQuery.type/)。
 
 ```js
 // 01-05
@@ -165,7 +165,7 @@ console.log(xp.isFunction({}));  // false
 isNumeric(value)
 ```
 
-- `value` : `Anything` 要检测的值
+- `value` : `AnyType` 要检测的值
 
 确定给定参数是否可以看作一个 JavaScript 数值。
 
@@ -182,7 +182,7 @@ console.log(xp.isNumeric({}));  // false
 isPlainObject(object)
 ```
 
-- `object` : `Anything` 用于被检查否是否为普通对象的对象
+- `object` : `AnyType` 要检测的值
 
 检查对象是否是普通对象（使用 `{}` 或 `new Object` 创建）。
 
@@ -280,7 +280,7 @@ parseXML(data)
 
 - `data` : `String` 一个格式正确的 XML 字符串
 
-此函数将给定的字符串解析为 XML 文档。在浏览器端并且未引用 xmldom，那么该函数使用浏览器的本地解析功能来创建有效的 XML 文档，否则将使用 xmldom 的解析功能来创建。
+此函数将给定的字符串解析为 XML 文档。
 
 ```js
 // 01-15

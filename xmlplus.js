@@ -65,23 +65,25 @@ let $ = {
     },
     guid: (function () {
         let counter = 0;
-        function intToABC( num ) {
+        function intToABC(num) {
            let ch = String.fromCharCode(97 + num % 26);
            return num < 26 ? ch : intToABC(Math.floor(num / 26) - 1) + ch;
         }
-        return function () {
+        return () => {
             return intToABC(counter++);
         };
     }()),
     ready: function (callback) {
+		if (!$.isFunction(callback))
+			throw Error("Invalid callback, expected a function");
         rdoc.addEventListener('DOMContentLoaded', callback);
     },
     type: (function () {
         let i, class2type = {},
             types = "Boolean Number String Function AsyncFunction Array Date RegExp Object Error".split(" ");
-        for ( i = 0; i < types.length; i++ )
+        for (i = 0; i < types.length; i++)
             class2type[ "[object " + types[i] + "]" ] = types[i].toLowerCase();
-        return function( obj ) {
+        return function(obj) {
              return obj == null ? obj + "" : class2type[class2type.toString.call(obj)] || "object";
         };
     }()),
@@ -96,8 +98,8 @@ let $ = {
         return type == "function" || type == "asyncfunction";
     },
     isNumeric: function (obj) {
-        let type = $.type( obj );
-        return ( type === "number" || type === "string" ) && !isNaN( obj - parseFloat( obj ) );
+        let type = $.type(obj);
+        return (type === "number" || type === "string") && !isNaN(obj - parseFloat(obj));
     },
     isPlainObject: function (obj) {
         return $.type(obj) == "object" && !$.isWindow(obj) && Object.getPrototypeOf(obj) == Object.prototype;
@@ -108,15 +110,6 @@ let $ = {
     },
     isSystemObject: function (obj) {
         return obj && typeof obj.guid == "function" && !!Store[obj.guid()];
-    },
-    each: function (objs, callback) {
-        if (hp.likeArray(objs) ) {
-            for (let i = 0; i < objs.length; i++ )
-                if (callback.call(objs[i], i, objs[i]) === false) break;
-        } else for (let key in objs ) {
-            if (callback.call(objs[key], key, objs[key]) === false) break;
-        }
-        return objs;
     },
     extend: function () {
         // This function is modified from jQuery.
@@ -162,6 +155,15 @@ let $ = {
             }
         }
         return target;
+    },
+    each: function (objs, callback) {
+        if (hp.likeArray(objs)) {
+            for (let i = 0; i < objs.length; i++ )
+                if (callback.call(objs[i], i, objs[i]) === false) break;
+        } else for (let key in objs) {
+            if (callback.call(objs[key], key, objs[key]) === false) break;
+        }
+        return objs;
     },
     parseXML: function (data) {
         let xml;
