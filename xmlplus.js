@@ -55,7 +55,7 @@ let Store = {};
 let Global = {};
 
 let $ = {
-	debug: true,
+    debug: true,
     startup: startup,
     create: function (path, options) {
         let widget = $.hasComponent(path);
@@ -74,8 +74,8 @@ let $ = {
         };
     }()),
     ready: function (callback) {
-		if (!$.isFunction(callback))
-			throw Error("Invalid callback, expected a function");
+        if (!$.isFunction(callback))
+            throw Error("Invalid callback, expected a function");
         rdoc.addEventListener('DOMContentLoaded', callback);
     },
     type: (function () {
@@ -89,6 +89,14 @@ let $ = {
     }()),
     isArray: Array.isArray || function (obj) {
         return obj instanceof Array
+    },
+    likeArray: function (obj) {
+        let length = !!obj && "length" in obj && obj.length,
+            type = $.type(obj);
+        if (type === "function" || $.isWindow(obj))
+            return false;
+        return type === "array" || length === 0 ||
+            typeof length === "number" && length > 0 && (length - 1) in obj;
     },
     isWindow: function (obj) {
         return obj != null && obj == obj.window;
@@ -157,7 +165,7 @@ let $ = {
         return target;
     },
     each: function (objs, callback) {
-        if (hp.likeArray(objs)) {
+        if ($.likeArray(objs)) {
             for (let i = 0; i < objs.length; i++ )
                 if (callback.call(objs[i], i, objs[i]) === false) break;
         } else for (let key in objs) {
@@ -202,7 +210,7 @@ let $ = {
         function fromObject(target) {
             let obj = {};
             for(let k in target) {
-                if (target[k].push) // 这里有风险
+                if ($.linkArray(target[k]))
                     obj[k] = fromArray(target[k]);
                 else if (typeof target[k] == "object")
                     obj[k] = fromObject(target[k])
@@ -286,14 +294,6 @@ let ph = (function () {
 }());
 
 let hp = {
-    likeArray: function (obj) {
-        let length = !!obj && "length" in obj && obj.length,
-            type = $.type( obj );
-        if (type === "function" || $.isWindow(obj))
-            return false;
-        return type === "array" || length === 0 ||
-            typeof length === "number" && length > 0 && (length - 1) in obj;
-    },
     parseToXML: function (input, dir) {
         if ( input == null )
             throw Error("Invalid input, expected a string or a xml node");
@@ -499,7 +499,7 @@ let bd = {
             for (let i in v)
                 proxy[i] = v[i];
             while (proxy.length > v.length)
-                proxy.pop();
+                proxy.pop(0);
         }
         function delter() {
             unbind();
@@ -589,11 +589,13 @@ let bd = {
             empty.push.apply(list, [view.bind(value)])
             return true;
         }
-        function pop() {
+        function pop(exports = 1) {
             if (!list.length)
                 return undefined;
-            let i = list.length - 1;
-            let item = $.exports(list[i].model);
+            let item,
+                i = list.length - 1;
+            if (exports)
+                item = $.exports(list[i].model);
             delete proxy[i];
             return item;
         }
