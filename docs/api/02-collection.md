@@ -1,5 +1,7 @@
 # 集合
 
+集合对象类同于数组，它除了包含 every, forEach, indexOf, map, pop, push, shift, some, slice, splice, unshift 这些函数接口。还包含了下面的特有接口。
+
 ## call
 
 ```js
@@ -7,8 +9,8 @@ call(funName[,parameter1][,parameterN])
 ```
 
 - `funName` : `Function` 调用的函数名
-- `parameter1` : `Anything` 给函数提供第一个参数
-- `parameterN` : `Anything` 给函数提供第 N 个参数
+- `parameter1` : `AnyType` 给函数提供第一个参数
+- `parameterN` : `AnyType` 给函数提供第 N 个参数
 
 遍历集合对象，并调用给定的函数，其中函数的参数由函数名的后续实参提供。
 
@@ -39,7 +41,7 @@ hash()
 ```js
 function hash() {
     var i = 0, table = {};
-    for ( ; i < this.length; i++ )
+    for (; i < this.length; i++)
         table[this[i]] = this[i];
     return table;
 }

@@ -404,3 +404,28 @@ Example: {
     </body>
 </html>
 ```
+
+## exports
+
+```js
+exports(object)
+```
+
+- `object` : `Proxy` 代理对象
+- `Returns` : `PlainObject` 转化得到的普通对象
+
+将数据绑定后得到的代理对象转化成普通的 JSON 对象。
+
+```html
+// 01-22
+Example: {
+	xml: "<div id='example'>\
+			<button id='item'/>\
+		  </div>",
+	fun: function (sys, items, opts) {
+		let data = [1,2,3,4];
+		let proxy = sys.item.bind(data);
+		console.log(xp.exports(proxy.model));  // [1,2,3,4]
+	}
+}
+```
