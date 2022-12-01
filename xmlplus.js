@@ -1138,7 +1138,7 @@ let CommonElementAPI = {
         return this.node.localName;
     },
     namespace: function () {
-        var uri = this.node.namespaceURI;
+        let uri = this.node.namespaceURI;
         return isHTML[this.node.nodeName] ? uri : "//" + ph.fullPath(this.env.dir, uri || '');
     },
     guid: function () {
@@ -1386,7 +1386,7 @@ function HtmlElement(node, parent) {
 }
 
 function CompElement(node, parent) {
-    var o = { typ: 1, elem: hp.elem, uid: $.guid(), appendTo: hp.appendTo };
+    let o = { typ: 1, elem: hp.elem, uid: $.guid(), appendTo: hp.appendTo };
     o.fdr = Finder(o);
     o.back = hp.build(o, NodeElementAPI);
     return o;
@@ -1779,24 +1779,24 @@ function parseEnvXML(env, parent, node) {
                 return Manager[node.nodeType].create(env, node, parent);
             throw Error("Create failed, invalid node");
         }
-        var i, ins;
-        if ( isHTML[node.nodeName] ) {
+        let i, ins;
+        if (isHTML[node.nodeName]) {
             ins = Manager[0].create(env, node, parent);
-            for ( i = 0; i < node.childNodes.length; i++ )
+            for (i = 0; i < node.childNodes.length; i++)
                 iterate(node.childNodes[i], ins.ele);
             env.smr.create(ins);
-        } else if ( (ins = Manager[1].create(env, node, parent)) ) {
+        } else if ((ins = Manager[1].create(env, node, parent))) {
             parseEnvXML(ins, parent, ins.xml.lastChild);
             ins.fdr.refresh();
-            var appendTo = ins.appendTo();
-            for ( i = 0; i < node.childNodes.length; i++ )
+            let appendTo = ins.appendTo();
+            for (i = 0; i < node.childNodes.length; i++)
                 iterate(node.childNodes[i], appendTo);
             env.smr.create(ins);
             ins.value = ins.fun.call(ins.api, ins.fdr.sys, ins.fdr.items, ins.opt);
         } else {
             xmlplus.release || console.warn($.serialize(node) + " not found");
             ins = Manager[0].create(env, node, parent);
-            for ( i = 0; i < node.childNodes.length; i++ )
+            for (i = 0; i < node.childNodes.length; i++)
                 iterate(node.childNodes[i], ins.ele);
             env.smr.create(ins);
         }
