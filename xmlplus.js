@@ -620,42 +620,42 @@ let bd = {
 };
 
 let Collection = (function () {
-    var emptyArray = [],
+    let emptyArray = [],
         fn = new Function,
         slice = emptyArray.slice,
         list = "every forEach indexOf map pop push shift some splice unshift".split(' ');
     fn.prototype = {
         length: 0,
         slice: function () {
-            var result = new Collection,
+            let result = new Collection,
                 list = slice.apply(this, slice.call(arguments));
-            for ( var i = 0; i < list.length; i++ )
+            for (let i = 0; i < list.length; i++)
                 result.push(list[i]);
             return result;
         },
         hash: function () {
-            var i = 0, table = {};
-            for ( ; i < this.length; i++ )
+            let i = 0, table = {};
+            for (; i < this.length; i++)
                 table[this[i]] = this[i];
             return table;
         },
         call: function (fnName) {
-            if ( typeof fnName != "string" )
+            if (typeof fnName != "string")
                 throw Error("Invalid function name, expected a string");
-            var args = slice.call(arguments).slice(1);
-            for ( var i = 0; i < this.length; i++ )
-                if( typeof this[i][fnName] == "function" )
+            let args = slice.call(arguments).slice(1);
+            for (let i = 0; i < this.length; i++)
+                if ($.isFunction(this[i][fnName]))
                     this[i][fnName].apply(this[i], args);
             return this;
         },
         values: function () {
-            var result = new Collection;
-            for ( var i = 0; i < this.length; i++ )
+            let result = new Collection;
+            for (let i = 0; i < this.length; i++)
                 result.push(this[i].val());
             return result;
         }
     };
-    for ( var i = 0; i < list.length; i++ )
+    for (let i = 0; i < list.length; i++)
         fn.prototype[list[i]] = emptyArray[list[i]];
     return fn;
 }());
@@ -1394,7 +1394,7 @@ function CompElement(node, parent) {
 
 function TextManager() {
     let table = {};
-    function create( env, node, parent ) {
+    function create(env, node, parent) {
         let k = node.nodeType,
             o = (table[k] || (table[k] = [])).pop() || TextElement(node, parent);
         o.ele.textContent = node.textContent;
