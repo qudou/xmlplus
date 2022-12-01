@@ -1602,11 +1602,11 @@ function PackageManager() {
         }
     }
     function init(obj, name, space) {
+        if (Library[space][name])
+            console.warn(`Component [${space}/${name}] already exists`);
         Source[space][name] = obj;
         Library[space][name] = obj = $.extend(true, {}, Template, obj);
         xmlplus.debug && assert(obj);
-        if (Library[space][name])
-            console.warn(`Component [${space}/${name}] already exists`);
         obj.dir = space;
         obj.cid = $.guid();
         // initialize
