@@ -55,6 +55,7 @@ let Store = {};
 let Global = {};
 
 let $ = {
+	debug: true,
     startup: startup,
     create: function (path, options) {
         let widget = $.hasComponent(path);
@@ -769,7 +770,7 @@ let EventModuleAPI = (function () {
     function on(type, selector, fn) {
         if ($.isFunction(selector))
             fn = selector, selector = undefined;
-        xmlplus.release || assert(type, selector, fn);
+        xmlplus.debug && assert(type, selector, fn);
         let uid = this.elem().xmlTarget.uid,
             listener = this.api;
         function handler(event) {
@@ -1599,7 +1600,7 @@ function PackageManager() {
     function init(obj, name, space) {
         Source[space][name] = obj;
         Library[space][name] = obj = $.extend(true, {}, Template, obj);
-        xmlplus.release || assert(obj);
+        xmlplus.debug && assert(obj);
         Library[space][name] || console.warn(space + "/" + name + " already exists");
         obj.dir = space;
         obj.cid = $.guid();
@@ -1794,7 +1795,7 @@ function parseEnvXML(env, parent, node) {
             env.smr.create(ins);
             ins.value = ins.fun.call(ins.api, ins.fdr.sys, ins.fdr.items, ins.opt);
         } else {
-            xmlplus.release || console.warn($.serialize(node) + " not found");
+            xmlplus.debug && console.warn($.serialize(node) + " not found");
             ins = Manager[0].create(env, node, parent);
             for (i = 0; i < node.childNodes.length; i++)
                 iterate(node.childNodes[i], ins.ele);
