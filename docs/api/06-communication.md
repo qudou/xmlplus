@@ -87,7 +87,7 @@ trigger(eventType[,data])
 ```
 
 - `eventType` : `String` 事件类型，比如 `click` 或者 `submit`
-- `data` : `Anything` 一个数组或者其他的任意的数据类型。
+- `data` : `AnyType` 一个数组或者其他的任意的数据类型。
 - `Returns` : `SystemObject` 函数的调用者
 
 该函数用于派发一个事件，可选参数 `data` 可以携带额外的数据。更多内容请参考 [事件的派发](/docs#事件与通信_事件的派发)。
@@ -192,7 +192,7 @@ notify(messageType[,data])
 ```
 
 - `messageType` : `String` 一个事件类型，比如 `push` 或者 `ok`
-- `data` : `Anything` 一个数组或者其他的任意的数据类型
+- `data` : `AnyType` 一个数组或者其他的任意的数据类型
 - `Returns` : `SystemObject` 函数的调用者
 
 该函数用于派发一个消息，可选参数 `data` 可以携带额外的数据。更多内容请参考 [消息的派发与捕获](/docs#消息与通信_消息的派发与捕获)。
