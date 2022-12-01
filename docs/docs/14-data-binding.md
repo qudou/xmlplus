@@ -1,6 +1,6 @@
 # 数据绑定
 
-所谓数据绑定是指将 JSON 数据对象与相应的组件对象进行绑定，之后通过操作数据即可间接地操作 DOM 节点。同时，DOM 节点上相关的数据变化也可以及时反馈到数据上来。
+所谓数据绑定是指将 JSON 数据对象与相应的组件对象进行绑定，之后通过操作数据即可间接地操作 DOM 节点。
 
 ## 数据绑定的三种类型
 
@@ -107,26 +107,6 @@ Index: {
 }
 ```
 
-下面再给出一个联动表单的示例。这里将单选按钮列表与菜单列表绑定到同一个数据对象，它们中的任何一方改变，都会导致另一方的选中项发生变更。
-
-```js
-// 14-07
-Index: {
-    xml: "<div id='index'>\
-            <input type='radio' name='n' value='USA'/>\
-            <input type='radio' name='n' value='China'/>\
-            <select id='select'>\
-                <option>USA</option>\
-                <option>China</option>\
-            </select>\
-          </div>",
-    ali: {country: "//input | //select", },
-    fun: function (sys, items, opts) {
-        this.bind({country: "China"});
-    }
-}
-```
-
 三、绑定的数据类型是数组
 
 这种情况下，作为被绑定的组件对象成为数据的渲染器。当执行绑定后，系统会为数组中的每一个子项生成一个与渲染器类型相同的组件对象，并将数据与该对象绑定。请看下面的示例：
@@ -183,7 +163,7 @@ Index: {
 }
 ```
 
-解绑是通过调用 bind 函数的返回值的 unbind 函数实现的。这个示例中，我们将一个字符串绑定到一个 `span` 组件对象和一个 `input` 组件对象。然后设置了一个定时器，10 秒钟之后，定时器触发，代理对象的解绑函数得到执行。此后，在文本框中输入任何内容，`span` 组件对象都不会同步更新。
+解绑是通过调用 bind 函数的返回值的 unbind 函数实现的。这个示例中，我们将一个字符串绑定到一个 `span` 组件对象和一个 `input` 组件对象。然后设置了一个定时器，10 秒钟之后，定时器触发，代理对象的解绑函数得到执行。
 
 ## 取值与赋值函数
 
@@ -192,19 +172,23 @@ Index: {
 ```js
 // 14-11
 Index: {
-    xml: "<input id='index' type='text'/>",
-    fun: function (sys, items, opts) {
-        sys.index.bind("#hello, world");
-		var elem = this.elem()
-		return Object.defineProperty({}, "value", {
-			get: () => { return elem.value.replace(/#/,'') },
-			set: value => elem.value = '#' + value
-		});
-    }
+	xml: "<input id='index' type='text'/>",
+	fun: function (sys, items, opts) {
+		var elem = this.elem();
+		function model(value) {
+			if (value == undefined)
+				return elem.value.substr(1);
+			elem.value = '#' + value;
+		}
+		setTimeout(() => {
+			window.ret = sys.index.bind("hello, world");
+		},0);
+		return { model: model };
+	}
 }
 ```
 
-此例在绑定项中对被绑定对象 `index` 配置自定义的取值与赋值操作函数。其中取值函数对于取到值会先替换掉首字符 `'#'` 再返回。而赋值函数则在赋值之前会给数据值添加首字符 `'#'` 后才对被绑定对象赋值。
+此例在绑定项中对被绑定对象 `index` 配置自定义的取值与赋值操作函数 model。该函数对于取到值会先替换掉首字符 `'#'` 再返回。而在赋值之前会给数据值添加首字符 `'#'` 后才对被绑定对象赋值。
 
 ## 操作绑定后的数据
 
@@ -268,10 +252,27 @@ ret.model.push(5)   // 数组值变为 [1,2,9,5]，新增一个文本框，其�
 
 ## 数据导出
 
-接上面的示例我们知道，通过函数 `bind` 返回的是代理对象。但我们通常需要返回普通的 JSON 对象值，这可以通过 `export` 函数实现。
+接上面的示例我们知道，通过函数 `bind` 返回的是代理对象。但我们通常需要返回普通的 JSON 对象值，这可以通过全局函数 `exports` 函数实现。
 
 ```js
-ret.export()
+exports(object)
 ```
 
-对于绑定的数据，导出的对象与它具有相同的结构。
+- `object` : `Proxy` 代理对象
+- `Returns` : `PlainObject` 转化得到的普通对象
+
+将数据绑定后得到的代理对象转化成普通的 JSON 对象。对于绑定的数据，导出的对象与它具有相同的结构。
+
+```html
+// 14-14
+Example: {
+	xml: "<div id='example'>\
+			<button id='item'/>\
+		  </div>",
+	fun: function (sys, items, opts) {
+		let data = [1,2,3,4];
+		let proxy = sys.item.bind(data);
+		console.log(xp.exports(proxy.model));  // [1,2,3,4]
+	}
+}
+```
