@@ -233,7 +233,8 @@ let $ = {
             if (target.push) return fromArray(target);
             return typeof target == "object" ? fromObject(target) : target;
         };
-    }())
+    }()),
+	delay: ms => new Promise((resolve, reject) => setTimeout(resolve, ms))
 };
 
 let ph = (function () {
@@ -1871,9 +1872,10 @@ function startup(xml, parent, param) {
         });
     } else {
         delete $.ready;
+		let xmldom = require("./lib/dom-parser");
         XPath = require("xpath");
-        DOMParser_ = require("exmldom").DOMParser;
-        XMLSerializer_ = require("exmldom").XMLSerializer;
+        DOMParser_ = xmldom.DOMParser;
+        XMLSerializer_ = xmldom.XMLSerializer;
         vdoc = $.parseXML("<body/>");
         rdoc = $.parseXML("<body/>");
         NodeElementAPI = $.extend(ServerElementAPI, EventModuleAPI, MessageModuleAPI, CommonElementAPI);

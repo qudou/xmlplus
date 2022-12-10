@@ -1,9 +1,8 @@
 {
   "name": "xmlplus",
-  "version": "1.7.19",
+  "version": "1.7.20",
   "dependencies": {
-    "xpath": "^0.0.24",
-    "exmldom": "^0.1.21"
+    "xpath": "^0.0.24"
   },
   "description": "A JavaScript framwork for developing projects efficiently.",
   "main": "xmlplus.js",
