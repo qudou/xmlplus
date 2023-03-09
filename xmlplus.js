@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.7.18
+ * xmlplus.js v1.7.19
  * https://xmlplus.cn
  * (c) 2017-2022 qudou
  * Released under the MIT license
@@ -56,6 +56,19 @@ let Global = {};
 
 let $ = {
     debug: true,
+    events: (function() {
+        let ev = {};
+        if ("ontouchend" in document.documentElement) {
+            ev.touchstart = "touchstart";
+            ev.touchmove = "touchmove";
+            ev.touchend = ev.click = "touchend";
+        } else {
+            ev.touchstart = "mousedown";
+            ev.touchmove = "mousemove";
+            ev.touchend = ev.click = "mouseup";
+        }
+        return ev;
+    }()),
     startup: startup,
     create: function (path, options) {
         let widget = $.hasComponent(path);
@@ -234,7 +247,7 @@ let $ = {
             return typeof target == "object" ? fromObject(target) : target;
         };
     }()),
-	delay: ms => new Promise((resolve, reject) => setTimeout(resolve, ms))
+    delay: ms => new Promise((resolve, reject) => setTimeout(resolve, ms))
 };
 
 let ph = (function () {
@@ -1872,7 +1885,7 @@ function startup(xml, parent, param) {
         });
     } else {
         delete $.ready;
-		let xmldom = require("./lib/dom-parser");
+        let xmldom = require("./lib/dom-parser");
         XPath = require("xpath");
         DOMParser_ = xmldom.DOMParser;
         XMLSerializer_ = xmldom.XMLSerializer;
