@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.7.19
+ * xmlplus.js v1.7.22
  * https://xmlplus.cn
  * (c) 2017-2022 qudou
  * Released under the MIT license
@@ -58,7 +58,7 @@ let $ = {
     debug: true,
     events: (function() {
         let ev = {};
-        if ("ontouchend" in document.documentElement) {
+        if ("ontouchend" in rdoc.documentElement) {
             ev.touchstart = "touchstart";
             ev.touchmove = "touchmove";
             ev.touchend = ev.click = "touchend";
