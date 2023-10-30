@@ -1,6 +1,6 @@
 {
   "name": "xmlplus",
-  "version": "1.7.24",
+  "version": "1.7.25",
   "dependencies": {
     "xpath": "^0.0.24"
   },

@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.7.24
+ * xmlplus.js v1.7.25
  * https://xmlplus.cn
  * (c) 2017-2023 qudou
  * Released under the MIT license
@@ -1837,9 +1837,9 @@ function startup(xml, parent, param) {
         throw Error("Target type must be ELEMENT_NODE");
     if ($.isPlainObject(parent)) {
         param = parent;
-        parent = rdoc.body || rdoc.lastChild;
+        parent = rdoc.body || rdoc.cloneNode();
     } else if (parent === undefined) {
-        parent = rdoc.body || rdoc.lastChild;
+        parent = rdoc.body || rdoc.cloneNode();
     } else if (typeof parent == "string") {
         parent = rdoc.getElementById(parent);
         if (!parent)
