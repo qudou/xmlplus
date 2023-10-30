@@ -1,7 +1,7 @@
 /*!
- * xmlplus.js v1.7.23
+ * xmlplus.js v1.7.24
  * https://xmlplus.cn
- * (c) 2017-2022 qudou
+ * (c) 2017-2023 qudou
  * Released under the MIT license
  */
  (function (inBrowser, undefined) {
@@ -1556,14 +1556,18 @@ function StyleManager() {
             delete table[key];
         }
     }
-    function style() {
+    function reset(realParent) {
+        if (parent.nodeName != "void") return;
+        let head = realParent.getElementsByTagName("head")[0];
+        if (!head) return;
         let i, temp = [], kids = parent.childNodes;
         for (i = 0; i < kids.length; i++)
-            if (kids[i].nodeType == 1)
-                temp.push(kids[i].textContent);
-        return temp.join("");
+            temp.push(kids[i]);
+        for (i = 0; i < temp.length; i++)
+            head.appendChild(temp[i]);
+        parent = head;
     }
-    return { create: create, remove: remove, style: style };
+    return { create: create, remove: remove, reset: reset };
 }
 
 function PackageManager() {
@@ -1853,7 +1857,8 @@ function startup(xml, parent, param) {
     let fragment = rdoc.createDocumentFragment();
     let instance = parseEnvXML(env, fragment, env.xml.lastChild);
     parent.appendChild(fragment);
-    return $.extend(hp.create(instance).api, {style: env.smr.style});
+    env.smr.reset(parent);
+    return hp.create(instance).api;
 }
 
 (function () {
