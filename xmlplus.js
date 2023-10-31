@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.7.25
+ * xmlplus.js v1.7.26
  * https://xmlplus.cn
  * (c) 2017-2023 qudou
  * Released under the MIT license
@@ -14,9 +14,9 @@
 //const ENTITY_NODE                 = 6;
 //const PROCESSING_INSTRUCTION_NODE = 7;
 //const COMMENT_NODE                = 8;
-//const DOCUMENT_NODE               = 9;
-  const DOCUMENT_TYPE_NODE          = 10;
-//const DOCUMENT_FRAGMENT_NODE      = 11;
+  const DOCUMENT_NODE               = 9;
+//const DOCUMENT_TYPE_NODE          = 10;
+  const DOCUMENT_FRAGMENT_NODE      = 11;
 //const NOTATION_NODE               = 12;
 
 const svgns = "http://www.w3.org/2000/svg";
@@ -762,6 +762,7 @@ let MessageModuleAPI = (function () {
 let EventModuleAPI = (function () {
     let eventTable = {},
         listeners = {},
+        topElements = {},
         ignoreProps = /^([A-Z]|returnValue$|layer[XY]$|keyLocation$)/,
         specialEvents={ click: "MouseEvents", mousedown: "MouseEvents", mouseup: "MouseEvents", mousemove: "MouseEvents" };
     function assert(type, selector, fn) {
@@ -791,9 +792,13 @@ let EventModuleAPI = (function () {
         eventTable[uid] = eventTable[uid] || {};
         eventTable[uid][type] = eventTable[uid][type] || [];
         eventTable[uid][type].push({selector: selector, fn: fn, handler: handler});
-        if (!listeners[type]) {
-            listeners[type] = type;
-            rdoc.addEventListener(type, eventHandler)
+        let aid = this.env.aid;
+        listeners[aid] = listeners[aid] || {};
+        if (!listeners[aid][type]) {
+            listeners[aid][type] = type;
+            if (!topElements[aid])
+                topElements[aid] = topElement(this.elem());
+            topElements[aid].addEventListener(type, eventHandler)
         }
         return this;
     }
@@ -883,6 +888,13 @@ let EventModuleAPI = (function () {
             if (cancelBubble || event.bubbles === false || event.bubble_ === false) 
                 break;
             target = target.parentNode;
+        }
+    }
+    function topElement(node) {
+        while (node) {
+            if ( node.nodeType == DOCUMENT_FRAGMENT_NODE || node.nodeType == DOCUMENT_NODE )
+                return node.lastChild;
+            node = node.parentNode;
         }
     }
     return { on: on, once: once, off: off, trigger: trigger, remove: remove };
@@ -1847,7 +1859,7 @@ function startup(xml, parent, param) {
     }
     env.fdr = Finder(env);
     env.smr = StyleManager();
-    env.aid = inBrowser ? $.guid() : "";
+    env.aid = $.guid();
     env.api = hp.build(env, NodeElementAPI);
     if ($.isPlainObject(param)) {
         env.xml.getAttribute("id") || env.xml.setAttribute("id", $.guid());
