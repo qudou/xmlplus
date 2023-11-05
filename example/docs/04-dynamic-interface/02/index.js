@@ -3,9 +3,9 @@ xmlplus("xp", function ( xp, $_) {
         Index: {
             xml: "<Ipv4Box id='ipbox'/>",
             fun: function (sys, items, opts) {
-                items.ipbox.value = "192.168.0.1";
-                console.log(items.ipbox.value);
-                console.log(sys.ipbox.value() == items.ipbox);
+                items.ipbox.val = "192.168.0.1";
+                console.log(items.ipbox.val);
+                console.log(sys.ipbox.val() == items.ipbox);
             }
         },
         IPv4Box: {
@@ -15,7 +15,7 @@ xmlplus("xp", function ( xp, $_) {
                     <input/>.<input/>.<input/>.<input/>\
                   </div>",
             fun: function (sys, items, opts) {
-                var inputs = sys.box.children();
+                var inputs = sys.box.kids();
                 sys.box.on("keypress", "input", function(e) {
                     var next, ch = String.fromCharCode(e.which);
                     if (!/[0-9]/.test(ch))
@@ -35,8 +35,8 @@ xmlplus("xp", function ( xp, $_) {
                     for (var i = 0; i < inputs.length; i++)
                         inputs[i].prop("value", input[i]);
                 }
-                return Object.defineProperty({}, "value", { get: getValue, set: setValue });
+                return Object.defineProperty({}, "val", { get: getValue, set: setValue });
             }
         }
-    });
+	});
 });

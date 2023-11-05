@@ -25,8 +25,8 @@ Index: {
 此示例实例化了两个组件 Input。组件 Input 允许接收一个 `format` 参数作为其静态接口输入，并提供一个属性 `val` 作为其动态输入输出接口。`format` 参数有三种可能的值：`string` (默认)、`int` 以及 `float`。这三种值分别对应三种数据类型：字符串型、整型和浮点型。属性 `val` 根据 `format` 的值来进行格式化输入输出。下面是示例的输出结果：
 
 ```
-hello, world
-227
+foo hello, world
+bar 27
 ```
 
 组件对象 `foo` 的参数 `format` 的默认值是 `string`，所以输入值 `hello, world` 以字符串原样输出。组件对象 bar 的 `format` 值是 `int`，所以输入值 `27.1828` 会被格式化为整型数 `27` 输出。
@@ -69,15 +69,13 @@ Input: {
     opt: { format: 'string' },
     fun: function (sys, items, opts) {
         var parse = {"int": parseInt, "float": parseFloat, "string": String}[opts.format];
-        if (opts.disabled)
-            sys.input.attr("disabled", opts.disabled);
         function getValue() {
             return parse(sys.input.prop("value"));
         }
         function setValue(value) {
             sys.input.prop("value", parse(value));
         }
-        return Object.defineProperty({}, "value", { get: getValue, set: setValue });
+        return Object.defineProperty({}, "val", { get: getValue, set: setValue });
     }
 }
 ```
@@ -97,7 +95,7 @@ Input: {
         function setValue(value) {
             sys.input.prop("value", parse(value));
         }
-        return Object.defineProperty({}, "value", { get: getValue, set: setValue });
+        return Object.defineProperty({}, "val", { get: getValue, set: setValue });
     }
 }
 ```
@@ -147,9 +145,9 @@ Form: {
     map: { cfgs: { foo: "format", bar: "format" } },
     fun: function (sys, items, opts) {
         function getValue() {
-            return [items.foo.value, items.bar.value];
+            return [items.foo.val, items.bar.val];
         }
-        return Object.defineProperty({}, "value", { get: getValue });
+        return Object.defineProperty({}, "val", { get: getValue });
     }
 }
 ```
@@ -166,8 +164,8 @@ Index: {
           </div>",
     fun: function (sys, items, opts) {
         sys.btn.on("click", function(e) {
-            console.log("foo", items.foo.value);
-            console.log("bar", items.bar.value);
+            console.log("foo", items.foo.val);
+            console.log("bar", items.bar.val);
         });
     }
 }
@@ -188,9 +186,9 @@ Form: {
     map: { cfgs: { inputs: "format" } },
     fun: function (sys, items, opts) {
         function getValue() {
-            return [items.foo.value, items.bar.value];
+            return [items.foo.val, items.bar.val];
         }
-        return Object.defineProperty({}, "value", { get: getValue });
+        return Object.defineProperty({}, "val", { get: getValue });
     }
 }
 ```

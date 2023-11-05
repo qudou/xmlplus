@@ -112,21 +112,6 @@ console.log(xp.type(true));        // "boolean"
 console.log(xp.type(3));           // "number"
 ```
 
-## isWindow
-
-```js
-isWindow(obj)
-```
-
-- `obj` : `PlainObject` 用于测试是否是一个窗体的对象
-
-该函数用于确定给定对象是否为窗体。
-
-```js
-// 01-06
-console.log(xp.isWindow(window)); // true
-```
-
 ## isArray
 
 ```js
@@ -141,6 +126,31 @@ isArray(obj)
 // 01-07
 console.log(xp.isArray([])); // true
 console.log(xp.isArray({})); // false
+```
+
+## likeArray
+
+```js
+likeArray(obj)
+```
+
+- `obj` : `Object` 用于测试是否是伪数组的对象
+
+该函数用于确定给定对象是否为伪数组。
+
+## isWindow
+
+```js
+isWindow(obj)
+```
+
+- `obj` : `PlainObject` 用于测试是否是一个窗体的对象
+
+该函数用于确定给定对象是否为窗体。
+
+```js
+// 01-06
+console.log(xp.isWindow(window)); // true
 ```
 
 ## isFunction

@@ -1856,7 +1856,9 @@ function startup(xml, parent, param) {
         parent = rdoc.getElementById(parent);
         if (!parent)
             throw Error(`Parent element ${parent} not found`);
-    }
+    } else if (parent.nodeType != ELEMENT_NODE) {
+		throw Error(`Invalid parent`);
+	}
     env.fdr = Finder(env);
     env.smr = StyleManager();
     env.aid = $.guid();

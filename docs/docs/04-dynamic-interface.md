@@ -13,11 +13,11 @@
 - [startup](/api#全局_startup)：实例化一个组件
 - [create](/api#全局_create)：用于创建轻量的组件对象
 - [guid](/api#全局_guid)：获取系统内的唯一的全局标识符
-- [error](/api#全局_error)：抛出一个错误
-- [ready](/api#全局_ready)：在页面文档加载后激活回调函数
+- [ready](/api#全局_ready)：在页面文档加载后激活回调函数，仅浏览器中可用
 - [type](/api#全局_type)：判断一个对象的所属类型
-- [isWindow](/api#全局_isWindow)：判断一个对象是不是窗体
 - [isArray](/api#全局_isArray)：判断一个对象是不是数组类型
+- [likeArray](/api#全局_likeArray)：判断一个对象是不是伪数组类型
+- [isWindow](/api#全局_isWindow)：判断一个对象是不是窗体
 - [isFunction](/api#全局_isFunction)：判断一个对象是不是函数类型
 - [isNumeric](/api#全局_isNumeric)：判断一个对象是否数值型
 - [isPlainObject](/api#全局_isPlainObject)：判断一个对象是否简单对象
@@ -62,7 +62,7 @@ every | forEach | indexOf | map | pop | push | shift | slice | some | splice | u
 
 ### 与 DOM 元素相关的接口
 
-由于每一组件对象都对应一个 DOM 元素对象，所以系统提供了相关的操作 DOM 元素对象的接口。通过这些系统接口可以间接地操作 DOM 元素对象，以下简称 DOM 元素对象为节点。
+由于每一组件对象都对应一个 DOM 元素对象，所以系统提供了相关的操作 DOM 元素对象的接口。通过这些系统接口可以间接地与 DOM 元素对象交互，以下简称 DOM 元素对象为节点。
 
 - [text](/api#DOM_text)：获取或者设置节点的文本
 - [prop](/api#DOM_prop)：获取或者设置节点的属性值
@@ -114,7 +114,7 @@ every | forEach | indexOf | map | pop | push | shift | slice | some | splice | u
 
 ### 与组件通信相关接口
 
-这类接口用于在各组件对象之间进行通信。通信分为两类，一类是事件通信，另一类是消息通信。下面的系统接口中，前四者属于事件通信接口，后四者属于消息通信接口。
+这类接口用于在各组件对象之间进行通信。通信分为两类，一类是事件通信，另一类是消息通信。下面的系统接口中，前四者属于事件通信接口，后五者属于消息通信接口。
 
 - [on](/api#通信_on)：侦听事件
 - [off](/api#通信_off)：取消事件侦听
