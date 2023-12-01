@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.7.27
+ * xmlplus.js v1.7.28
  * https://xmlplus.cn
  * (c) 2017-2023 qudou
  * Released under the MIT license
@@ -1883,12 +1883,6 @@ function startup(xml, parent, param) {
         rdoc = document;
         vdoc = $.parseXML("<void/>");
         NodeElementAPI = $.extend(ClientElementAPI, EventModuleAPI, MessageModuleAPI, CommonElementAPI);
-        window.xmlplus = window.xp = $.extend(xmlplus, $);
-        if (typeof define === "function" && define.amd)
-            define("xmlplus", [], () => { return xmlplus });
-        $.ready(() => {
-            rdoc.body.getAttribute("init") == "false" || hp.parseHTML(rdoc.body);
-        });
         let e = $.events = {};
         if ("ontouchend" in rdoc.documentElement) {
             e.touchstart = "touchstart";
@@ -1899,6 +1893,12 @@ function startup(xml, parent, param) {
             e.touchmove = "mousemove";
             e.touchend = e.click = "mouseup";
         }
+        window.xmlplus = window.xp = $.extend(xmlplus, $);
+        if (typeof define === "function" && define.amd)
+            define("xmlplus", [], () => { return xmlplus });
+        $.ready(() => {
+            rdoc.body.getAttribute("init") == "false" || hp.parseHTML(rdoc.body);
+        });
     } else {
         delete $.ready;
         let xmldom = require("./lib/dom-parser");
