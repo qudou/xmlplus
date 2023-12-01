@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.7.28
+ * xmlplus.js v1.7.29
  * https://xmlplus.cn
  * (c) 2017-2023 qudou
  * Released under the MIT license
@@ -1186,10 +1186,11 @@ let CommonElementAPI = {
         function setter(target, propKey, value) {
             if (!proxy || propKey !== "model")
                 return Reflect.set(target, propKey, value);
-            view.api.trigger("$/before/bind", [value], false);
+			let isArray = $.isArray(value);
+            isArray || view.api.trigger("$/before/bind", [value], false);
             if (model) {
                 // nothing to do.
-            } else if ($.isArray(value)) {
+            } else if (isArray) {
                 model = bd.bindArray(view);
             } else if ($.isPlainObject(value)) {
                 if (!view.fdr)
@@ -1199,7 +1200,7 @@ let CommonElementAPI = {
                 model = bd.bindLiteral(view, propKey);
             }
             model.set(value);
-            view.api.trigger("$/after/bind", [value, proxy.model], false);
+            isArray || view.api.trigger("$/after/bind", [value, proxy.model], false);
             return true;
         }
         function unbind() {
