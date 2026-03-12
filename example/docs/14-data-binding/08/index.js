@@ -1,12 +1,10 @@
 xmlplus("xp", function (xp, $_) {
     $_().imports({
-        Index: {
-            xml: "<div id='index'>\
-                    <input id='text' type='text'/>\
-                  </div>",
-            fun: function (sys, items, opts) {
-                sys.text.bind([1,2,3,4]);
-            }
-        }
+		Index: {
+			xml: "<input id='index' type='text'/>",
+			fun: function (sys, items, opts) {
+				window.proxy = sys.index.bind("hello, world");
+			}
+		}
     });
 });

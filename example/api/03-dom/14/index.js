@@ -5,8 +5,8 @@ xmlplus("xp", function (xp, $_, t) {
             xml: "<div id='example'>\
                     <p id='text'>hello,world</p>\
                   </div>",
-            map: { nofragment: true },
-            fun: function (sys, items, opts) {
+            fun: async function (sys, items, opts) {
+				await xp.delay(0);
                 var offset = sys.text.offset();
                 console.log(offset.top, offset.left);  // 16 8
                 sys.text.offset({top:100, left:0});

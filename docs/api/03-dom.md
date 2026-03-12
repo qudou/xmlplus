@@ -198,8 +198,8 @@ removeClass([className])
 Example: {
     css: "#klass { color: blue; }",
     xml: "<h1 id='example'>hello,world</h1>",
-    map: { nofragment: true },
-    fun: function (sys, items, opts) {
+    fun: async function (sys, items, opts) {
+        await xp.delay(0);
         sys.example.addClass("#klass");
         console.log(sys.example.css("color")); // rgb(0, 0, 255)
         sys.example.removeClass("#klass");
@@ -261,8 +261,8 @@ css(propertyName,value)
 // 03-09
 Example: {
     xml: "<h1 id='example'>hello, world</h1>",
-    map: { nofragment: true },
-    fun: function (sys, items, opts) {
+    fun: async function (sys, items, opts) {
+	    await xp.delay(0);
         console.log(sys.example.css("color")); // rgb(0, 0, 0)
         sys.example.css("color", "blue");
         console.log(sys.example.css("color")); // blue
@@ -342,8 +342,8 @@ width(value)
 // 03-12
 Example: {
     xml: "<h1 id='example'>hello, world</h1>",
-    map: { nofragment: true },
-    fun: function (sys, items, opts) {
+    fun: async function (sys, items, opts) {
+	    await xp.delay(0);
         sys.example.width(100);
         console.log(sys.example.width());
     }
@@ -375,8 +375,8 @@ height(value)
 // 03-13
 Example: {
     xml: "<h1 id='example'>hello, world</h1>",
-    map: { nofragment: true },
-    fun: function (sys, items, opts) {
+    fun: async function (sys, items, opts) {
+	    await xp.delay(0);
         sys.example.height(100);
         console.log(sys.example.height());
     }
@@ -411,8 +411,8 @@ Example: {
     xml: "<div id='example'>\
             <p id='text'>hello,world</p>\
           </div>",
-    map: { nofragment: true },
-    fun: function (sys, items, opts) {
+    fun: async function (sys, items, opts) {
+	    await xp.delay(0);
         var offset = sys.example.offset();
         console.log(offset.top, offset.left);  // 16 8
         sys.example.offset({top:100, left:0});
@@ -440,8 +440,8 @@ Example: {
     xml: "<div id='example'>\
             <p id='text'>hello,world</p>\
           </div>",
-    map: { nofragment: true },
-    fun: function (sys, items, opts) {
+    fun: async function (sys, items, opts) {
+	    await xp.delay(0);
         var p = sys.text.position();
         console.log(p.left, p.top);  // 8 0
     }

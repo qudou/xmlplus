@@ -2,15 +2,14 @@ xmlplus("xp", function (xp, $_) {
     $_().imports({
         Index: {
             xml: "<div id='index'>\
-                    <input type='text'/>\
-                    <input type='text'/>\
-                    <input type='radio' name='n' value='USA'/>\
-                    <input type='radio' name='n' value='China'/>\
+                    <Input id='text' type='text'/>\
                   </div>",
-            ali: {text: "//input[@type='text']", radio: "//input[@type='radio']", },
             fun: function (sys, items, opts) {
-                this.bind({text: "hello, world", radio: "China"});
+                sys.text.bind([{foo: 1},{foo: 2}]);
             }
+        },
+        Input: {
+            xml: "<input id='foo' type='text'/>"
         }
     });
 });

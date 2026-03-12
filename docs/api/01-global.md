@@ -1,4 +1,4 @@
-﻿# 全局
+# 全局
 
 ## startup
 
@@ -415,18 +415,18 @@ Example: {
 </html>
 ```
 
-## exports
+## proxyToJSON
 
 ```js
-exports(object)
+proxyToJSON(object)
 ```
 
 - `object` : `Proxy` 代理对象
-- `Returns` : `PlainObject` 转化得到的普通对象
+- `Returns` : `PlainObject` 转化得到的 JSON 类型的对象
 
-将数据绑定后得到的代理对象转化成普通的 JSON 对象。
+将数据绑定后得到的代理对象转化成 JSON 类型的对象。
 
-```html
+```js
 // 01-22
 Example: {
 	xml: "<div id='example'>\
@@ -435,7 +435,27 @@ Example: {
 	fun: function (sys, items, opts) {
 		let data = [1,2,3,4];
 		let proxy = sys.item.bind(data);
-		console.log(xp.exports(proxy.model));  // [1,2,3,4]
+		console.log(xp.proxyToJSON(proxy));  // [1,2,3,4]
+	}
+}
+```
+
+## delay
+
+```js
+delay(milliseconds)
+```
+
+- `milliseconds` : `Integer` 毫秒数
+
+延迟给定的毫秒数。
+
+```js
+// 01-23
+Example: {
+	fun: async function (sys, items, opts) {
+		await xp.delay(1000);
+		console.log("hello, world");
 	}
 }
 ```

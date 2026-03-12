@@ -1,7 +1,7 @@
 /*!
- * xmlplus.js v1.7.29
+ * xmlplus.js v1.7.30
  * https://xmlplus.cn
- * (c) 2017-2023 qudou
+ * (c) 2017-2026 qudou
  * Released under the MIT license
  */
  (function (inBrowser, undefined) {
@@ -29,7 +29,7 @@ let vdoc, rdoc;
 let XPath, DOMParser_, XMLSerializer_, NodeElementAPI;
 const Manager = [HtmlManager(),CompManager(),,TextManager(),TextManager(),,,,TextManager(),,];
 const PM = PackageManager();
-const Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", cfgs: {}, attrs: {}, bind: {} }, fun: new Function };
+const Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", cfgs: {}, attrs: {} }, fun: new Function };
 
 // isHTML contains isSVG
 const isSVG = {}, isHTML = {};
@@ -206,34 +206,26 @@ let $ = {
             return Store[id] && Store[id].api;
         return inBrowser ? (Global[id] || rdoc.getElementById(id)) : null;
     },
-    exports: (function () {
-        function fromObject(target) {
-            let obj = {};
-            for(let k in target) {
-                if ($.linkArray(target[k]))
-                    obj[k] = fromArray(target[k]);
-                else if (typeof target[k] == "object")
-                    obj[k] = fromObject(target[k])
-                else obj[k] = target[k]
-            }
-            return obj;
-        }
-        function fromArray(target) {
-            let i, arr = [];
-            for (i = 0; i < target.length; i++) {
-                if (target[i].push)
-                    arr.push(fromArray(target[i]))
-                else if (typeof target[i] == "object")
-                    arr.push(fromObject(target[i]))
-                else arr.push(target[i])
-            }
-            return arr;
-        }
-        return target => {
-            if (target.push) return fromArray(target);
-            return typeof target == "object" ? fromObject(target) : target;
-        };
-    }()),
+    proxyToJSON: function (proxy) {
+		let type = Object.prototype.toString.call(proxy);
+		switch (type) {
+			case "[object Object]":
+				let obj = {};
+				for(let k in proxy)
+					obj[k] = $.proxyToJSON(proxy[k]);
+				return obj;
+			case "[object Array]":
+				let i, arr = [];
+				for (i = 0; i < proxy.length; i++)
+					arr.push($.proxyToJSON(proxy[i]));
+				return arr;
+			case "[object Literal]":
+			case "[object Normal]":
+			    return proxy.value;
+			default:
+			    throw new Error("Type error!");
+		}
+    },
     delay: ms => new Promise((resolve, reject) => setTimeout(resolve, ms))
 };
 
@@ -442,78 +434,10 @@ let bd = {
     isLiteral: function (value) {
         return $.isNumeric(value) || $.type(value) == "string" || $.type(value) == "boolean";
     },
-    bindObject: function (view) {
-        let objects = {}, binds = {};
-        let proxy = new bd.ObjectProxy(objects, binds);
-        function setter(target) {
-            let props = Object.getOwnPropertyNames(target);
-            $.each(props, (i,key) => {
-                objects.hasOwnProperty(key) || bind(target[key], key);
-                proxy[key] = objects[key] = target[key];
-            });
-        }
-        function delter() {
-            for (let k in proxy)
-                delete proxy[k];
-            $.each(Object.getOwnPropertyNames(binds), (i,key) => {
-                delete binds[key];
-            });
-        }
-        function unbind() {
-            $.each(Object.getOwnPropertyNames(binds), (i,key) => {
-                binds[key].forEach(i => i.unbind());
-                delete objects[key];
-                delete binds[key];
-            });
-        }
-        function bind(value, key) {
-            binds[key] = binds[key] || [];
-            let views = view.fdr.sys[view.map.bind[key] || key];
-            if (!views || typeof views == "string")
-                return binds[key].push(bd.BindNormal(view, key));
-            if ($.isSystemObject(views))
-                views = [views];
-            views = views.map(v => {return Store[v.guid()]});
-            if ($.isArray(value)) {
-                views.forEach(view => {
-                    binds[key].push(bd.bindArray(view));
-                });
-            } else if ($.isPlainObject(value)) {
-                views.forEach(view => {
-                    binds[key].push(bd.bindObject(view));
-                });
-            } else if (bd.isLiteral(value)) {
-                views.forEach(view => {
-                    binds[key].push(bd.bindLiteral(view, key));
-                });
-            } else {
-                throw Error(`Type error: ${value}`);
-            }
-        }
-        return {get: ()=>{return proxy}, set: setter, del: delter, unbind: unbind};
-    },
-    bindArray: function (view) {
-        let render = view.node.cloneNode(false);
-        render.removeAttribute("id");
-        let proxy = bd.ArrayProxy(view.api.hide(), render);
-        function setter(v) {
-            for (let i in v)
-                proxy[i] = v[i];
-            while (proxy.length > v.length)
-                proxy.pop(0);
-        }
-        function delter() {
-            unbind();
-            view.api.remove();
-        }
-        function unbind() {
-            while (proxy.length)
-                delete proxy[0];
-        }
-        return {get: ()=>{return proxy}, set: setter, del: delter, unbind: unbind};
-    },
-    bindLiteral: function (view, key) {
+    bindLiteral: function (view, value) {
         let elem = view.elem();
+		let key = "value";
+		let { proxy, revoke } = Proxy.revocable({}, {get: get, set: set, deleteProperty: deleteProperty})
         let type = 0;
         switch(elem.nodeName) {
             case "PROGRESS":
@@ -526,101 +450,187 @@ let bd = {
                 let at = elem.getAttribute("type");
                 type = (at == "range" || at == "text" ? 1 : 2);
         }
-        function getter() {
-            let v = view.fdr ? view.value : view.env.value;
-            if (v && $.isFunction(v[key]))
-                return v[key]();
-            return type == 1 ? elem.value : (type ? elem.checked : view.api.text());
-        }
-        function setter(value) {
-            let v = view.fdr ? view.value : view.env.value;
-            if (v && $.isFunction(v[key]))
-                return v[key](value);
-            type == 1 ? (elem.value = value) : (type ? (elem.checked = value) : view.api.text(value));
-        }
-        function delter() {
-            view.api.remove();
-        }
-        function unbind() {
-            // nothing to do
-        }
-        return {get: getter, set: setter, del: delter, unbind: unbind};
-    },
-    BindNormal: function (view, key) {
-        let tmpValue;
-        let v = view.value;
-        function getter() {
-            return v && $.isFunction(v[key]) ? v[key]() : tmpValue;
-        }
-        function setter(value) {
-            if (v && $.isFunction(v[key]))
-                return v[key](value);
-            tmpValue = value;
-        }
-        function dump() {}
-        return {get: getter, set: setter, del: dump, unbind: dump};
-    },
-    ObjectProxy: function (target, objects) {
-        return new Proxy(target, {
-            get(target, propKey, receiver) {
-                if (objects[propKey] !== undefined)
-                    return objects[propKey][0].get();
+		let sys = view.env.fdr.sys;
+		let dispatchEvent = elem.dataset.dispatchEvent;
+        function get(target, propKey, receiver) {
+			if (propKey === Symbol.toStringTag)
+				return "Literal";
+			if (propKey != key)
                 return Reflect.get(target, propKey, receiver);
-            },
-            set(target, propKey, value, receiver) {
-                if (objects[propKey] !== undefined)
-                    objects[propKey].forEach(i=>i.set(value));
-                return true;
-            },
-            deleteProperty(target, propKey) {
-                if (objects[propKey] !== undefined)
-                    objects[propKey].forEach(i=>i.del());
-                return Reflect.deleteProperty(target, propKey);
-            }
-        });
+            let value = type == 1 ? elem.value : (type ? elem.checked : view.api.text());
+			if (dispatchEvent) {
+				let object = {value: value};
+				view.api.trigger("$/after/getting", object);
+				value = object.value;
+			}
+			return value;
+        }
+        function set(target, propKey, value) {
+			if (propKey != key)
+                return Reflect.set(target, propKey, value);
+			if (!bd.isLiteral(value))
+				throw Error("Only accept data of literal type");
+			if (dispatchEvent) {
+				let object = {value: value};
+				view.api.trigger("$/before/setting", object);
+				value = object.value;
+			}
+            type == 1 ? (elem.value = value) : (type ? (elem.checked = value) : view.api.text(value));
+			return true;
+        }
+		// I feel that the deletion operation is somewhat redundant.
+        function deleteProperty(target, propKey, receiver) {
+			if (propKey == key)
+				throw Error("This value is prohibited from being deleted");
+			return true;
+        }
+		view.api.once("$/before/remove", e => {
+			revoke();
+			e.stopPropagation();
+		});
+        return proxy;
     },
-    ArrayProxy: function (holder, render) {
+    bindObject: function (view, value) {
+        let [objects, proxys] = [value, {}];
+		let { proxy, revoke } = Proxy.revocable(objects, {get: get, set: set, deleteProperty: deleteProperty});
+		function get(target, propKey, receiver) {
+			if (!objects.hasOwnProperty(propKey))
+				return Reflect.get(target, propKey, receiver);
+			return proxys[propKey][0].proxy;
+		}
+        function set(target, propKey, value) {
+			if (!objects.hasOwnProperty(propKey))
+                throw Error("The proxy does not exist");
+			proxys[propKey] ||= [];
+			if ($.isArray(objects[propKey]))
+				eraseArray(proxys[propKey]);
+			objects[propKey] = value;
+			let items = view.fdr.sys[propKey];
+			if (!items) {
+				let normal = bd.bindNormal(view, value)
+				return proxys[propKey].push({proxy: normal});
+			}
+			if ($.isSystemObject(items))
+				items = [items];
+			items = items.map(v => {return Store[v.guid()]});
+			items.forEach(view => {
+				let proxy = view.api.bind(value);
+				proxys[propKey].push({view: view, proxy: proxy});
+			});
+			return true;
+        }
+		function eraseArray(proxyList) {
+			proxyList.forEach(item => {
+				while (item.proxy.length)
+					delete item.proxy[0];
+			});
+			proxyList.splice(0);
+		}
+        function deleteProperty(target, propKey, receiver) {
+			if (!objects.hasOwnProperty(propKey))
+                return Reflect.deleteProperty(target, propKey, receiver);
+			if ($.isArray(objects[propKey])) {
+				eraseArray(proxys[propKey]);
+			} else {
+				proxys[propKey].forEach(i => {
+					if (i.view)
+					    i.view.api.remove();
+					else
+					    delete i.proxy.value;
+		        });
+				proxys[propKey].splice(0);
+			}
+            delete objects[propKey];
+			return true;
+        }
+		view.api.once("$/before/remove", e => {
+			revoke();
+			e.stopPropagation();
+		});
+        return proxy;
+    },
+    bindArray: function (view, value) {
+        let render = view.node.cloneNode(false);
+        render.removeAttribute("id");
+		view.api.hide();
         let List = new Function;
         List.prototype = {length: 0, push: push, pop: pop};
         let [views, list, empty] = [[], new List, []];
-        let proxy = new Proxy(list, {get: getter, set: setter, deleteProperty: delter});
+        let { proxy, revoke } = Proxy.revocable(list, {get: get, set: set, deleteProperty: deleteProperty});
+
         function push(value) {
-            let view = holder.before(render.cloneNode(false));
-            views.push(view);
-            empty.push.apply(list, [view.bind(value)])
+            let item = view.api.before(render.cloneNode(false));
+            views.push(item);
+            empty.push.apply(list, [item.bind(value)]);
             return true;
         }
-        function pop(exports = 1) {
+        function pop(exp = 1) {
             if (!list.length)
                 return undefined;
             let item,
                 i = list.length - 1;
-            if (exports)
-                item = $.exports(list[i].model);
+            if (exp)
+                item = $.proxyToJSON(list[i]);
             delete proxy[i];
             return item;
         }
-        function getter(target, propKey, receiver) {
+        function get(target, propKey, receiver) {
+			if (propKey === Symbol.toStringTag)
+				return "Array";
             if ($.isNumeric(propKey))
-                return list[propKey].model;
+                return list[propKey];
             return Reflect.get(target, propKey, receiver);
         }
-        function setter(target, propKey, value) {
+        function set(target, propKey, value) {
+			if ($.isArray(value))
+				throw Error("Do not accept data of array type.");
             if (propKey == list.length)
                 return push(value);
             if (!views[propKey])
-                throw Error(`prop name ${propKey} does not exist.`);
-            list[propKey].model = value;
+                throw Error(`Prop name ${propKey} does not exist.`);
+			views[propKey] = views[propKey].replace(render.cloneNode(false));
+			empty.splice.apply(list, [propKey, 1, views[propKey].bind(value)])
             return true;
         }
-        function delter(target, propKey, receiver) {
+        function deleteProperty(target, propKey, receiver) {
             if (!views[propKey])
-                return Reflect.get(target, propKey, receiver);
+                return Reflect.deleteProperty(target, propKey, receiver);
             views[propKey].remove();
             views.splice(propKey,1);
             empty.splice.apply(list, [propKey,1]);
             return true;
         }
+		view.api.once("$/before/remove", e => {
+			revoke();
+			e.stopPropagation();
+		});
+        return proxy;
+    },
+    bindNormal: function (view, value) {
+        let value_ = value;
+		let key = "value";
+		let { proxy, revoke } = Proxy.revocable({}, {get: get, set: set, deleteProperty: deleteProperty});
+        function get(target, propKey, receiver) {
+			if (propKey != key)
+                return Reflect.get(target, propKey, receiver);
+            return value_
+        }
+        function set(target, propKey, value) {
+			if (propKey === Symbol.toStringTag)
+				return "Normal";
+			if (propKey != key)
+                return Reflect.set(target, propKey, value);
+            value_ = value;
+			return true;
+        }
+        function deleteProperty(target, propKey, receiver) {
+			propKey == key && revoke();
+			return true;
+		}
+		view.api.once("$/before/remove", e => {
+			revoke();
+			e.stopPropagation();
+		});
         return proxy;
     }
 };
@@ -705,6 +715,7 @@ let MessageModuleAPI = (function () {
     function notify(type, data) {
         let that = this;
         data = data == null ? [] : ($.isArray(data) ? data : [data]);
+		// the false of returned means the process has been canceled
         (function iterate(target) {
             let uid = target.uid;
             if (target.fdr) {
@@ -986,7 +997,7 @@ let CommonElementAPI = {
         parent = parent || this.appendTo();
         if ($.isSystemObject(target)) {
             if (target.contains(this.api))
-                throw Error("attempt to append a object which contains current node!");
+                throw Error("Attempt to append a object which contains current node");
             let src = Store[target.guid()],
                 srcEnv = src.env,
                 srcParent = src.elem().parentNode,
@@ -1046,10 +1057,11 @@ let CommonElementAPI = {
         return hp.create(Store[this.node.previousSibling.uid]).api;
     },
     replace: function (target, options) {
+		this.api.trigger("$/before/remove");
         let elem = this.elem();
         if ($.isSystemObject(target)) {
-            if ( target.contains(this.api) )
-                throw Error("attempt to replace a object which contains current node");
+            if (target.contains(this.api))
+                throw Error("Attempt to replace a object which contains current node");
             let src = Store[target.guid()],
                 srcEnv = src.env,
                 srcParent = src.elem().parentNode,
@@ -1081,6 +1093,7 @@ let CommonElementAPI = {
         return hp.create(Store[target.uid]).api;
     },
     remove: function () {
+		this.api.trigger("$/before/remove");
         if (this.env.xml.lastChild == this.node) {
             this.api.replace("void");
         } else {
@@ -1173,48 +1186,29 @@ let CommonElementAPI = {
         return $.serialize(elem);
     },
     bind: function (value) {
-        let [view, model] = [this, null];
-        let proxy = new Proxy({}, {get: getter, set: setter, deleteProperty: delter});
-        function getter(target, propKey, receiver) {
-            if (model == null)
-                return Reflect.get(target, propKey, receiver);
-            if (propKey == "model")
-                return model.get();
-            if (propKey == "unbind")
-                return unbind;
-        }
-        function setter(target, propKey, value) {
-            if (!proxy || propKey !== "model")
-                return Reflect.set(target, propKey, value);
-			let isArray = $.isArray(value);
-            isArray || view.api.trigger("$/before/bind", [value], false);
-            if (model) {
-                // nothing to do.
-            } else if (isArray) {
-                model = bd.bindArray(view);
-            } else if ($.isPlainObject(value)) {
-                if (!view.fdr)
-                    throw Error("a PlainObject is not allow to bind a htmltag!");
-                model = bd.bindObject(view);
-            } else if (bd.isLiteral(value)) {
-                model = bd.bindLiteral(view, propKey);
-            }
-            model.set(value);
-            isArray || view.api.trigger("$/after/bind", [value, proxy.model], false);
-            return true;
-        }
-        function unbind() {
-            model.unbind();
-            model = null;
-        }
-        function delter(target, propKey) {
-            if (model && propKey == "model") {
-                model.del();
-                proxy = model = null;
-            }
-            return Reflect.deleteProperty(target, propKey);
-        }
-        proxy.model = value;
+        let proxy;
+		if (bd.isLiteral(value)) {
+			if (this.fdr)
+				throw Error("A Literal value can only be bound to a htmltag");
+			proxy = bd.bindLiteral(this, value);
+			proxy.value = value;
+		} else if ($.isPlainObject(value)) {
+			if (!this.fdr)
+				throw Error("A PlainObject is not allowed to bind a htmltag");
+			proxy = bd.bindObject(this, value);
+			let props = Object.getOwnPropertyNames(value);
+			props.forEach(key => proxy[key] = value[key]);
+		} else if ($.isArray(value)) {
+			if (this.env.xml.lastChild == this.node)
+				throw Error("Document nodes are not allowed to bind arrays");
+			proxy = bd.bindArray(this, value);
+            for (let i in value)
+                proxy[i] = value[i];
+            while (proxy.length > value.length)
+                proxy.pop(0);
+		} else {
+			throw Error("Invalid value, expected a literal, a plainObject, or an array");
+		}
         return proxy;
     }
 };
@@ -1858,8 +1852,8 @@ function startup(xml, parent, param) {
         if (!parent)
             throw Error(`Parent element ${parent} not found`);
     } else if (parent.nodeType != ELEMENT_NODE) {
-		throw Error(`Invalid parent`);
-	}
+        throw Error(`Invalid parent`);
+    }
     env.fdr = Finder(env);
     env.smr = StyleManager();
     env.aid = $.guid();

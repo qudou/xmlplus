@@ -2,8 +2,8 @@ xmlplus("xp", function (xp, $_, t) {
     $_().imports({
         Example: {
             xml: "<h1 id='example'>hello, world</h1>",
-            map: { nofragment: true },
-            fun: function (sys, items, opts) {
+            fun: async function (sys, items, opts) {
+				await xp.delay(0);
                 sys.example.width(100);
                 console.log(sys.example.width());
             }

@@ -1,18 +1,13 @@
 xmlplus("xp", function (xp, $_) {
     $_().imports({
-        Index: {
-            xml: "<div id='index'>\
-                    <input type='radio' name='n' value='USA'/>\
-                    <input type='radio' name='n' value='China'/>\
-                    <select id='select'>\
-                        <option>USA</option>\
-                        <option>China</option>\
-                    </select>\
-                  </div>",
-            ali: {country: "//input | //select", },
-            fun: function (sys, items, opts) {
-                this.bind({country: "China"});
-            }
-        }
+		Index: {
+			xml: "<input id='index' type='text'/>",
+			fun: function (sys, items, opts) {
+				let proxy = this.bind({label: "hello, world"});
+				console.log(proxy.label.value);
+				proxy.label.value = "hi, world";
+				console.log(proxy.label.value);
+			}
+		}
     });
 });
