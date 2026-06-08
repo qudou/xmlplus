@@ -1,5 +1,5 @@
 /*!
- * xmlplus.js v1.7.30
+ * xmlplus.js v1.7.32
  * https://xmlplus.cn
  * (c) 2017-2026 qudou
  * Released under the MIT license
@@ -29,7 +29,7 @@ let vdoc, rdoc;
 let XPath, DOMParser_, XMLSerializer_, NodeElementAPI;
 const Manager = [HtmlManager(),CompManager(),,TextManager(),TextManager(),,,,TextManager(),,];
 const PM = PackageManager();
-const Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { share: "", cfgs: {}, attrs: {} }, fun: new Function };
+const Template = { css: "", cfg: {}, opt: {}, ali: {}, map: { cfgs: {}, attrs: {} }, fun: new Function };
 
 // isHTML contains isSVG
 const isSVG = {}, isHTML = {};
@@ -1362,26 +1362,6 @@ let TextElementAPI = (function () {
     return api;
 }());
 
-let ShareElementAPI = {
-    remove: function () {
-        let k = this.dir + "/" + this.node.localName;
-        this.env.share[k].copys.forEach(function( item ) {
-            item.api.remove();
-        });
-        delete this.env.share[k];
-        CommonElementAPI.remove.call(this);
-    }
-};
-
-let CopyElementAPI = {
-    remove: function () {
-        let k = this.dir + "/" + this.node.localName,
-            s = this.env.share[k];
-        CommonElementAPI.remove.call(this);
-        s.copys.splice(s.copys.indexOf(this), 1);
-    }
-};
-
 let TextElement = (function() {
     let types = [,,,"TextNode","CDATASection",,,,"Comment"];
     return (node, parent) => {
@@ -1460,22 +1440,6 @@ function HtmlManager() {
     return { create: create, recycle: recycle, chenv: chenv };
 }
 
-function setComponent(env, ins) {
-    let share = ins.env.share[ins.dir + "/" + ins.node.localName];
-    if (!share) {
-        ins.api = ins.back;
-    } else if (share.ins) {
-        ins.xml.replaceChild(vdoc.createElement("void"), ins.xml.lastChild);
-        ins.api = hp.build(ins, CopyElementAPI);
-        share.copys.push(ins);
-        ins.fun = () => { return share.ins.value };
-    } else {
-        ins.api = hp.build(ins, ShareElementAPI);
-        share.ins = ins, share.copys = [];
-    }
-    return ins;
-}
-
 function CompManager() {
     let table = [];
     function create(env, node, parent) {
@@ -1492,16 +1456,9 @@ function CompManager() {
         resetAttrs(env, node, exprs);
         resetConfigs(env, node, exprs);
         resetOptions(env, o, exprs);
-        o.share = $.extend({}, env.share);
-        o.map.share.forEach(item => {
-            let p = ph.fullPath(o.dir, item),
-                s = ph.split(p);
-            if (Library[s.dir] && Library[s.dir][s.basename])
-                return o.share[p] = {};
-            throw Error(`Shared object ${p} not found`);
-        });
         o.xml = w.xml.cloneNode(true);
-        return Store[o.uid] = setComponent(env, o);
+		o.api = o.back;
+        return Store[o.uid] = o;
     }
     function recycle(item) {
         let i = 0, o, 
@@ -1595,8 +1552,6 @@ function PackageManager() {
             if (!$.isPlainObject(obj.map[key])) 
                 throw Error(`Invalid ${key} in map, expected a plainObject`);
         });
-        if ($.type(obj.map.share) != "string") 
-            throw Error("Invalid share in map, expected a string");
         if ($.type(obj.xml) != "string" && obj.xml !== undefined) 
             throw Error("Invalid xml, expected a undefined value or a string");
     }
@@ -1624,7 +1579,6 @@ function PackageManager() {
         // initialize
         let map = obj.map;
         resetInput(map.attrs), resetInput(map.cfgs);
-        map.share = map.share ? map.share.split(' ') : [];
         let root = obj.dir.split('/')[0];
         obj.xml = $.parseXML(obj.xml || "<void/>");
     }
@@ -1640,7 +1594,7 @@ function PackageManager() {
         let result = {},
             extend = target.map.extend;
         result.xml = target.xml || source.xml;
-        ["opt","cfg","map"].forEach(key => {
+        ["ali","opt","cfg","map"].forEach(key => {
             result[key] = (extend[key] == "r") ? target[key] : $.extend({}, source[key], target[key]);
         });
         if (extend.fun == "r" || !source.fun) {
@@ -1839,7 +1793,7 @@ function xmlplus(root, callback) {
 
 // The entry function, which will be assigned to xmlplus.
 function startup(xml, parent, param) {
-    let env = $.extend(true, {xml: hp.parseToXML(xml), cid: $.guid(), share: {}, dir: ""}, Template);
+    let env = $.extend(true, {xml: hp.parseToXML(xml), cid: $.guid(), dir: ""}, Template);
     if (env.xml.nodeType !== ELEMENT_NODE)
         throw Error("Target type must be ELEMENT_NODE");
     if ($.isPlainObject(parent)) {
@@ -1905,8 +1859,6 @@ function startup(xml, parent, param) {
         NodeElementAPI = $.extend(ServerElementAPI, EventModuleAPI, MessageModuleAPI, CommonElementAPI);
         module.exports = $.extend(xmlplus, $);
     }
-    CopyElementAPI = $.extend({}, NodeElementAPI, CopyElementAPI);
-    ShareElementAPI = $.extend({}, NodeElementAPI, ShareElementAPI);
 }());
 
-}(typeof navigator !== "undefined" && navigator.userAgent));
+}(typeof window !== 'undefined' && typeof document !== 'undefined'));

@@ -11,7 +11,7 @@
 下面示例中，由 `div` 元素创建的组件对象 `index` 通过函数接口 `bind` 绑定了一个字符串：`"hello, world"`。
 
 ```js
-// 14-01
+// 13-01
 Index: {
     xml: "<div id='index'/>",
     fun: function (sys, items, opts) {
@@ -27,7 +27,7 @@ Index: {
 类型为普通对象的数据只能与自定义组件对象相绑定，下面是一个简单的示例：
 
 ```js
-// 14-02
+// 13-02
 Index: {
     xml: "<input id='index' type='text'/>",
     fun: function (sys, items, opts) {
@@ -39,7 +39,7 @@ Index: {
 该示例中，绑定数据包含一个键为 `index`，值为 `"hello, world"` 的键值对。所以，若想成功绑定，被绑定的组件对象中必需有个称作 `index` 的命名对象。注意，这里的被绑定对象是 `this`，与前一个示例有所不同。该示例中的键值对绑定的是个体对象，当然也可以是集体对象，请看下面的示例：
 
 ```js
-// 14-03
+// 13-03
 Index: {
     xml: "<div id='index'>\
             <input id='text1' type='text'/>\
@@ -57,7 +57,7 @@ Index: {
 下面我们来个更复杂的例子，绑定的数据对象包含两个键值对，每个键值对各绑定两个组件对象。
 
 ```js
-// 14-04
+// 13-04
 Index: {
     xml: "<div id='index'>\
             <input type='text'/>\
@@ -77,7 +77,7 @@ Index: {
 数组可以与 HTML 元素对象或者自定义组件绑定。作为被绑定的组件对象成为数组的渲染器。当执行绑定后，系统会为数组中的每一个子项数据生成一个与渲染器类型相同的组件对象，并将相应的子项数据与该对象绑定。请看下面的示例：
 
 ```js
-// 14-05
+// 13-05
 Index: {
     xml: "<div id='index'>\
             <input id='text' type='text'/>\
@@ -93,7 +93,7 @@ Index: {
 数组中的元素除了可以为字面量，还可以是普通对象，这将形成递归绑定。请参考下面的示例：
 
 ```js
-// 14-06
+// 13-06
 Index: {
     xml: "<div id='index'>\
             <Input id='text' type='text'/>\
@@ -114,7 +114,7 @@ Input {
 当一个普通对象与一个自定义组件对象绑定时，普通对象的子项存在空绑的情形。请看下面的示例：
 
 ```js
-// 14-07
+// 13-07
 Index: {
     xml: "<input id='index' type='text'/>",
     fun: function (sys, items, opts) {
@@ -137,7 +137,7 @@ Index: {
 当绑定的数据是字面量时。返回的结果即为字面量代理对象。请看下面的示例：
 
 ```js
-// 14-08
+// 13-08
 Index: {
     xml: "<input id='index' type='text'/>",
     fun: function (sys, items, opts) {
@@ -161,7 +161,7 @@ delete proxy.value             // 试图删除文本框
 当绑定的数据是普通对象时。返回的结果即为普通代理对象。请看下面的示例：
 
 ```js
-// 14-09
+// 13-09
 Index: {
     xml: "<div id='index'>\
 	        <input id='text' type='text'/>\
@@ -188,7 +188,7 @@ proxy.text                     // 代理 text 已移除，不可用
 当绑定的数据是数组时。返回的结果即为数组代理对象。请看下面的示例：
 
 ```js
-// 14-10
+// 13-10
 Index: {
     xml: "<div id='index'>\
             <input id='text' type='text'/>\
@@ -215,7 +215,7 @@ proxy = [3,6,8] // 数组值变为 [3,6,8], 原来的所有文本宽被删除，
 系统对于被绑定的 HTML 元素对象，有默认的取值与赋值操作。当然，你有机会在赋值之前与取值之后修正或者覆盖默认的操作。请看下面的示例：
 
 ```js
-// 14-11
+// 13-11
 Index: {
 	xml: "<input id='index' type='text' data-dispatch-event='true'/>"
 	fun: function (sys, items, opts) {
@@ -252,7 +252,7 @@ proxyToJSON(object)
 此函数将数据绑定后得到的代理对象转化成普通的 JSON 对象。对于绑定的数据，导出的对象与它具有相同的结构。
 
 ```html
-// 14-12
+// 13-12
 Index: {
 	xml: "<div id='index'>\
 			<button id='item'/>\
