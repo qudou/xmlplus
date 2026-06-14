@@ -1731,7 +1731,7 @@ function resetConfigs(env, node, exprs) {
 }
 
 function resetOptions(env, ins, exprs) {
-    let i, k, o, list,
+    let i, k, o,
         id = ins.node.getAttribute("id");
     for (k in exprs)
         $.extend(ins.opt, env.cfg[k]);
@@ -1764,7 +1764,7 @@ function parseEnvXML(env, parent, node) {
             for (i = 0; i < node.childNodes.length; i++)
                 iterate(node.childNodes[i], appendTo);
             env.smr.create(ins);
-            ins.value = ins.fun.call(ins.api, ins.fdr.sys, ins.fdr.items, ins.opt);
+			ins.value = ins.fun.call(ins.api, ins.fdr.sys, ins.fdr.items, ins.opt);
         } else {
             xmlplus.debug && console.warn($.serialize(node) + " not found");
             ins = Manager[0].create(env, node, parent);
