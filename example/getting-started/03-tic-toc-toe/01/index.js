@@ -16,14 +16,14 @@ xmlplus("xp", function (xp, $_) {
 					squares = Array(9).fill(null);
 				});
                 sys.board.on("e/board/change", (e, i) => {
-                    let o = e.target.text() == 'O' ? 'X' : 'O';
-                    sys.next.text("Next player: " + o);
                     squares[i] = e.target.text();
+                    sys.next.text("Next player: " + squares[i] == 'O' ? 'X' : 'O');
                     for (let i = 0; i < lines.length; i++) {
                         const [a, b, c] = lines[i];
                         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
 							items.board.lock();
-							sys.next.text("Winner: " + squares[a])
+							sys.next.text("Winner: " + squares[a]);
+							break;
 						}
                     }
                 });
@@ -43,15 +43,12 @@ xmlplus("xp", function (xp, $_) {
                     locked = 0;
                     sys.board.kids().call("text", '');
                 }
-				function lock() {
-					locked = 1;
-				}
                 sys.board.on("click", "//Square", function() {
                     if (locked || this.text() != '') return;
                     curr = this.text(curr && curr.text() == 'O' ? 'X' : 'O');
                     curr.trigger("e/board/change", [parseInt(this + '')]);
                 });
-				return { clear, lock };
+				return { clear, lock:()=>(locked = 1) };
             }
         },
         Square: {
@@ -61,3 +58,43 @@ xmlplus("xp", function (xp, $_) {
         }
     });
 });
+
+function minimax(b, player, isMaximizing = true) {
+	const winner = checkWinner(b);
+	
+	if (winner === AI) return { score: 10 };
+	if (winner === PLAYER) return { score: -10 };
+	if (b.every(cell => cell !== EMPTY)) return { score: 0 };
+
+	const moves = [];
+
+	for (let i = 0; i < 9; i++) {
+		if (b[i] === EMPTY) {
+			b[i] = player;
+			const result = minimax(b, player === AI ? PLAYER : AI, !isMaximizing);
+			moves.push({ index: i, score: result.score });
+			b[i] = EMPTY;
+		}
+	}
+
+	let bestMove;
+	if (isMaximizing) {
+		let bestScore = -Infinity;
+		for (const move of moves) {
+			if (move.score > bestScore) {
+				bestScore = move.score;
+				bestMove = move;
+			}
+		}
+	} else {
+		let bestScore = Infinity;
+		for (const move of moves) {
+			if (move.score < bestScore) {
+				bestScore = move.score;
+				bestMove = move;
+			}
+		}
+	}
+
+	return bestMove;
+}

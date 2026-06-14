@@ -28,32 +28,32 @@ Square: {
 ```js
 // 03-01
 Board: {
-    css: "#board { width: 148px; height: 148px; margin: 0 auto; }\
-          #board div { float: left; font-size: 36px; font-weight: bold; }",
-    xml: "<div id='board'>\
-            <Square id='0'/><Square id='1'/><Square id='2'/>\
-            <Square id='3'/><Square id='4'/><Square id='5'/>\
-            <Square id='6'/><Square id='7'/><Square id='8'/>\
-          </div>",
-    fun: function (sys, items, opts) {
-        let curr, locked;
-        sys.board.on("click", "//Square", function() {
-            if (locked || this.text() != '') return;
-            curr = this.text(curr && curr.text() == 'O' ? 'X' : 'O');
-            curr.notify("board-change", [parseInt(this + '')]);
-        });
-        this.watch("game-start", e => {
-            locked = false;
-            sys.board.kids().call("text", '');
-        });
-        this.watch("winner", e => locked = true);
-    }
+	css: "#board { width: 148px; height: 148px; margin: 0 auto; }\
+		  #board div { float: left; font-size: 36px; font-weight: bold; }",
+	xml: "<div id='board'>\
+			<Square id='0'/><Square id='1'/><Square id='2'/>\
+			<Square id='3'/><Square id='4'/><Square id='5'/>\
+			<Square id='6'/><Square id='7'/><Square id='8'/>\
+		  </div>",
+	fun: function (sys, items, opts) {
+		let curr, locked = 0;
+		function clear() {
+			locked = 0;
+			sys.board.kids().call("text", '');
+		}
+		sys.board.on("click", "//Square", function() {
+			if (locked || this.text() != '') return;
+			curr = this.text(curr && curr.text() == 'O' ? 'X' : 'O');
+			curr.trigger("e/board/change", [parseInt(this + '')]);
+		});
+		return { clear, lock:()=>(locked = 1) };
+	}
 }
 ```
 
 观察该组件的视图项部分，每一个方块都被按顺序编了号。再看此网格组件的样式项部分可知，该组件的长宽均被设置为 `148px`，这是足够的，因为组件 Square 的 `margin-right` 和 `margin-top` 均被设置为 `-1`。
 
-注意该组件内部比方块组件多出了一个名为 `fun` 的子项，该子项叫做函数项，函数项包含了实现一些组件对象的初始化代码。此组件的函数项包含了方块的点击事件的响应代码以及对两个消息的侦听代码。对于具体的细节，可以先不理解。在读完本节内容后，你应该特别留意各组件对象之间是如何通过事件与消息之间传递来协作完成任务的。
+注意该组件内部比方块组件多出了一个名为 `fun` 的子项，该子项叫做函数项，函数项包含了实现一些组件对象的初始化代码。此组件的函数项包含了方块的点击事件的响应代码以及对两个消息的侦听代码。对于具体的细节，可以先不理解。在读完本节内容后，你应该特别留意各组件对象之间是如何通过事件传递来协作完成任务的。
 
 ## 胜负的判断
 

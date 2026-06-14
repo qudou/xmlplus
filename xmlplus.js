@@ -207,24 +207,24 @@ let $ = {
         return inBrowser ? (Global[id] || rdoc.getElementById(id)) : null;
     },
     proxyToJSON: function (proxy) {
-		let type = Object.prototype.toString.call(proxy);
-		switch (type) {
-			case "[object Object]":
-				let obj = {};
-				for(let k in proxy)
-					obj[k] = $.proxyToJSON(proxy[k]);
-				return obj;
-			case "[object Array]":
-				let i, arr = [];
-				for (i = 0; i < proxy.length; i++)
-					arr.push($.proxyToJSON(proxy[i]));
-				return arr;
-			case "[object Literal]":
-			case "[object Normal]":
-			    return proxy.value;
-			default:
-			    throw new Error("Type error!");
-		}
+        let type = Object.prototype.toString.call(proxy);
+        switch (type) {
+            case "[object Object]":
+                let obj = {};
+                for(let k in proxy)
+                    obj[k] = $.proxyToJSON(proxy[k]);
+                return obj;
+            case "[object Array]":
+                let i, arr = [];
+                for (i = 0; i < proxy.length; i++)
+                    arr.push($.proxyToJSON(proxy[i]));
+                return arr;
+            case "[object Literal]":
+            case "[object Normal]":
+                return proxy.value;
+            default:
+                throw new Error("Type error!");
+        }
     },
     delay: ms => new Promise((resolve, reject) => setTimeout(resolve, ms))
 };
@@ -436,8 +436,8 @@ let bd = {
     },
     bindLiteral: function (view, value) {
         let elem = view.elem();
-		let key = "value";
-		let { proxy, revoke } = Proxy.revocable({}, {get: get, set: set, deleteProperty: deleteProperty})
+        let key = "value";
+        let { proxy, revoke } = Proxy.revocable({}, {get: get, set: set, deleteProperty: deleteProperty})
         let type = 0;
         switch(elem.nodeName) {
             case "PROGRESS":
@@ -450,109 +450,109 @@ let bd = {
                 let at = elem.getAttribute("type");
                 type = (at == "range" || at == "text" ? 1 : 2);
         }
-		let sys = view.env.fdr.sys;
-		let dispatchEvent = elem.dataset.dispatchEvent;
+        let sys = view.env.fdr.sys;
+        let dispatchEvent = elem.dataset.dispatchEvent;
         function get(target, propKey, receiver) {
-			if (propKey === Symbol.toStringTag)
-				return "Literal";
-			if (propKey != key)
+            if (propKey === Symbol.toStringTag)
+                return "Literal";
+            if (propKey != key)
                 return Reflect.get(target, propKey, receiver);
             let value = type == 1 ? elem.value : (type ? elem.checked : view.api.text());
-			if (dispatchEvent) {
-				let object = {value: value};
-				view.api.trigger("$/after/getting", object);
-				value = object.value;
-			}
-			return value;
+            if (dispatchEvent) {
+                let object = {value: value};
+                view.api.trigger("$/after/getting", object);
+                value = object.value;
+            }
+            return value;
         }
         function set(target, propKey, value) {
-			if (propKey != key)
+            if (propKey != key)
                 return Reflect.set(target, propKey, value);
-			if (!bd.isLiteral(value))
-				throw Error("Only accept data of literal type");
-			if (dispatchEvent) {
-				let object = {value: value};
-				view.api.trigger("$/before/setting", object);
-				value = object.value;
-			}
+            if (!bd.isLiteral(value))
+                throw Error("Only accept data of literal type");
+            if (dispatchEvent) {
+                let object = {value: value};
+                view.api.trigger("$/before/setting", object);
+                value = object.value;
+            }
             type == 1 ? (elem.value = value) : (type ? (elem.checked = value) : view.api.text(value));
-			return true;
+            return true;
         }
-		// I feel that the deletion operation is somewhat redundant.
+        // I feel that the deletion operation is somewhat redundant.
         function deleteProperty(target, propKey, receiver) {
-			if (propKey == key)
-				throw Error("This value is prohibited from being deleted");
-			return true;
+            if (propKey == key)
+                throw Error("This value is prohibited from being deleted");
+            return true;
         }
-		view.api.once("$/before/remove", e => {
-			revoke();
-			e.stopPropagation();
-		});
+        view.api.once("$/before/remove", e => {
+            revoke();
+            e.stopPropagation();
+        });
         return proxy;
     },
     bindObject: function (view, value) {
         let [objects, proxys] = [value, {}];
-		let { proxy, revoke } = Proxy.revocable(objects, {get: get, set: set, deleteProperty: deleteProperty});
-		function get(target, propKey, receiver) {
-			if (!objects.hasOwnProperty(propKey))
-				return Reflect.get(target, propKey, receiver);
-			return proxys[propKey][0].proxy;
-		}
+        let { proxy, revoke } = Proxy.revocable(objects, {get: get, set: set, deleteProperty: deleteProperty});
+        function get(target, propKey, receiver) {
+            if (!objects.hasOwnProperty(propKey))
+                return Reflect.get(target, propKey, receiver);
+            return proxys[propKey][0].proxy;
+        }
         function set(target, propKey, value) {
-			if (!objects.hasOwnProperty(propKey))
+            if (!objects.hasOwnProperty(propKey))
                 throw Error("The proxy does not exist");
-			proxys[propKey] ||= [];
-			if ($.isArray(objects[propKey]))
-				eraseArray(proxys[propKey]);
-			objects[propKey] = value;
-			let items = view.fdr.sys[propKey];
-			if (!items) {
-				let normal = bd.bindNormal(view, value)
-				return proxys[propKey].push({proxy: normal});
-			}
-			if ($.isSystemObject(items))
-				items = [items];
-			items = items.map(v => {return Store[v.guid()]});
-			items.forEach(view => {
-				let proxy = view.api.bind(value);
-				proxys[propKey].push({view: view, proxy: proxy});
-			});
-			return true;
+            proxys[propKey] ||= [];
+            if ($.isArray(objects[propKey]))
+                eraseArray(proxys[propKey]);
+            objects[propKey] = value;
+            let items = view.fdr.sys[propKey];
+            if (!items) {
+                let normal = bd.bindNormal(view, value)
+                return proxys[propKey].push({proxy: normal});
+            }
+            if ($.isSystemObject(items))
+                items = [items];
+            items = items.map(v => {return Store[v.guid()]});
+            items.forEach(view => {
+                let proxy = view.api.bind(value);
+                proxys[propKey].push({view: view, proxy: proxy});
+            });
+            return true;
         }
-		function eraseArray(proxyList) {
-			proxyList.forEach(item => {
-				while (item.proxy.length)
-					delete item.proxy[0];
-			});
-			proxyList.splice(0);
-		}
+        function eraseArray(proxyList) {
+            proxyList.forEach(item => {
+                while (item.proxy.length)
+                    delete item.proxy[0];
+            });
+            proxyList.splice(0);
+        }
         function deleteProperty(target, propKey, receiver) {
-			if (!objects.hasOwnProperty(propKey))
+            if (!objects.hasOwnProperty(propKey))
                 return Reflect.deleteProperty(target, propKey, receiver);
-			if ($.isArray(objects[propKey])) {
-				eraseArray(proxys[propKey]);
-			} else {
-				proxys[propKey].forEach(i => {
-					if (i.view)
-					    i.view.api.remove();
-					else
-					    delete i.proxy.value;
-		        });
-				proxys[propKey].splice(0);
-			}
+            if ($.isArray(objects[propKey])) {
+                eraseArray(proxys[propKey]);
+            } else {
+                proxys[propKey].forEach(i => {
+                    if (i.view)
+                        i.view.api.remove();
+                    else
+                        delete i.proxy.value;
+                });
+                proxys[propKey].splice(0);
+            }
             delete objects[propKey];
-			return true;
+            return true;
         }
-		view.api.once("$/before/remove", e => {
-			revoke();
-			e.stopPropagation();
-		});
+        view.api.once("$/before/remove", e => {
+            revoke();
+            e.stopPropagation();
+        });
         return proxy;
     },
     bindArray: function (view, value) {
         let render = view.node.cloneNode(false);
         render.removeAttribute("id");
-		view.api.hide();
+        view.api.hide();
         let List = new Function;
         List.prototype = {length: 0, push: push, pop: pop};
         let [views, list, empty] = [[], new List, []];
@@ -575,21 +575,21 @@ let bd = {
             return item;
         }
         function get(target, propKey, receiver) {
-			if (propKey === Symbol.toStringTag)
-				return "Array";
+            if (propKey === Symbol.toStringTag)
+                return "Array";
             if ($.isNumeric(propKey))
                 return list[propKey];
             return Reflect.get(target, propKey, receiver);
         }
         function set(target, propKey, value) {
-			if ($.isArray(value))
-				throw Error("Do not accept data of array type.");
+            if ($.isArray(value))
+                throw Error("Do not accept data of array type.");
             if (propKey == list.length)
                 return push(value);
             if (!views[propKey])
                 throw Error(`Prop name ${propKey} does not exist.`);
-			views[propKey] = views[propKey].replace(render.cloneNode(false));
-			empty.splice.apply(list, [propKey, 1, views[propKey].bind(value)])
+            views[propKey] = views[propKey].replace(render.cloneNode(false));
+            empty.splice.apply(list, [propKey, 1, views[propKey].bind(value)])
             return true;
         }
         function deleteProperty(target, propKey, receiver) {
@@ -600,37 +600,37 @@ let bd = {
             empty.splice.apply(list, [propKey,1]);
             return true;
         }
-		view.api.once("$/before/remove", e => {
-			revoke();
-			e.stopPropagation();
-		});
+        view.api.once("$/before/remove", e => {
+            revoke();
+            e.stopPropagation();
+        });
         return proxy;
     },
     bindNormal: function (view, value) {
         let value_ = value;
-		let key = "value";
-		let { proxy, revoke } = Proxy.revocable({}, {get: get, set: set, deleteProperty: deleteProperty});
+        let key = "value";
+        let { proxy, revoke } = Proxy.revocable({}, {get: get, set: set, deleteProperty: deleteProperty});
         function get(target, propKey, receiver) {
-			if (propKey != key)
+            if (propKey != key)
                 return Reflect.get(target, propKey, receiver);
             return value_
         }
         function set(target, propKey, value) {
-			if (propKey === Symbol.toStringTag)
-				return "Normal";
-			if (propKey != key)
+            if (propKey === Symbol.toStringTag)
+                return "Normal";
+            if (propKey != key)
                 return Reflect.set(target, propKey, value);
             value_ = value;
-			return true;
+            return true;
         }
         function deleteProperty(target, propKey, receiver) {
-			propKey == key && revoke();
-			return true;
-		}
-		view.api.once("$/before/remove", e => {
-			revoke();
-			e.stopPropagation();
-		});
+            propKey == key && revoke();
+            return true;
+        }
+        view.api.once("$/before/remove", e => {
+            revoke();
+            e.stopPropagation();
+        });
         return proxy;
     }
 };
@@ -715,7 +715,7 @@ let MessageModuleAPI = (function () {
     function notify(type, data) {
         let that = this;
         data = data == null ? [] : ($.isArray(data) ? data : [data]);
-		// the false of returned means the process has been canceled
+        // the false of returned means the process has been canceled
         (function iterate(target) {
             let uid = target.uid;
             if (target.fdr) {
@@ -1057,7 +1057,7 @@ let CommonElementAPI = {
         return hp.create(Store[this.node.previousSibling.uid]).api;
     },
     replace: function (target, options) {
-		this.api.trigger("$/before/remove");
+        this.api.trigger("$/before/remove");
         let elem = this.elem();
         if ($.isSystemObject(target)) {
             if (target.contains(this.api))
@@ -1093,7 +1093,7 @@ let CommonElementAPI = {
         return hp.create(Store[target.uid]).api;
     },
     remove: function () {
-		this.api.trigger("$/before/remove");
+        this.api.trigger("$/before/remove");
         if (this.env.xml.lastChild == this.node) {
             this.api.replace("void");
         } else {
@@ -1187,28 +1187,28 @@ let CommonElementAPI = {
     },
     bind: function (value) {
         let proxy;
-		if (bd.isLiteral(value)) {
-			if (this.fdr)
-				throw Error("A Literal value can only be bound to a htmltag");
-			proxy = bd.bindLiteral(this, value);
-			proxy.value = value;
-		} else if ($.isPlainObject(value)) {
-			if (!this.fdr)
-				throw Error("A PlainObject is not allowed to bind a htmltag");
-			proxy = bd.bindObject(this, value);
-			let props = Object.getOwnPropertyNames(value);
-			props.forEach(key => proxy[key] = value[key]);
-		} else if ($.isArray(value)) {
-			if (this.env.xml.lastChild == this.node)
-				throw Error("Document nodes are not allowed to bind arrays");
-			proxy = bd.bindArray(this, value);
+        if (bd.isLiteral(value)) {
+            if (this.fdr)
+                throw Error("A Literal value can only be bound to a htmltag");
+            proxy = bd.bindLiteral(this, value);
+            proxy.value = value;
+        } else if ($.isPlainObject(value)) {
+            if (!this.fdr)
+                throw Error("A PlainObject is not allowed to bind a htmltag");
+            proxy = bd.bindObject(this, value);
+            let props = Object.getOwnPropertyNames(value);
+            props.forEach(key => proxy[key] = value[key]);
+        } else if ($.isArray(value)) {
+            if (this.env.xml.lastChild == this.node)
+                throw Error("Document nodes are not allowed to bind arrays");
+            proxy = bd.bindArray(this, value);
             for (let i in value)
                 proxy[i] = value[i];
             while (proxy.length > value.length)
                 proxy.pop(0);
-		} else {
-			throw Error("Invalid value, expected a literal, a plainObject, or an array");
-		}
+        } else {
+            throw Error("Invalid value, expected a literal, a plainObject, or an array");
+        }
         return proxy;
     }
 };
@@ -1457,7 +1457,7 @@ function CompManager() {
         resetConfigs(env, node, exprs);
         resetOptions(env, o, exprs);
         o.xml = w.xml.cloneNode(true);
-		o.api = o.back;
+        o.api = o.back;
         return Store[o.uid] = o;
     }
     function recycle(item) {
@@ -1764,7 +1764,7 @@ function parseEnvXML(env, parent, node) {
             for (i = 0; i < node.childNodes.length; i++)
                 iterate(node.childNodes[i], appendTo);
             env.smr.create(ins);
-			ins.value = ins.fun.call(ins.api, ins.fdr.sys, ins.fdr.items, ins.opt);
+            ins.value = ins.fun.call(ins.api, ins.fdr.sys, ins.fdr.items, ins.opt);
         } else {
             xmlplus.debug && console.warn($.serialize(node) + " not found");
             ins = Manager[0].create(env, node, parent);
