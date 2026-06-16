@@ -15,7 +15,7 @@ $_().imports({
 		css: "#ai { text-align: center; }\
 			  #title { font-size: 2.5rem; margin-bottom: 20px; text-shadow: 0 0 10px rgba(100, 200, 255, 0.5); }",
 		xml: "<AI id='ai'>\
-		        <h1 id='title'>TicTacToe</h1>\
+		        <h1 id='title'>井字棋</h1>\
 				<Status id='status'/>\
 				<Board id='board'/>\
                 <ResetButton id='reset'/>\

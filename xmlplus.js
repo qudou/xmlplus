@@ -283,7 +283,7 @@ let ph = (function () {
             return table[key] = patt.substr(2);
         return table[key] = isAbsolute(patt) ? join(dir.split('/')[0], patt.slice(1)) : join(dir, patt);
     }
-    return { split: split, fullPath: fullPath };
+    return { split, fullPath };
 }());
 
 let hp = {
@@ -1639,7 +1639,7 @@ function PackageManager() {
         }
         return { imports: items => { return imports(items, space) } };
     }
-    return { make: makePackage, component: component };
+    return { makePackage, component };
 }
 
 function Finder(env) {
@@ -1785,7 +1785,7 @@ function xmlplus(root, callback) {
     function createPackage(space) {
         if ($.type(space) != "string" && space != null)
             throw Error("Invalid namespace, expected a null value or a string");
-        return PM.make(root, space ? (root + "/" + space) : root);
+        return PM.makePackage(root, space ? (root + "/" + space) : root);
     }
     callback.call(xmlplus, xmlplus, createPackage);
     return xmlplus;
