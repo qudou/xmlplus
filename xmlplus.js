@@ -1402,7 +1402,7 @@ function TextManager() {
     function chenv(env, item) {
         item.env = env;
     }
-    return { create: create, recycle: recycle, chenv: chenv };
+    return { create, recycle, chenv };
 }
 
 function HtmlManager() {
@@ -1437,7 +1437,7 @@ function HtmlManager() {
         }
         item.env = env;
     }
-    return { create: create, recycle: recycle, chenv: chenv };
+    return { create, recycle, chenv };
 }
 
 function CompManager() {
@@ -1483,7 +1483,7 @@ function CompManager() {
         }
         item.env = env;
     }
-    return { create: create, recycle: recycle, chenv: chenv };
+    return { create, recycle, chenv };
 }
 
 function StyleManager() {
@@ -1531,7 +1531,7 @@ function StyleManager() {
             head.appendChild(temp[i]);
         parent = head;
     }
-    return { create: create, remove: remove, reset: reset };
+    return { create, remove, reset };
 }
 
 function PackageManager() {
@@ -1692,7 +1692,7 @@ function Finder(env) {
                 kids[i].nodeType == 1 && parse(kids[i]);
         }(env.xml.lastChild));
     }
-    return { sys: sys, items: items, refresh: refresh };
+    return { sys, items, refresh };
 }
 
 function aliasMatch(env, node) {
