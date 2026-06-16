@@ -767,7 +767,7 @@ let MessageModuleAPI = (function () {
         }(this));
         return Object.keys(result);
     }
-    return { watch: watch, glance: glance, unwatch: unwatch, notify: notify, remove: remove, messages: messages };
+    return { watch, glance, unwatch, notify, remove, messages };
 }());
 
 let EventModuleAPI = (function () {
@@ -908,7 +908,7 @@ let EventModuleAPI = (function () {
             node = node.parentNode;
         }
     }
-    return { on: on, once: once, off: off, trigger: trigger, remove: remove };
+    return { on, once, off, trigger, remove };
 }());
 
 let CommonElementAPI = {
