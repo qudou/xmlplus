@@ -952,7 +952,7 @@ let CommonElementAPI = {
         ctx = (ctx && Store[ctx.guid()] || this).env;
         let elem = this.elem(),
             klass = elem.getAttribute("class"),
-            input = (value + '').replace(/#/g, ctx.aid + ctx.cid).split(/\s+/),
+            input = (value + '').replace(/\$/g, ctx.aid + ctx.cid).split(/\s+/),
             result = klass ? klass.split(/\s+/) : [];
         for (let i = 0; i < input.length; i++)
             if (result.indexOf(input[i]) < 0)
@@ -966,7 +966,7 @@ let CommonElementAPI = {
             return elem.setAttribute("class", ""), this;
         ctx = (ctx && Store[ctx.guid()] || this).env;
         let klass = elem.getAttribute("class"),
-            input = (value + '').replace(/#/g, ctx.aid + ctx.cid).split(/\s+/),
+            input = (value + '').replace(/\$/g, ctx.aid + ctx.cid).split(/\s+/),
             result = klass ? klass.split(/\s+/) : [];
         for (let k, i = 0; i < input.length; i++ ) {
             k = result.indexOf(input[i]);
@@ -978,7 +978,7 @@ let CommonElementAPI = {
     hasClass: function(value) {
         let elem = this.elem(),
             env = this.env;
-        value = (value + '').replace(/#/g, env.aid + env.cid);
+        value = (value + '').replace(/\$/g, env.aid + env.cid);
         if (value.length == 0) 
             return false;
         return new RegExp(' ' + value + ' ').test(' ' + elem.getAttribute("class") + ' ');

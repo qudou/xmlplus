@@ -155,7 +155,7 @@ addClass(className[,context])
 - `context` : `SystemObject` 指代上下文的系统对象
 - `Returns` : `SystemObject` 函数的调用者
 
-该函数用于给组件对象添加类，该类名可以是独立的，也可以是由多个空格分隔的类集合。其中可选的参数 `context` 是一系统对象，用于指明该对象的宿主组件标识符。该标识符会替换掉参数 `className` 中出现的符号 `#`。
+该函数用于给组件对象添加类，该类名可以是独立的，也可以是由多个空格分隔的类集合。其中可选的参数 `context` 是一系统对象，用于指明该对象的宿主组件标识符。该标识符会替换掉参数 `className` 中出现的符号 `$`。
 
 默认情况下，`context` 为函数 `addClass` 的调用者，请看下面示例。
 
@@ -168,19 +168,19 @@ Example: {
             <h1 id='text'>hello, world</h1>\
           </div>",
     fun: function (sys, items, opts) {
-        sys.text.addClass("#klass");                // 引用的是当前组件的 klass
+        sys.text.addClass("$klass");                // 引用的是当前组件的 klass
     }
 },
 Widget: {
     css: "#klass { color: red; }",
     xml: "<h1 id='widget'>hello, world</h1>",
     fun: function (sys, items, opts) {
-        sys.widget.addClass("#klass", this);        // 引用的是组件 Example 的 klass
+        sys.widget.addClass("$klass", this);        // 引用的是组件 Example 的 klass
     }
 }
 ```
 
-注意，参数 `className` 中出现的符号 `#` 所代表的内容与样式项中出现的符号 `$` 所代表的内容一致。对于类名中出现的通配符，详细内容请参考 [样式项中的通配符](/docs#命名_样式项中的通配符)。
+注意，参数 `className` 中出现的符号 `$` 所代表的内容与样式项中出现的符号 `$` 所代表的内容一致。对于类名中出现的通配符，详细内容请参考 [样式项中的通配符](/docs#命名_样式项中的通配符)。
 
 ## removeClass
 
@@ -200,9 +200,9 @@ Example: {
     xml: "<h1 id='example'>hello,world</h1>",
     fun: async function (sys, items, opts) {
         await xp.delay(0);
-        sys.example.addClass("#klass");
+        sys.example.addClass("$klass");
         console.log(sys.example.css("color")); // rgb(0, 0, 255)
-        sys.example.removeClass("#klass");
+        sys.example.removeClass("$klass");
         console.log(sys.example.css("color")); // rgb(0, 0, 0)
     }
 }
