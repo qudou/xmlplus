@@ -135,10 +135,9 @@ $_().imports({
 				});
 			}
 			function lightWinner(board, winner) {
-                const winIndices = winPatterns.find(pattern => 
+                winPatterns.find(pattern => 
                     pattern.every(i => board[i] === winner)
-                );
-				winIndices.forEach(i => cells[i].addClass(`$winner`));
+                ).forEach(i => cells[i].addClass(`$winner`));
 			}
 			return { makeMove, reset, lightWinner }
 		}
@@ -152,7 +151,7 @@ $_().imports({
 			    <button id='resetGame'>重新开始</button>\
 			  </div>",
 		fun: function (sys, items, opts) {
-			sys.resetGame.on("click", () => this.trigger(`e/resetGame`));
+			sys.resetGame.on("click", ()=> this.trigger(`e/resetGame`));
 		}
 	}
 });

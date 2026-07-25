@@ -86,4 +86,4 @@ At last, you need a HTML file containing following content. Here, we name the fi
 </html>
 ```
 
-Ensure that the above three files are in the same folder. If opening the `index.html` with a browser, you should be able to see the red `hello, world`.
+Ensure that the above three files are in the same folder. If opening the `index.html` with a browser, you should be able to see the red `hello, world`. 
